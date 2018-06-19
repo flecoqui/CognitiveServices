@@ -25,7 +25,7 @@ You can install the application on:
 - **Windows 10 Mobile Platform**: a phone running Windows 10 Anniversary Update
 
 The applications packages for x86, x64 and ARM are available there :
-[ZIP file of the application x86, x64, ARM Packages](https://github.com/flecoqui/Windows10/raw/master/Samples/TranslatorTextUWPSampleApp/Releases/LatestRelease.zip)
+[ZIP file of the application x86, x64, ARM Packages](https://github.com/flecoqui/CognitiveServices/raw/master/TranslatorTextUWPSampleApp/Releases/LatestRelease.zip)
 
 
 **Personal Computer installation:**
@@ -52,41 +52,41 @@ Once the application is installed on your device, you can launch it and the main
 
 ### Main page
 
-![](https://raw.githubusercontent.com/flecoqui/Windows10/master/Samples/TranslatorTextUWPSampleApp/Docs/main.png)
+![](https://raw.githubusercontent.com/flecoqui/CognitiveServices/master/TranslatorTextUWPSampleApp/Docs/main.png)
 
 The application is used to translate text after getting the list of supported languages. The application can also detect the language of a text.
 
 ### Entering your subscription Key
 Once the application is launched, you can enter your subscription key which will be used for the communication with Translator-Text Cognitive Services.
 
-![](https://raw.githubusercontent.com/flecoqui/Windows10/master/Samples/TranslatorTextUWPSampleApp/Docs/subscriptionkey.png)
+![](https://raw.githubusercontent.com/flecoqui/CognitiveServices/master/TranslatorTextUWPSampleApp/Docs/subscriptionkey.png)
 
 ### Getting the list of supported languages
 With the application you can get the list of supported languages.
 Click on the button "Get Languages" to get the list of supported languages.
 
-![](https://raw.githubusercontent.com/flecoqui/Windows10/master/Samples/TranslatorTextUWPSampleApp/Docs/getlanguages.png)
+![](https://raw.githubusercontent.com/flecoqui/CognitiveServices/master/TranslatorTextUWPSampleApp/Docs/getlanguages.png)
 
 Once the list is downloaded, you can translate the input text. 
 Once the text is filled in the edit box, you can either select the input language using the combo box language or detect the input language by clicking on button "Detect Language"
 
-![](https://raw.githubusercontent.com/flecoqui/Windows10/master/Samples/TranslatorTextUWPSampleApp/Docs/detect.png)
+![](https://raw.githubusercontent.com/flecoqui/CognitiveServices/master/TranslatorTextUWPSampleApp/Docs/detect.png)
 
-![](https://raw.githubusercontent.com/flecoqui/Windows10/master/Samples/TranslatorTextUWPSampleApp/Docs/inputlanguage.png)
+![](https://raw.githubusercontent.com/flecoqui/CognitiveServices/master/TranslatorTextUWPSampleApp/Docs/inputlanguage.png)
 
 Once the input language is set, you can translate the input text into a text in another language. You need to select the output language using the combo box language.
 
-![](https://raw.githubusercontent.com/flecoqui/Windows10/master/Samples/TranslatorTextUWPSampleApp/Docs/outputlanguage.png)
+![](https://raw.githubusercontent.com/flecoqui/CognitiveServices/master/TranslatorTextUWPSampleApp/Docs/outputlanguage.png)
 
 Click on the button "Translate".
 
-![](https://raw.githubusercontent.com/flecoqui/Windows10/master/Samples/TranslatorTextUWPSampleApp/Docs/translate.png) 
+![](https://raw.githubusercontent.com/flecoqui/CognitiveServices/master/TranslatorTextUWPSampleApp/Docs/translate.png) 
 
 After few seconds the result is displayed on the page.
 
-![](https://raw.githubusercontent.com/flecoqui/Windows10/master/Samples/TranslatorTextUWPSampleApp/Docs/result.png) 
+![](https://raw.githubusercontent.com/flecoqui/CognitiveServices/master/TranslatorTextUWPSampleApp/Docs/result.png) 
 
-![](https://raw.githubusercontent.com/flecoqui/Windows10/master/Samples/TranslatorTextUWPSampleApp/Docs/mainpage.png)
+![](https://raw.githubusercontent.com/flecoqui/CognitiveServices/master/TranslatorTextUWPSampleApp/Docs/mainpage.png)
 
 
 Building the application

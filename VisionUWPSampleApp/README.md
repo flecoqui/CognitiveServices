@@ -25,7 +25,7 @@ You can install the application on:
 - **Windows 10 Mobile Platform**: a phone running Windows 10 RS1
 
 The applications packages for x86, x64 and ARM are available there :
-[ZIP file of the application x86, x64, ARM Packages](https://github.com/flecoqui/Windows10/raw/master/Samples/VisionUWPSampleApp/Releases/LatestRelease.zip)
+[ZIP file of the application x86, x64, ARM Packages](https://github.com/flecoqui/CognitiveServices/raw/master/VisionUWPSampleApp/Releases/LatestRelease.zip)
 
 
 **Personal Computer installation:**
@@ -52,7 +52,7 @@ Once the application is installed on your device, you can launch it and the main
 
 ### Main page
 
-![](https://raw.githubusercontent.com/flecoqui/Windows10/master/Samples/VisionUWPSampleApp/Docs/main.png)
+![](https://raw.githubusercontent.com/flecoqui/CognitiveServices/master/VisionUWPSampleApp/Docs/main.png)
 
 The application is used to take picture, open picture and analyze the picture with Cognitive Services.
 As you use the application with Computer Vision service, verify the Check Box Custom Vision is unchecked. 
@@ -60,33 +60,33 @@ As you use the application with Computer Vision service, verify the Check Box Cu
 ### Entering your subscription Key
 Then you can enter the subscription key associated with the Computer Vision Cognitive Service which will be used for the communication Computer Vision Cognitive Services.
 
-![](https://raw.githubusercontent.com/flecoqui/Windows10/master/Samples/VisionUWPSampleApp/Docs/subscriptionkey.png)
+![](https://raw.githubusercontent.com/flecoqui/CognitiveServices/master/VisionUWPSampleApp/Docs/subscriptionkey.png)
 
 
 ### Entering the hostname
 Then you can enter the hostname associated with the url of your Computer Vision Cognitive Service. The format is usually region.api.cognitive.microsoft.com.
 
-![](https://raw.githubusercontent.com/flecoqui/Windows10/master/Samples/VisionUWPSampleApp/Docs/hostname.png)
+![](https://raw.githubusercontent.com/flecoqui/CognitiveServices/master/VisionUWPSampleApp/Docs/hostname.png)
 
 ### Selecting the options
 Then you can select the options before calling the service. For instance, if you want to analyze faces from celebrities, select the Visula Features "Faces"  and the details "Celebreties".
 
-![](https://raw.githubusercontent.com/flecoqui/Windows10/master/Samples/VisionUWPSampleApp/Docs/options.png)
+![](https://raw.githubusercontent.com/flecoqui/CognitiveServices/master/VisionUWPSampleApp/Docs/options.png)
 
 
 ### Taking a picture
 Now you can either take a picture with the camera installed on your device running Windows 10 or open a picture stored on your computer.
 Tap on the Video button to launch the video preview
 
-![](https://raw.githubusercontent.com/flecoqui/Windows10/master/Samples/VisionUWPSampleApp/Docs/video.png)
+![](https://raw.githubusercontent.com/flecoqui/CognitiveServices/master/VisionUWPSampleApp/Docs/video.png)
 
 You can also select the resolution of your picture, select a resolution which will create a picture with a size below 4 MB.
 
-![](https://raw.githubusercontent.com/flecoqui/Windows10/master/Samples/VisionUWPSampleApp/Docs/comboresolution.png)
+![](https://raw.githubusercontent.com/flecoqui/CognitiveServices/master/VisionUWPSampleApp/Docs/comboresolution.png)
 
 When the preview control is displaying the picture you want to take, Tap on the Camera button to capture the picture associated with the video preview
 
-![](https://raw.githubusercontent.com/flecoqui/Windows10/master/Samples/VisionUWPSampleApp/Docs/camera.png)
+![](https://raw.githubusercontent.com/flecoqui/CognitiveServices/master/VisionUWPSampleApp/Docs/camera.png)
 
 The picture is displayed in the preview control.
 
@@ -94,18 +94,18 @@ The picture is displayed in the preview control.
 You can also open an existing picture.
 Tap on the Open button to select the picture on your harddrive
 
-![](https://raw.githubusercontent.com/flecoqui/Windows10/master/Samples/VisionUWPSampleApp/Docs/open.png)
+![](https://raw.githubusercontent.com/flecoqui/CognitiveServices/master/VisionUWPSampleApp/Docs/open.png)
 
 The selected picture is displayed in the preview control.
 
 ### Analyzing the picture
 Tap on the Send button to send the current picture to the Cognitive Services
 
-![](https://raw.githubusercontent.com/flecoqui/Windows10/master/Samples/VisionUWPSampleApp/Docs/send.png)
+![](https://raw.githubusercontent.com/flecoqui/CognitiveServices/master/VisionUWPSampleApp/Docs/send.png)
 
 After few seconds, the result is displayed in the Log field:
 
-![](https://raw.githubusercontent.com/flecoqui/Windows10/master/Samples/VisionUWPSampleApp/Docs/result.png)
+![](https://raw.githubusercontent.com/flecoqui/CognitiveServices/master/VisionUWPSampleApp/Docs/result.png)
 
 
 Using the application with Custom Vision Cognitive Service
@@ -114,42 +114,42 @@ Once the application is installed on your device, you can launch it and the main
 
 ### Main page
 
-![](https://raw.githubusercontent.com/flecoqui/Windows10/master/Samples/VisionUWPSampleApp/Docs/maincustom.png)
+![](https://raw.githubusercontent.com/flecoqui/CognitiveServices/master/VisionUWPSampleApp/Docs/maincustom.png)
 
 As you will use the application with Custom Vision service, verify the Check Box Custom Vision is checked. 
 
-![](https://raw.githubusercontent.com/flecoqui/Windows10/master/Samples/VisionUWPSampleApp/Docs/customcheck.png)
+![](https://raw.githubusercontent.com/flecoqui/CognitiveServices/master/VisionUWPSampleApp/Docs/customcheck.png)
 
 ### Entering your subscription Key
 Then you can enter the subscription key associated with the Computer Vision Cognitive Service which will be used for the communication Computer Vision Cognitive Services.
 
-![](https://raw.githubusercontent.com/flecoqui/Windows10/master/Samples/VisionUWPSampleApp/Docs/subscriptionkeycustom.png)
+![](https://raw.githubusercontent.com/flecoqui/CognitiveServices/master/VisionUWPSampleApp/Docs/subscriptionkeycustom.png)
 
 
 ### Entering the hostname
 Then you can enter the hostname associated with the url of your Computer Vision Cognitive Service. The format is usually region.api.cognitive.microsoft.com.
 
-![](https://raw.githubusercontent.com/flecoqui/Windows10/master/Samples/VisionUWPSampleApp/Docs/hostnamecustom.png)
+![](https://raw.githubusercontent.com/flecoqui/CognitiveServices/master/VisionUWPSampleApp/Docs/hostnamecustom.png)
 
 ### Entering the ProjectID and optionnally the IterationID
 Then you can enter the Project ID associated with the Custom Vision Model and optionnally the Iteration ID of the model. If you leave this field empty the service will use the latest model.
 
-![](https://raw.githubusercontent.com/flecoqui/Windows10/master/Samples/VisionUWPSampleApp/Docs/optionscustom.png)
+![](https://raw.githubusercontent.com/flecoqui/CognitiveServices/master/VisionUWPSampleApp/Docs/optionscustom.png)
 
 
 ### Taking a picture
 Now you can either take a picture with the camera installed on your device running Windows 10 or open a picture stored on your computer.
 Tap on the Video button to launch the video preview
 
-![](https://raw.githubusercontent.com/flecoqui/Windows10/master/Samples/VisionUWPSampleApp/Docs/video.png)
+![](https://raw.githubusercontent.com/flecoqui/CognitiveServices/master/VisionUWPSampleApp/Docs/video.png)
 
 You can also select the resolution of your picture, select a resolution which will create a picture with a size below 4 MB.
 
-![](https://raw.githubusercontent.com/flecoqui/Windows10/master/Samples/VisionUWPSampleApp/Docs/comboresolution.png)
+![](https://raw.githubusercontent.com/flecoqui/CognitiveServices/master/VisionUWPSampleApp/Docs/comboresolution.png)
 
 When the preview control is displaying the picture you want to take, Tap on the Camera button to capture the picture associated with the video preview
 
-![](https://raw.githubusercontent.com/flecoqui/Windows10/master/Samples/VisionUWPSampleApp/Docs/camera.png)
+![](https://raw.githubusercontent.com/flecoqui/CognitiveServices/master/VisionUWPSampleApp/Docs/camera.png)
 
 The picture is displayed in the preview control.
 
@@ -157,18 +157,18 @@ The picture is displayed in the preview control.
 You can also open an existing picture.
 Tap on the Open button to select the picture on your harddrive
 
-![](https://raw.githubusercontent.com/flecoqui/Windows10/master/Samples/VisionUWPSampleApp/Docs/open.png)
+![](https://raw.githubusercontent.com/flecoqui/CognitiveServices/master/VisionUWPSampleApp/Docs/open.png)
 
 The selected picture is displayed in the preview control.
 
 ### Analyzing the picture
 Tap on the Send button to send the current picture to the Custom Cognitive Services
 
-![](https://raw.githubusercontent.com/flecoqui/Windows10/master/Samples/VisionUWPSampleApp/Docs/send.png)
+![](https://raw.githubusercontent.com/flecoqui/CognitiveServices/master/VisionUWPSampleApp/Docs/send.png)
 
 After few seconds, the result is displayed in the Log field:
 
-![](https://raw.githubusercontent.com/flecoqui/Windows10/master/Samples/VisionUWPSampleApp/Docs/resultcustom.png)
+![](https://raw.githubusercontent.com/flecoqui/CognitiveServices/master/VisionUWPSampleApp/Docs/resultcustom.png)
 
 
 
