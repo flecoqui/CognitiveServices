@@ -63,34 +63,54 @@
                 </StackPanel>
                 <StackPanel x:Name="ButtonPanel" VerticalAlignment="Top"  >
                     <StackPanel Orientation="Horizontal"  VerticalAlignment="Center">
+                        <TextBlock x:Name="labelHostname" Text="Speech Service hostname:" HorizontalAlignment="Left" />
+                    </StackPanel>
+                    <StackPanel Orientation="Vertical"  VerticalAlignment="Center">
+                        <ComboBox x:Name="ComboHostname" ToolTipService.ToolTip="Speech-To-Text host name, by default speech.platform.bing.com" Width="308" IsTabStop="True"   HorizontalAlignment="Left" SelectionChanged="ComboHostname_SelectionChanged"/>
+                    </StackPanel>
+
+                    <StackPanel Orientation="Horizontal"  VerticalAlignment="Center">
                         <TextBlock x:Name="labelSubscriptionID" Text="Speech-To-Text Subscription Key:" HorizontalAlignment="Left" />
                     </StackPanel>
                     <StackPanel Orientation="Vertical"  VerticalAlignment="Center">
                         <TextBox x:Name="subscriptionKey" ToolTipService.ToolTip="SubscriptionKey associated with the Cognitive Service Speech-To-Text Account" Width="308" IsTabStop="True" TextChanged="subscriptionKey_TextChanged" HorizontalAlignment="Left"  Text=""/>
                     </StackPanel>
+
                     <StackPanel Orientation="Horizontal"  VerticalAlignment="Center">
-                        <TextBlock x:Name="labelHostname" Text="Speech-To-Text hostname:" HorizontalAlignment="Left" />
+                        <TextBlock x:Name="labelCustomEndpointID" Text="Custom Speech Endpoint ID:" HorizontalAlignment="Left" />
                     </StackPanel>
                     <StackPanel Orientation="Vertical"  VerticalAlignment="Center">
-                        <TextBox x:Name="Hostname" ToolTipService.ToolTip="Speech-To-Text host name, by default speech.platform.bing.com" Width="308" IsTabStop="True" TextChanged="Hostname_TextChanged"  HorizontalAlignment="Left" />
+                        <TextBox x:Name="customEndpointID" ToolTipService.ToolTip="Custom Endpoint ID (GUID) associated with the Cognitive Service Custom Speech Account (www.cris.ai). Only required for Custom Serivces." Width="308" IsTabStop="True" TextChanged="customEndpointID_TextChanged" HorizontalAlignment="Left"  Text=""/>
                     </StackPanel>
-                    <TextBlock>Cognitive Services Speech Recognition API:</TextBlock>
-                    <StackPanel Orientation="Vertical"  VerticalAlignment="Center">
-                        <ComboBox x:Name="ComboAPI" ToolTipService.ToolTip="Cognitive Services Speech Recognition API (endpoint) " Width="308" ></ComboBox>
+                    <StackPanel Orientation="Horizontal"  >
+                        <TextBlock x:Name="labelAPISelection" Text="Speech API:" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                        <ToggleSwitch HorizontalAlignment="Right" Margin="100,2,2,2" x:Name="SpeechApiType" MinWidth="100"
+                                          OffContent="REST"
+                                          OnContent="WebSocket"
+                                          VerticalAlignment="Center"
+                                          Toggled="SpeechApiType_Toggled"
+                              ToolTipService.ToolTip="Configure the Speech Client to use either REST API or WebSocket"    >
+                    </ToggleSwitch>
                     </StackPanel>
-                    <TextBlock>Cognitive Services Speech Result Type:</TextBlock>
-                    <StackPanel Orientation="Vertical"  VerticalAlignment="Center">
-                        <ComboBox x:Name="ComboAPIResult" ToolTipService.ToolTip="Cognitive Services Speech Recognition Result API (simple or detailed) " Width="308" ></ComboBox>
+                    <StackPanel Orientation="Horizontal"  >
+                        <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center">Recognition API:</TextBlock>
+                        <ComboBox x:Name="ComboAPI" ToolTipService.ToolTip="Cognitive Services Speech Recognition API: interactive, dictation plus conversation for WebSocket  " Width="180" Margin="20,2,0,2" SelectionChanged="ComboAPI_SelectionChanged" ></ComboBox>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal"  >
+                        <TextBlock VerticalAlignment="Center">Result Type:</TextBlock>
+                        <ComboBox x:Name="ComboAPIResult" ToolTipService.ToolTip="Cognitive Services Speech Recognition Result API (simple or detailed) " Width="180" Margin="50,2,0,2" ></ComboBox>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal"  >
+                        <TextBlock x:Name="labelLanguage" Text="Speech-To-Text Language:" HorizontalAlignment="Right" VerticalAlignment="Center" />
+                        <ComboBox  x:Name="speechToTextLanguage" ToolTipService.ToolTip="Language for Speech-To-Text" VerticalAlignment="Center" HorizontalAlignment="Stretch"  IsTabStop="True" Margin="40,2,0,2" Width="95" >
+                        </ComboBox>
                     </StackPanel>
 
                     <StackPanel Orientation="Horizontal"  VerticalAlignment="Center">
-                        <TextBlock x:Name="labelUri" Text="Path:" VerticalAlignment="Center" HorizontalAlignment="Left" Width="40"  />
+                        <TextBlock x:Name="labelUri" Text="Audio file path:" VerticalAlignment="Center" HorizontalAlignment="Left" Width="176"  />
                         <Button IsEnabled="False" Content="&#xE720;" x:Name="fileRecordingButton" ToolTipService.ToolTip="Record microphone into a local WAV file" FontFamily="Segoe MDL2 Assets" IsTabStop="True" Height="42" Width="42" Margin="1,1,1,1" Click="FileRecording_Click"  />
                         <Button IsEnabled="False" Content="&#xE8E5;" x:Name="openButton" HorizontalAlignment="Right"  ToolTipService.ToolTip="Open the WAV file" FontFamily="Segoe MDL2 Assets" IsTabStop="True" Height="42" Width="42" Margin="1,1,1,1" Click="open_Click" />
                         <Button IsEnabled="False" Content="&#xE898;" x:Name="convertWAVButton"  ToolTipService.ToolTip="Speech-To-Text with local WAV file sent to Cognitive Services" FontFamily="Segoe MDL2 Assets" IsTabStop="True" Height="42" Width="42" Margin="1,1,1,1" Click="sendWAVFile_Click" />
-                        <TextBlock x:Name="labelLanguage" Text="Lang:" HorizontalAlignment="Right" VerticalAlignment="Center" Width="40" />
-                        <ComboBox  x:Name="language" ToolTipService.ToolTip="Language of the audio to convert" VerticalAlignment="Center" Width="96"   HorizontalAlignment="Stretch"  IsTabStop="True"  >
-                        </ComboBox>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal"  VerticalAlignment="Center">
                         <TextBox x:Name="mediaUri" ToolTipService.ToolTip="Path or Uri of the WAV file to play/test" IsTabStop="True"  Width="308" />
@@ -118,11 +138,16 @@
                 </StackPanel>
             </StackPanel>
             <StackPanel x:Name="SubTitlePanel" Grid.Row="1" Grid.RowSpan="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="5"  >
+                <StackPanel Orientation="Horizontal"  >
+                    <TextBlock x:Name="labelTextToSpeechLanguage" Text="Speech-To-Text Language:" HorizontalAlignment="Right" VerticalAlignment="Center" />
+                    <ComboBox  x:Name="textToSpeechLanguage" ToolTipService.ToolTip="Language for Speech-To-Text" VerticalAlignment="Center" HorizontalAlignment="Stretch"  IsTabStop="True" Margin="38,2,0,2" Width="95" >
+                    </ComboBox>
+                </StackPanel>
                 <StackPanel Orientation="Horizontal"  VerticalAlignment="Center">
                     <TextBlock x:Name="labelText" Text="Result:" HorizontalAlignment="Left" VerticalAlignment="Center" />
                     <Button IsEnabled="False" Content="&#xE969;" x:Name="textToSpeechButton" ToolTipService.ToolTip="Test Text to Speech feature"  FontFamily="Segoe MDL2 Assets" IsTabStop="True" Height="42" Width="42" Margin="1,1,1,1" Click="textToSpeech_Click"/>
-                    <TextBlock x:Name="genderText" Text="Gender:" HorizontalAlignment="Left" VerticalAlignment="Center" />
-                    <ComboBox  x:Name="gender" ToolTipService.ToolTip="Gender for the TextToSpeech" VerticalAlignment="Center" Width="96"   HorizontalAlignment="Stretch"  IsTabStop="True"  ></ComboBox>
+                    <TextBlock x:Name="genderText" Text="Gender:" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5,0,0,0"/>
+                    <ComboBox  x:Name="gender" ToolTipService.ToolTip="Gender for the TextToSpeech" VerticalAlignment="Center" Width="96"   HorizontalAlignment="Stretch"  IsTabStop="True" Margin="66,2,0,2" ></ComboBox>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal"  VerticalAlignment="Center">
                     <TextBox x:Name="resultText" ToolTipService.ToolTip="Speech-To-Text Conversion result" Width="308" Height="100" IsTabStop="True"  TextWrapping="Wrap" AcceptsReturn="True" FontSize="12" IsReadOnly="False"  />

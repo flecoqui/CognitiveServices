@@ -39,10 +39,82 @@ namespace SpeechToTextUWPSampleApp
         bool isRecordingContinuously = false;
         bool bUseWebSocket = false;
 
-        string[] LanguageArray = 
-            {"ca-ES","de-DE","zh-TW", "zh-HK","ru-RU","es-ES", "ja-JP","ar-EG", "da-DK","en-AU" ,"en-CA","en-GB" ,"en-IN", "en-US" , "en-NZ","es-MX","fi-FI",
-              "fr-FR","fr-CA" ,"it-IT","ko-KR" , "nb-NO","nl-NL","pt-BR" ,"pt-PT"  ,             
-              "pl-PL"  ,"sv-SE", "zh-CN"  };
+        string[] TextToSpeechLanguageArray =
+            {   "ar-EG",
+                "ar-SA",
+                "bg-BG",
+                "ca-ES",
+                "cs-CZ",
+                "da-DK",
+                "de-AT",
+                "de-CH",
+                "de-DE",
+                "el-GR",
+                "en-AU",
+                "en-CA",
+                "en-GB",
+                "en-IE",
+                "en-IN",
+                "en-US",
+                "es-ES",
+                "es-MX",
+                "fi-FI",
+                "fr-CA",
+                "fr-CH",
+                "fr-FR",
+                "he-IL",
+                "hi-IN",
+                "hr-HR",
+                "hu-HU",
+                "id-ID",
+                "it-IT",
+                "ja-JP",
+                "ko-KR",
+                "ms-MY",
+                "nb-NO",
+                "nl-NL",
+                "pl-PL",
+                "pt-BR",
+                "pt-PT",
+                "ro-RO",
+                "ru-RU",
+                "sk-SK",
+                "sk-SI",
+                "sv-SE",
+                "ta-IN",
+                "th-TH",
+                "tr-TR",
+                "vi-VN",
+                "zh-CN",
+                "zh-HK",
+                "zh-TW"
+                };
+
+        string[] SpeechToTextLanguageArray =
+            {   "ar-EG",
+                "ca-ES",
+                "da-DK",
+                "de-DE",
+                "en-AU",
+                "en-CA",
+                "en-GB",
+                "en-IN",
+                "en-NZ",
+                "en-US",
+                "es-ES",
+                "es-MX",
+                "fi-FI",
+                "fr-CA",
+                "fr-FR"
+                };
+        string[] SpeechToTextConversationLanguageArray =
+            {   "ar-EG",
+                "de-DE",
+                "en-US",
+                "es-ES",
+                "fr-FR"
+                };
+
         public MainPage()
         {
             this.InitializeComponent();
@@ -84,6 +156,14 @@ namespace SpeechToTextUWPSampleApp
             mediaPlayer.MediaFailed += MediaPlayer_MediaFailed;
             mediaPlayer.MediaOpened += MediaPlayer_MediaOpened;
 
+            // Fill ComboBox Hostname
+            ComboHostname.Items.Clear();
+            ComboHostname.Items.Add(defaultBingSpeechHostname);
+            ComboHostname.Items.Add(defaultWestUSSpeechHostname);
+            ComboHostname.Items.Add(defaultEastAsiaSpeechHostname);
+            ComboHostname.Items.Add(defaultNorthEuropeSpeechHostname);
+            ComboHostname.SelectedIndex = 0;
+
             // Fill Combobox API
             ComboAPI.Items.Clear();
             ComboAPI.Items.Add("interactive");
@@ -96,10 +176,15 @@ namespace SpeechToTextUWPSampleApp
             ComboAPIResult.Items.Add("detailed");
             ComboAPIResult.SelectedIndex = 0;
 
-            language.Items.Clear();
-            foreach(var l in LanguageArray)
-                language.Items.Add(l);
-            language.SelectedItem = "en-US";
+            speechToTextLanguage.Items.Clear();
+            foreach(var l in SpeechToTextLanguageArray)
+                speechToTextLanguage.Items.Add(l);
+            speechToTextLanguage.SelectedItem = "en-US";
+
+            textToSpeechLanguage.Items.Clear();
+            foreach (var l in TextToSpeechLanguageArray)
+                textToSpeechLanguage.Items.Add(l);
+            textToSpeechLanguage.SelectedItem = "en-US";
 
             gender.Items.Add("Female");
             gender.Items.Add("Male");
@@ -133,7 +218,7 @@ namespace SpeechToTextUWPSampleApp
             if (!string.IsNullOrEmpty(subscriptionKey.Text))
             {
                 LogMessage("Getting Token for subscription key: " + subscriptionKey.Text.ToString());
-                client.SetAPI(Hostname.Text, (string)ComboAPI.SelectedItem, bUseWebSocket);
+                client.SetAPI(ComboHostname.SelectedItem.ToString(), customEndpointID.Text, (string)ComboAPI.SelectedItem, bUseWebSocket);
                 string s = await client.GetToken(subscriptionKey.Text);
                 if (!string.IsNullOrEmpty(s))
                     LogMessage("Getting Token successful Token: " + s.ToString());
@@ -142,7 +227,13 @@ namespace SpeechToTextUWPSampleApp
             }
 
         }
-
+        /// <summary>
+        /// This method is called when the EndpointID is changed
+        /// </summary>
+        private void customEndpointID_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            UpdateControls();
+        }
         /// <summary>
         /// This method is called when the Duration TextBox changed  
         /// </summary>
@@ -245,18 +336,65 @@ namespace SpeechToTextUWPSampleApp
 
         #region Settings
         const string keyHostname = "hostnameKey";
-        const string keySubscription = "subscriptionKey";
+        const string keyBingSpeechSubscription = "bingSpeechSubscriptionKey";
+        const string keyWestUsSpeechSubscription = "westUsSpeechSubscriptionKey";
+        const string keyEastAsiaSpeechSubscription = "eastAsiaSpeechSubscriptionKey";
+        const string keyNorthEuropeSpeechSubscription = "northEuropeSpeechSubscriptionKey";
+        const string keyWestUsEndPointID = "westUsEndPointIDKey";
+        const string keyEastAsiaEndPointID  = "eastAsiaEndPointIDKey";
+        const string keyNorthEuropeEndPointID = "northEuropeEndPointIDKey";
         const string keyLevel = "levelKey";
         const string keyDuration = "durationKey";
+        const string keyWebSocket = "webSocketKey";
         const string keyIsRecordingContinuously = "isRecordingContinuouslyKey";
-        const string defaultHostname = "speech.platform.bing.com";
+        const string defaultBingSpeechHostname = "speech.platform.bing.com";
+        const string defaultWestUSSpeechHostname = "westus.stt.speech.microsoft.com";
+        const string defaultEastAsiaSpeechHostname = "eastasia.stt.speech.microsoft.com";
+        const string defaultNorthEuropeSpeechHostname = "northeurope.stt.speech.microsoft.com";
+
+        string valueBingSpeechSubscription = string.Empty;
+        string valueWestUsSpeechSubscription = string.Empty;
+        string valueEastAsiaSpeechSubscription = string.Empty;
+        string valueNorthEuropeSpeechSubscription = string.Empty;
+        string valueWestUsEndPointID = string.Empty;
+        string valueEastAsiaEndPointID = string.Empty;
+        string valueNorthEuropeEndPointID = string.Empty;
         /// <summary>
         /// Function to save all the persistent attributes
         /// </summary>
         public bool SaveSettingsAndState()
         {
-            SaveSettingsValue(keyHostname, Hostname.Text);
-            SaveSettingsValue(keySubscription, subscriptionKey.Text);
+            SaveSettingsValue(keyHostname, ComboHostname.SelectedItem.ToString());
+            if(ComboHostname.SelectedItem.ToString()== defaultBingSpeechHostname)
+            {
+                valueBingSpeechSubscription = subscriptionKey.Text;
+
+            }
+            else if (ComboHostname.SelectedItem.ToString() == defaultWestUSSpeechHostname)
+            {
+                valueWestUsSpeechSubscription = subscriptionKey.Text;
+                valueWestUsEndPointID = customEndpointID.Text;
+            }
+            else if (ComboHostname.SelectedItem.ToString() == defaultEastAsiaSpeechHostname)
+            {
+                valueEastAsiaSpeechSubscription = subscriptionKey.Text;
+                valueEastAsiaEndPointID = customEndpointID.Text;
+            }
+            else if (ComboHostname.SelectedItem.ToString() == defaultNorthEuropeSpeechHostname)
+            {
+                valueNorthEuropeSpeechSubscription = subscriptionKey.Text;
+                valueNorthEuropeEndPointID = customEndpointID.Text;
+            }
+            SaveSettingsValue(keyBingSpeechSubscription, valueBingSpeechSubscription);
+            SaveSettingsValue(keyWestUsSpeechSubscription, valueWestUsSpeechSubscription);
+            SaveSettingsValue(keyWestUsEndPointID, valueWestUsEndPointID);
+            SaveSettingsValue(keyEastAsiaSpeechSubscription, valueEastAsiaSpeechSubscription);
+            SaveSettingsValue(keyEastAsiaEndPointID, valueEastAsiaEndPointID);
+            SaveSettingsValue(keyNorthEuropeSpeechSubscription, valueNorthEuropeSpeechSubscription);
+            SaveSettingsValue(keyNorthEuropeEndPointID, valueNorthEuropeEndPointID);
+
+            bUseWebSocket = SpeechApiType.IsOn;
+            SaveSettingsValue(keyWebSocket, bUseWebSocket.ToString());
             SaveSettingsValue(keyLevel, level.ToString());
             SaveSettingsValue(keyDuration, duration.ToString());
             SaveSettingsValue(keyIsRecordingContinuously,isRecordingContinuously.ToString());
@@ -267,14 +405,54 @@ namespace SpeechToTextUWPSampleApp
         /// </summary>
         public bool ReadSettingsAndState()
         {
-            string s = ReadSettingsValue(keySubscription) as string;
+            string s = ReadSettingsValue(keyHostname) as string;
             if (!string.IsNullOrEmpty(s))
-                subscriptionKey.Text = s;
-            s = ReadSettingsValue(keyHostname) as string;
-            if (!string.IsNullOrEmpty(s))
-                Hostname.Text = s;
+                ComboHostname.SelectedItem = s;
             else
-                Hostname.Text = defaultHostname;
+                ComboHostname.SelectedItem = defaultBingSpeechHostname;
+
+            valueBingSpeechSubscription = ReadSettingsValue(keyBingSpeechSubscription) as string;
+            if (valueBingSpeechSubscription ==null) valueBingSpeechSubscription = string.Empty;
+
+            valueWestUsSpeechSubscription = ReadSettingsValue(keyWestUsSpeechSubscription) as string;
+            if (valueWestUsSpeechSubscription == null) valueWestUsSpeechSubscription = string.Empty;
+
+            valueEastAsiaSpeechSubscription = ReadSettingsValue(keyEastAsiaSpeechSubscription) as string;
+            if (valueEastAsiaSpeechSubscription == null) valueEastAsiaSpeechSubscription = string.Empty;
+
+            valueNorthEuropeSpeechSubscription = ReadSettingsValue(keyNorthEuropeSpeechSubscription) as string;
+            if (valueNorthEuropeSpeechSubscription == null) valueNorthEuropeSpeechSubscription = string.Empty;
+
+            valueWestUsEndPointID = ReadSettingsValue(keyWestUsEndPointID) as string;
+            if (valueWestUsEndPointID == null) valueWestUsEndPointID = string.Empty;
+
+            valueEastAsiaEndPointID = ReadSettingsValue(keyEastAsiaEndPointID) as string;
+            if (valueEastAsiaEndPointID == null) valueEastAsiaEndPointID = string.Empty;
+
+            valueNorthEuropeEndPointID = ReadSettingsValue(keyNorthEuropeEndPointID) as string;
+            if (valueNorthEuropeEndPointID == null) valueNorthEuropeEndPointID = string.Empty;
+
+            if (ComboHostname.SelectedItem.ToString() == defaultBingSpeechHostname)
+            {
+                subscriptionKey.Text = valueBingSpeechSubscription;
+                customEndpointID.Text = string.Empty;
+            }
+            else if (ComboHostname.SelectedItem.ToString() == defaultWestUSSpeechHostname)
+            {
+                subscriptionKey.Text = valueWestUsSpeechSubscription;
+                customEndpointID.Text = valueWestUsEndPointID;
+            }
+            else if (ComboHostname.SelectedItem.ToString() == defaultEastAsiaSpeechHostname)
+            {
+                subscriptionKey.Text = valueEastAsiaSpeechSubscription;
+                customEndpointID.Text = valueEastAsiaEndPointID;
+            }
+            else if (ComboHostname.SelectedItem.ToString() == defaultNorthEuropeSpeechHostname)
+            {
+                subscriptionKey.Text = valueNorthEuropeSpeechSubscription;
+                customEndpointID.Text = valueNorthEuropeEndPointID;
+            }
+
             s = ReadSettingsValue(keyLevel) as string;
             if (!string.IsNullOrEmpty(s))
                 UInt16.TryParse(s, out level);
@@ -284,6 +462,10 @@ namespace SpeechToTextUWPSampleApp
             s = ReadSettingsValue(keyIsRecordingContinuously) as string;
             if (!string.IsNullOrEmpty(s))
                 bool.TryParse(s, out isRecordingContinuously);
+            s = ReadSettingsValue(keyWebSocket) as string;
+            if (!string.IsNullOrEmpty(s))
+                bool.TryParse(s, out bUseWebSocket);
+            SpeechApiType.IsOn = bUseWebSocket;
             return true;
         }
         /// <summary>
@@ -619,7 +801,7 @@ namespace SpeechToTextUWPSampleApp
 
                 if (client != null)
                 {
-                    client.SetAPI(Hostname.Text, (string)ComboAPI.SelectedItem, bUseWebSocket);
+                    client.SetAPI(ComboHostname.SelectedItem.ToString(), customEndpointID.Text, (string)ComboAPI.SelectedItem, bUseWebSocket);
                     if ((!client.HasToken()) && (!string.IsNullOrEmpty(subscriptionKey.Text)))
                     {
                         LogMessage("Getting Token for subscription key: " + subscriptionKey.Text.ToString());
@@ -634,7 +816,7 @@ namespace SpeechToTextUWPSampleApp
                     if (client.HasToken())
                     {
 
-                        string locale = language.SelectedItem.ToString();
+                        string locale = textToSpeechLanguage.SelectedItem.ToString();
                         string genderString = gender.SelectedItem.ToString();
                         
                         LogMessage("Sending text to TextToSpeech servcvice for language : " +locale);
@@ -824,9 +1006,100 @@ namespace SpeechToTextUWPSampleApp
                  {
                      {
                          textToSpeechButton.IsEnabled = true;
+                         // If WebSocket API conversation enabled
+                         if(SpeechApiType.IsOn == true)
+                         {
+                             if (ComboAPI.Items.Count != 3)
+                             {
+                                 string oldSelction = ComboAPI.SelectedItem.ToString();
+                                 // Fill Combobox API
+                                 ComboAPI.Items.Clear();
+                                 ComboAPI.Items.Add("interactive");
+                                 ComboAPI.Items.Add("conversation");
+                                 ComboAPI.Items.Add("dictation");
+                                 if (ComboAPI.Items.Contains(oldSelction))
+                                     ComboAPI.SelectedItem = oldSelction;
+                                 else
+                                     ComboAPI.SelectedIndex = 0;
+                             }
+                         }
+                         // REST API
+                         else
+                         {
+                             if (ComboAPI.Items.Count != 2)
+                             {
+                                 string oldSelction = ComboAPI.SelectedItem.ToString();
+                                 // Fill Combobox API
+                                 ComboAPI.Items.Clear();
+                                 ComboAPI.Items.Add("interactive");
+                                 ComboAPI.Items.Add("dictation");
+                                 if (ComboAPI.Items.Contains(oldSelction))
+                                     ComboAPI.SelectedItem = oldSelction;
+                                 else
+                                     ComboAPI.SelectedIndex = 0;
+                             }
+                         }
                          // if hostname is bing speech hostname, user can change language,
                          // if hostname is different, it's custom speech user can't change the language
-                         language.IsEnabled = string.Equals(Hostname.Text, defaultHostname) ;
+                         if (string.Equals(ComboHostname.SelectedItem.ToString(), defaultBingSpeechHostname))
+                         {
+                             speechToTextLanguage.IsEnabled = true;
+                             if (ComboAPI.SelectedItem.ToString() == "conversation")
+                             {
+                                 if(speechToTextLanguage.Items.Count != SpeechToTextConversationLanguageArray.Count())
+                                 {
+                                     string oldSelection = speechToTextLanguage.SelectedItem.ToString();
+                                     speechToTextLanguage.Items.Clear();
+                                     foreach (var l in SpeechToTextConversationLanguageArray)
+                                         speechToTextLanguage.Items.Add(l);
+                                     if(speechToTextLanguage.Items.Contains(oldSelection))
+                                         speechToTextLanguage.SelectedItem = oldSelection;
+                                     else
+                                        speechToTextLanguage.SelectedItem = "en-US";
+                                 }
+                             }
+                             else
+                             {
+                                 if (speechToTextLanguage.Items.Count != SpeechToTextLanguageArray.Count())
+                                 {
+                                     string oldSelection = speechToTextLanguage.SelectedItem.ToString();
+                                     speechToTextLanguage.Items.Clear();
+                                     foreach (var l in SpeechToTextLanguageArray)
+                                         speechToTextLanguage.Items.Add(l);
+                                     if (speechToTextLanguage.Items.Contains(oldSelection))
+                                         speechToTextLanguage.SelectedItem = oldSelection;
+                                     else
+                                         speechToTextLanguage.SelectedItem = "en-US";
+                                 }
+                             }
+                             speechToTextLanguage.IsEnabled = true;
+                             textToSpeechButton.IsEnabled = true;
+                             textToSpeechLanguage.IsEnabled = true;
+                             gender.IsEnabled = true;
+                             customEndpointID.IsEnabled = false;
+                         }
+                         else
+                         {
+                             // Custom Speech URL or new Speech Service URL selected 
+                             customEndpointID.IsEnabled = true;
+                             if (!string.IsNullOrEmpty(customEndpointID.Text))
+                             {
+                                 // Custom Speech Service
+                                 speechToTextLanguage.IsEnabled = false;
+                                 textToSpeechButton.IsEnabled = false;
+                                 textToSpeechLanguage.IsEnabled = false;
+                                 gender.IsEnabled = false;
+
+                             }
+                             else
+                             {
+                                 // New Speech Service
+                                 speechToTextLanguage.IsEnabled = true;
+                                 textToSpeechButton.IsEnabled = true;
+                                 textToSpeechLanguage.IsEnabled = true;
+                                 gender.IsEnabled = true;
+                             }
+                         }
 
                          if ((client == null) || (!client.IsRecording()))
                          {
@@ -931,7 +1204,7 @@ namespace SpeechToTextUWPSampleApp
 
                 if (client != null)
                 {
-                    client.SetAPI(Hostname.Text,(string)ComboAPI.SelectedItem, bUseWebSocket);
+                    client.SetAPI(ComboHostname.SelectedItem.ToString(), customEndpointID.Text, (string)ComboAPI.SelectedItem, bUseWebSocket);
                     if ((!client.HasToken()) && (!string.IsNullOrEmpty(subscriptionKey.Text)))
                     {
                         LogMessage("Getting Token for subscription key: " + subscriptionKey.Text.ToString());
@@ -970,7 +1243,7 @@ namespace SpeechToTextUWPSampleApp
                             client.AudioLevel -= Client_AudioLevel;
                             client.AudioCaptureError -= Client_AudioCaptureError;
                             ClearCanvas();
-                            string locale = language.SelectedItem.ToString();
+                            string locale = speechToTextLanguage.SelectedItem.ToString();
                             string resulttype = ComboAPIResult.SelectedItem.ToString();
                             LogMessage("Sending Memory Buffer...");
                             SpeechToTextResponse result = await client.SendBuffer(locale, resulttype);
@@ -1024,7 +1297,7 @@ namespace SpeechToTextUWPSampleApp
 
                 if (client != null)
                 {
-                    client.SetAPI(Hostname.Text, (string)ComboAPI.SelectedItem,bUseWebSocket);
+                    client.SetAPI(ComboHostname.SelectedItem.ToString(), customEndpointID.Text, (string)ComboAPI.SelectedItem,bUseWebSocket);
 
                     if ((!client.HasToken()) && (!string.IsNullOrEmpty(subscriptionKey.Text)))
                     {
@@ -1050,6 +1323,7 @@ namespace SpeechToTextUWPSampleApp
                                     client.BufferReady += Client_BufferReady;
                                     client.AudioLevel += Client_AudioLevel;
                                     client.AudioCaptureError += Client_AudioCaptureError;
+                                    client.WebSocketEvent += Client_WebSocketEvent;
                                     LogMessage("Start Recording...");
                                 }
                                 else
@@ -1066,6 +1340,7 @@ namespace SpeechToTextUWPSampleApp
                             client.BufferReady -= Client_BufferReady;
                             client.AudioLevel -= Client_AudioLevel;
                             client.AudioCaptureError -= Client_AudioCaptureError;
+                            client.WebSocketEvent -= Client_WebSocketEvent;
                             ClearCanvas();
                         }
                     }
@@ -1081,6 +1356,57 @@ namespace SpeechToTextUWPSampleApp
             }
 
         }
+        string GetPhrase(string Body)
+        {
+            string result = string.Empty;
+            if(!string.IsNullOrEmpty(Body))
+            {
+                int pos = Body.IndexOf("\"DisplayText\"");
+                if(pos>0)
+                {
+                    pos = Body.IndexOf(":\"", pos + 13);
+                    if (pos > 0)
+                    {
+                        int end = Body.IndexOf("\"", pos + 2);
+                        if(end>0)
+                            result = Body.Substring(pos + 2, end - pos - 2);
+                    }
+                }
+            }
+            return result;
+        }
+        private async void Client_WebSocketEvent(SpeechToTextClient.SpeechToTextClient sender, string Path, string Body)
+        {
+            await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal,
+           () =>
+           {
+               LogMessage("Received WebSocket: " + Path + " Message: " + Body);
+
+               switch (Path.ToLower())
+               {
+                   case "turn.start":
+                       break;
+                   case "turn.end":
+                       client.WebSocketEvent -= Client_WebSocketEvent;
+                       break;
+                   case "speech.enddetected":
+                       break;
+                   case "speech.phrase":
+                       resultText.Text += GetPhrase(Body) + "\r\n";
+                       break;
+                   case "speech.hypothesis":
+                       break;
+                   case "speech.startdetected":
+                       break;
+                   case "speech.fragment":
+                       break;
+                   default:
+                       break;
+               }
+           });
+
+
+        }
 
         private async void Client_BufferReady(object sender)
         {
@@ -1090,7 +1416,7 @@ namespace SpeechToTextUWPSampleApp
                 SpeechToTextAudioStream stream;
                 while ((stream = client.GetAudioStream()) !=null)
                 {
-                    string locale = language.SelectedItem.ToString();
+                    string locale = speechToTextLanguage.SelectedItem.ToString();
                     string resulttype = ComboAPIResult.SelectedItem.ToString();
                     double start = stream.startTime.TotalSeconds;
                     double end = stream.endTime.TotalSeconds;
@@ -1141,7 +1467,7 @@ namespace SpeechToTextUWPSampleApp
                 Window.Current.CoreWindow.PointerCursor = new Windows.UI.Core.CoreCursor(Windows.UI.Core.CoreCursorType.Wait, 1);
                 if (client != null)
                 {
-                    client.SetAPI(Hostname.Text, (string)ComboAPI.SelectedItem, bUseWebSocket);
+                    client.SetAPI(ComboHostname.SelectedItem.ToString(), customEndpointID.Text, (string)ComboAPI.SelectedItem, bUseWebSocket);
 
                     if (client.IsRecording() == false)
                     {
@@ -1250,7 +1576,7 @@ namespace SpeechToTextUWPSampleApp
                 Window.Current.CoreWindow.PointerCursor = new Windows.UI.Core.CoreCursor(Windows.UI.Core.CoreCursorType.Wait, 1);
                 if (client != null)
                 {
-                    client.SetAPI(Hostname.Text, (string)ComboAPI.SelectedItem, bUseWebSocket);
+                    client.SetAPI(ComboHostname.SelectedItem.ToString(), customEndpointID.Text, (string)ComboAPI.SelectedItem, bUseWebSocket);
                     if ((!client.HasToken()) && (!string.IsNullOrEmpty(subscriptionKey.Text)))
                     {
                         LogMessage("Getting Token for subscription key: " + subscriptionKey.Text.ToString());
@@ -1265,35 +1591,38 @@ namespace SpeechToTextUWPSampleApp
 
                     if (client.HasToken())
                     {
-                        string locale = language.SelectedItem.ToString();
+                        string locale = speechToTextLanguage.SelectedItem.ToString();
                         string resulttype = ComboAPIResult.SelectedItem.ToString();
 
                         var file = await GetFileFromLocalPathUrl(mediaUri.Text);
                         if (file != null)
                         {
-                                string convertedText = string.Empty;
-                                LogMessage("Sending StorageFile: " + file.Path.ToString());
-                                SpeechToTextResponse result = await client.SendStorageFile(file, locale,resulttype);
-                                if (result != null)
+                            string convertedText = string.Empty;
+                            LogMessage("Sending StorageFile: " + file.Path.ToString());
+                            if(bUseWebSocket)
+                                client.WebSocketEvent += Client_WebSocketEvent;
+                            resultText.Text = string.Empty;
+                            SpeechToTextResponse result = await client.SendStorageFile(file, locale,resulttype);
+                            if (result != null)
+                            {
+                                string httpError = result.GetHttpError();
+                                if (!string.IsNullOrEmpty(httpError))
                                 {
-                                    string httpError = result.GetHttpError();
-                                    if (!string.IsNullOrEmpty(httpError))
-                                    {
-                                        resultText.Text = httpError;
-                                        LogMessage("Http Error: " + httpError.ToString());
-                                    }
-                                    else
-                                    {
-                                        if (result.Status() == "error")
-                                            resultText.Text = "error";
-                                        else
-                                            resultText.Text = result.Result();
-                                        LogMessage("Result: " + result.ToString());
-                                    }
+                                    resultText.Text = httpError;
+                                    LogMessage("Http Error: " + httpError.ToString());
                                 }
                                 else
-                                    LogMessage("Error while sending file");
+                                {
+                                    if (result.Status() == "error")
+                                        resultText.Text = "error";
+                                    else
+                                        resultText.Text = result.Result();
+                                    LogMessage("Result: " + result.ToString());
+                                }
                             }
+                            else
+                                LogMessage("Error while sending file");
+                        }
                     }
                     else
                         LogMessage("Authentication failed check your subscription Key: " + subscriptionKey.Text.ToString());
@@ -1307,7 +1636,7 @@ namespace SpeechToTextUWPSampleApp
 
         }
 
-        #endregion ui
+
 
         private void subscriptionKey_TextChanged(object sender, TextChangedEventArgs e)
         {
@@ -1315,11 +1644,46 @@ namespace SpeechToTextUWPSampleApp
                 client.ClearToken();
         }
 
-        private void Hostname_TextChanged(object sender, TextChangedEventArgs e)
+
+
+        private void ComboHostname_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (client != null)
                 client.ClearToken();
+            if (ComboHostname.SelectedItem.ToString() == defaultBingSpeechHostname)
+            {
+                subscriptionKey.Text = valueBingSpeechSubscription;
+                customEndpointID.Text = string.Empty;
+            }
+            else if (ComboHostname.SelectedItem.ToString() == defaultWestUSSpeechHostname)
+            {
+                subscriptionKey.Text = valueWestUsSpeechSubscription;
+                customEndpointID.Text = valueWestUsEndPointID;
+            }
+            else if (ComboHostname.SelectedItem.ToString() == defaultEastAsiaSpeechHostname)
+            {
+                subscriptionKey.Text = valueEastAsiaSpeechSubscription;
+                customEndpointID.Text = valueEastAsiaEndPointID;
+            }
+            else if (ComboHostname.SelectedItem.ToString() == defaultNorthEuropeSpeechHostname)
+            {
+                subscriptionKey.Text = valueNorthEuropeSpeechSubscription;
+                customEndpointID.Text = valueNorthEuropeEndPointID;
+            }
             UpdateControls();
         }
+
+        private void SpeechApiType_Toggled(object sender, RoutedEventArgs e)
+        {
+            bUseWebSocket = SpeechApiType.IsOn;
+            UpdateControls();
+        }
+
+        private void ComboAPI_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            UpdateControls();
+        }
+
+        #endregion ui
     }
 }

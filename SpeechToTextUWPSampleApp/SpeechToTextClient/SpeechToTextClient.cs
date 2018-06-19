@@ -74,6 +74,12 @@ namespace SpeechToTextClient
             return webSocketMessage;
         }
     }
+    
+    /// <summary>
+    /// Event which returns the position of the buffer ready to be sent 
+    /// This event is fired with continuous recording
+    /// </summary>
+    public delegate void WebSocketEventHandler(SpeechToTextClient sender,string Path, string Body);
 
     /// <summary>
     /// Event which returns the position of the buffer ready to be sent 
@@ -108,13 +114,15 @@ namespace SpeechToTextClient
         private string SubscriptionKey;
         private string Token;
         private SpeechToTextMainStream STTStream;
-        private const string SpeechAuthUrl = "https://api.cognitive.microsoft.com/sts/v1.0/issueToken";
-        private string AuthUrl = SpeechAuthUrl;
+        private const string BingSpeechAuthUrl = "https://api.cognitive.microsoft.com/sts/v1.0/issueToken";
+        private string AuthUrl = BingSpeechAuthUrl;
 //        private const string CustomSpeechAuthUrl = "https://westus.api.cognitive.microsoft.com/sts/v1.0/issueToken";
-        private const string CustomSpeechAuthUrl = "https://northeurope.api.cognitive.microsoft.com/sts/v1.0/issueToken";
+        private const string CustomSpeechAuthUrl = "https://{0}.api.cognitive.microsoft.com/sts/v1.0/issueToken";
         private const string SpeechUrl = "https://{0}/speech/recognition/{1}/cognitiveservices/v1";
+        private const string CustomSpeechUrl = "https://{0}/speech/recognition/{1}/cognitiveservices/v1?cid={2}";
 
         private const string WSSSpeechUrl = "wss://{0}/speech/recognition/{1}/cognitiveservices/v1";
+        private const string CustomWSSSpeechUrl = "wss://{0}/speech/recognition/{1}/cognitiveservices/v1?cid={2}";
         private const string endPointID = "d1ed3aff-18e7-4539-ad2f-d95e3129a842";
         // westus.stt.speech.microsoft.com
 //        private const string WSSSpeechUrl = "wss://{0}/speech/recognition/{1}/cognitiveservices/v1?cid={2}"; 
@@ -123,7 +131,7 @@ namespace SpeechToTextClient
         private bool bUseWebSocket;
         private Windows.Networking.Sockets.MessageWebSocket webSocket;
         private bool bWebSocketReady = false;
-        private System.Threading.AutoResetEvent WebSocketEvent;
+        private System.Threading.AutoResetEvent WebSocketInitializedEvent;
 
         private bool isRecordingInitialized;
         private bool isRecording;
@@ -134,6 +142,7 @@ namespace SpeechToTextClient
         private string apiString = "interactive";
         private string apiSynthesizeString = "synthesize";
         private string hostnameString = "speech.platform.bing.com";
+        private string endPointIDString = string.Empty;
         /// <summary>
         /// class SpeechToTextClient constructor
         /// </summary>
@@ -150,6 +159,18 @@ namespace SpeechToTextClient
             maxStreamSizeInBytes = 0;
             bUseWebSocket = false;
         }
+        string GetAzureRegion(string SpeechHostName)
+        {
+            if(!string.IsNullOrEmpty(SpeechHostName))
+            {
+                string[] array = SpeechHostName.Split('.');
+                if((array!=null)&&(array.Count()>0))
+                {
+                    return array[0];
+                }
+            }
+            return string.Empty;
+        }
         /// <summary>
         /// SetAPI method
         /// </summary>
@@ -158,9 +179,10 @@ namespace SpeechToTextClient
         /// </param>
         /// <return>True if successfull 
         /// </return>
-        public bool SetAPI(string HostnameString, string APIstring, bool bWebSocket )
+        public bool SetAPI(string HostnameString,  string customEndPointID, string APIstring, bool bWebSocket )
         {
             bool result = false;
+            endPointIDString = customEndPointID;
             if (string.Equals(APIstring, "interactive") ||
                 string.Equals(APIstring, "conversation") ||
                 string.Equals(APIstring, "dictation"))
@@ -207,9 +229,9 @@ namespace SpeechToTextClient
 
                     }
                     if (string.Equals(hostnameString, "speech.platform.bing.com"))
-                        AuthUrl = SpeechAuthUrl;
+                        AuthUrl = BingSpeechAuthUrl;
                     else
-                        AuthUrl = CustomSpeechAuthUrl;
+                        AuthUrl = string.Format(CustomSpeechAuthUrl,GetAzureRegion(hostnameString));
                 }
                 result = true;
             }
@@ -232,20 +254,27 @@ namespace SpeechToTextClient
                             switch (wsm.Path.ToLower())
                             {
                                 case "turn.start":
-                                    WebSocketEvent.Set();
+                                    WebSocketInitializedEvent.Set();
+                                    if (WebSocketEvent != null) WebSocketEvent(this, wsm.Path.ToLower(), wsm.Body);
                                     break;
                                 case "turn.end":
                                     bWebSocketReady = false;
+                                    if (WebSocketEvent != null) WebSocketEvent(this, wsm.Path.ToLower(), wsm.Body);
                                     break;
                                 case "speech.enddetected":
+                                    if (WebSocketEvent != null) WebSocketEvent(this, wsm.Path.ToLower(), wsm.Body);
                                     break;
                                 case "speech.phrase":
+                                    if (WebSocketEvent != null) WebSocketEvent(this, wsm.Path.ToLower(), wsm.Body);
                                     break;
                                 case "speech.hypothesis":
+                                    if (WebSocketEvent != null) WebSocketEvent(this, wsm.Path.ToLower(), wsm.Body);
                                     break;
                                 case "speech.startdetected":
+                                    if (WebSocketEvent != null) WebSocketEvent(this, wsm.Path.ToLower(), wsm.Body);
                                     break;
                                 case "speech.fragment":
+                                    if(WebSocketEvent!=null) WebSocketEvent(this, wsm.Path.ToLower(), wsm.Body);
                                     break;
                                 default:
                                     break;
@@ -407,14 +436,39 @@ namespace SpeechToTextClient
                 case "ar-eg":
                     voiceName = "Microsoft Server Speech Text to Speech Voice (ar-EG, Hoda)";
                     break;
+                case "ar-sa":
+                    voiceName = "Microsoft Server Speech Text to Speech Voice (ar-SA, Naayf)";
+                    break;
+                case "bg-bg":
+                    voiceName = "Microsoft Server Speech Text to Speech Voice (bg-BG, Ivan)";
+                    break;
+                case "ca-es":
+                    voiceName = "Microsoft Server Speech Text to Speech Voice (ca-ES, HerenaRUS)";
+                    break;
+                case "cs-cz":
+                    voiceName = "Microsoft Server Speech Text to Speech Voice (cs-CZ, Jakub)";
+                    break;
+                case "da-dk":
+                    voiceName = "Microsoft Server Speech Text to Speech Voice (da-DK, HelleRUS)";
+                    break;
+                case "de-at":
+                    voiceName = "Microsoft Server Speech Text to Speech Voice (de-AT, Michael)";
+                    break;
+                case "de-ch":
+                    voiceName = "Microsoft Server Speech Text to Speech Voice (de-CH, Karsten)";
+                    break;
+
                 case "de-de":
                     if(gender == "Female")
                     voiceName = "Microsoft Server Speech Text to Speech Voice (de-DE, Hedda)";
                     else
                     voiceName = "Microsoft Server Speech Text to Speech Voice (de-DE, Stefan, Apollo)";
                     break;
+                case "el-gr":
+                    voiceName = "Microsoft Server Speech Text to Speech Voice (el-GR, Stefanos)";
+                    break;
                 case "en-au":
-                    voiceName = "Microsoft Server Speech Text to Speech Voice (en-AU, Catherine)";
+                        voiceName = "Microsoft Server Speech Text to Speech Voice (en-AU, Catherine)";
                     break;
                 case "en-ca":
                     voiceName = "Microsoft Server Speech Text to Speech Voice (en-CA, Linda)";
@@ -425,8 +479,16 @@ namespace SpeechToTextClient
                     else
                     voiceName = "Microsoft Server Speech Text to Speech Voice (en-GB, George, Apollo)";
                     break;
+                case "en-ie":
+                    voiceName = "Microsoft Server Speech Text to Speech Voice (en-IE, Sean)";
+                    break;
+
+
                 case "en-in":
-                    voiceName = "Microsoft Server Speech Text to Speech Voice (en-IN, Ravi, Apollo)";
+                    if (gender == "Female")
+                        voiceName = "Microsoft Server Speech Text to Speech Voice (en-IN, Ravi, Apollo)";
+                    else
+                        voiceName = "Microsoft Server Speech Text to Speech Voice (en-IN, Ravi, Apollo)";
                     break;
                 case "en-us":
                     if(gender == "Female")
@@ -441,10 +503,20 @@ namespace SpeechToTextClient
                     voiceName = "Microsoft Server Speech Text to Speech Voice (es-ES, Pablo, Apollo)";
                     break;
                 case "es-mx":
-                    voiceName = "Microsoft Server Speech Text to Speech Voice (es-MX, Raul, Apollo)";
+                    if (gender == "Female")
+                        voiceName = "Microsoft Server Speech Text to Speech Voice (es-MX, HildaRUS)";
+                    else
+                        voiceName = "Microsoft Server Speech Text to Speech Voice (es-MX, Raul, Apollo)";
                     break;
+                case "fi-fi":
+                    voiceName = "Microsoft Server Speech Text to Speech Voice (fi-FI, HeidiRUS)";
+                    break;
+
                 case "fr-ca":
                     voiceName = "Microsoft Server Speech Text to Speech Voice (fr-CA, Caroline)";
+                    break;
+                case "fr-ch":
+                    voiceName = "Microsoft Server Speech Text to Speech Voice (fr-CH, Guillaume)";
                     break;
                 case "fr-fr":
                     if(gender == "Female")
@@ -452,6 +524,25 @@ namespace SpeechToTextClient
                     else
                     voiceName = "Microsoft Server Speech Text to Speech Voice (fr-FR, Paul, Apollo)";
                     break;
+                case "he-il":
+                    voiceName = "Microsoft Server Speech Text to Speech Voice (he-IL, Asaf)";
+                    break;
+                case "hi-in":
+                    if (gender == "Female")
+                        voiceName = "Microsoft Server Speech Text to Speech Voice (hi-IN, Kalpana, Apollo)";
+                    else
+                        voiceName = "Microsoft Server Speech Text to Speech Voice (hi-IN, Hemant)";
+                    break;
+                case "hr-hr":
+                    voiceName = "Microsoft Server Speech Text to Speech Voice (hr-HR, Matej)";
+                    break;
+                case "hu-hu":
+                    voiceName = "Microsoft Server Speech Text to Speech Voice (hu-HU, Szabolcs)";
+                    break;
+                case "id-id":
+                    voiceName = "Microsoft Server Speech Text to Speech Voice (id-ID, Andika)";
+                    break;
+
                 case "it-it":
                     voiceName = "Microsoft Server Speech Text to Speech Voice (it-IT, Cosimo, Apollo)";
                     break;
@@ -461,8 +552,27 @@ namespace SpeechToTextClient
                     else
                     voiceName = "Microsoft Server Speech Text to Speech Voice (ja-JP, Ichiro, Apollo)";
                     break;
+                case "ko-kr":
+                    voiceName = "Microsoft Server Speech Text to Speech Voice (ko-KR, HeamiRUS)";
+                    break;
+                case "ms-my":
+                    voiceName = "Microsoft Server Speech Text to Speech Voice (ms-MY, Rizwan)";
+                    break;
+                case "nb-no":
+                    voiceName = "Microsoft Server Speech Text to Speech Voice (nb-NO, HuldaRUS)";
+                    break;
+                case "nl-nl":
+                    voiceName = "Microsoft Server Speech Text to Speech Voice (nl-NL, HannaRUS)";
+                    break;
+                case "ro-ro":
+                    voiceName = "Microsoft Server Speech Text to Speech Voice (ro-RO, Andrei)";
+                    break;
+
                 case "pt-br":
-                    voiceName = "Microsoft Server Speech Text to Speech Voice (pt-BR, Daniel, Apollo)";
+                    if (gender == "Female")
+                        voiceName = "Microsoft Server Speech Text to Speech Voice (pt-BR, HeloisaRUS)";
+                    else
+                        voiceName = "Microsoft Server Speech Text to Speech Voice (pt-BR, Daniel, Apollo)";
                     break;
                 case "ru-ru":
                     if(gender == "Female")
@@ -470,6 +580,28 @@ namespace SpeechToTextClient
                     else
                     voiceName = "Microsoft Server Speech Text to Speech Voice (ru-RU, Pavel, Apollo)";
                     break;
+                case "sk-sk":
+                    voiceName = "Microsoft Server Speech Text to Speech Voice (sk-SK, Filip)";
+                    break;
+                case "sl-si":
+                    voiceName = "Microsoft Server Speech Text to Speech Voice (sl-SI, Lado)";
+                    break;
+                case "sv-se":
+                    voiceName = "Microsoft Server Speech Text to Speech Voice (sv-SE, HedvigRUS)";
+                    break;
+                case "ta-in":
+                    voiceName = "Microsoft Server Speech Text to Speech Voice (ta-IN, Valluvar)";
+                    break;
+                case "th-th":
+                    voiceName = "Microsoft Server Speech Text to Speech Voice (th-TH, Pattara)";
+                    break;
+                case "tr-tr":
+                    voiceName = "Microsoft Server Speech Text to Speech Voice (tr-TR, SedaRUS)";
+                    break;
+                case "vi-vn":
+                    voiceName = "Microsoft Server Speech Text to Speech Voice (vi-VN, An)";
+                    break;
+
                 case "zh-cn":
                     if(gender == "Female")
                     voiceName = "Microsoft Server Speech Text to Speech Voice (zh-CN, HuihuiRUS)";
@@ -521,7 +653,11 @@ namespace SpeechToTextClient
                     Windows.Web.Http.HttpClient hc = new Windows.Web.Http.HttpClient(httpBaseProtocolFilter);
 
 
-                    string speechUrl = "https://" + hostnameString + "/" + apiSynthesizeString;
+                    string speechUrl = string.Empty;
+                    if (string.Equals(hostnameString, "speech.platform.bing.com") )
+                        speechUrl = "https://" + hostnameString + "/" + apiSynthesizeString;
+                    else
+                        speechUrl = "https://" + hostnameString.Replace("stt","tts") + "/cognitiveservices/v1";
                     System.Threading.CancellationTokenSource cts = new System.Threading.CancellationTokenSource();
                     hc.DefaultRequestHeaders.Clear();
                     hc.DefaultRequestHeaders.TryAppendWithoutValidation("Authorization", Token);
@@ -611,7 +747,11 @@ namespace SpeechToTextClient
             {
                 try
                 {
-                    string speechUrl = string.Format(SpeechUrl, hostnameString, apiString) + "?language=" + locale + "&format=" + resulttype;
+                    string speechUrl = string.Empty;
+                    if (string.Equals(hostnameString, "speech.platform.bing.com") || (string.IsNullOrEmpty(endPointIDString)))
+                        speechUrl = string.Format(SpeechUrl, hostnameString, apiString) + "?language=" + locale + "&format=" + resulttype;
+                    else
+                        speechUrl = string.Format(CustomSpeechUrl, hostnameString, apiString,endPointIDString) + "&language=" + locale + "&format=" + resulttype;
                     Windows.Web.Http.HttpClient hc = new Windows.Web.Http.HttpClient();
                     System.Threading.CancellationTokenSource cts = new System.Threading.CancellationTokenSource();
                     hc.DefaultRequestHeaders.TryAppendWithoutValidation("Authorization", Token);
@@ -699,7 +839,11 @@ namespace SpeechToTextClient
             {
                 try
                 {
-                    string speechUrl = string.Format(SpeechUrl, hostnameString, apiString) + "?language=" + locale + "&format=" + resulttype;
+                    string speechUrl = string.Empty;
+                    if (string.Equals(hostnameString, "speech.platform.bing.com") || (string.IsNullOrEmpty(endPointIDString)))
+                        speechUrl = string.Format(SpeechUrl, hostnameString, apiString) + "?language=" + locale + "&format=" + resulttype;
+                    else
+                        speechUrl = string.Format(CustomSpeechUrl, hostnameString, apiString, endPointIDString) + "&language=" + locale + "&format=" + resulttype;
 
                     Windows.Web.Http.HttpClient hc = new Windows.Web.Http.HttpClient();
                     System.Threading.CancellationTokenSource cts = new System.Threading.CancellationTokenSource();
@@ -1048,19 +1192,18 @@ namespace SpeechToTextClient
                     try
                     {
                         string speechUrl = string.Empty;
-                        if (string.Equals(hostnameString, "speech.platform.bing.com"))
+                        if (string.Equals(hostnameString, "speech.platform.bing.com") || (string.IsNullOrEmpty(endPointIDString)))
                             speechUrl = string.Format(WSSSpeechUrl, hostnameString, apiString) + "?language=" + locale + "&format=" + resulttype;
                         else
-  //                          speechUrl = string.Format(WSSSpeechUrl, hostnameString, apiString, endPointID) ;
-                        speechUrl = string.Format(WSSSpeechUrl, hostnameString, apiString, endPointID) + "?language=" + locale + "&format=" + resulttype;
+                            speechUrl = string.Format(CustomWSSSpeechUrl, hostnameString, apiString, endPointIDString) + "&language=" + locale + "&format=" + resulttype;
                         webSocket.SetRequestHeader("Authorization", Token);
                         webSocket.SetRequestHeader("X-ConnectionId", Guid.NewGuid().ToString("N"));
                         await webSocket.ConnectAsync(new Uri(speechUrl));
                         // ResetEvent for synchronization
-                        if (WebSocketEvent == null)
-                            WebSocketEvent = new System.Threading.AutoResetEvent(false);
+                        if (WebSocketInitializedEvent == null)
+                            WebSocketInitializedEvent = new System.Threading.AutoResetEvent(false);
                         else
-                            WebSocketEvent.Reset();
+                            WebSocketInitializedEvent.Reset();
                         System.Diagnostics.Debug.WriteLine("Sending Speech Config");
                         bWebSocketReady = true;
                         if (await SendSpeechConfig() == true)
@@ -1071,7 +1214,7 @@ namespace SpeechToTextClient
 
 
                                 // wait for the reception of Start message before sending the Wav file
-                                if (WebSocketEvent.WaitOne(10000))
+                                if (WebSocketInitializedEvent.WaitOne(10000))
                                 {
                                     System.Diagnostics.Debug.WriteLine("Sending Speech File");
                                     await SendSpeechFile(wavFile);
@@ -1097,7 +1240,11 @@ namespace SpeechToTextClient
             {
                 try
                 {
-                    string speechUrl = string.Format(SpeechUrl, hostnameString, apiString) + "?language=" + locale + "&format=" + resulttype;
+                    string speechUrl = string.Empty;
+                    if (string.Equals(hostnameString, "speech.platform.bing.com") || (string.IsNullOrEmpty(endPointIDString)))
+                        speechUrl = string.Format(SpeechUrl, hostnameString, apiString) + "?language=" + locale + "&format=" + resulttype;
+                    else
+                        speechUrl = string.Format(CustomSpeechUrl, hostnameString, apiString, endPointIDString) + "&language=" + locale + "&format=" + resulttype;
                     Windows.Web.Http.HttpClient hc = new Windows.Web.Http.HttpClient();
 
                     hc.DefaultRequestHeaders.TryAppendWithoutValidation("Authorization", Token);
@@ -1437,6 +1584,13 @@ namespace SpeechToTextClient
             return true;
         }).AsAsyncOperation<bool>();
         }
+
+        /// <summary>
+        /// Event which returns the event from the WebSocket
+        /// This event is fired with WebSocket event
+        /// </summary>
+        public event WebSocketEventHandler WebSocketEvent;
+
         /// <summary>
         /// Event which returns the position of the buffer ready to be sent 
         /// This event is fired with continuous recording
