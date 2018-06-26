@@ -150,7 +150,7 @@
                     <ComboBox  x:Name="gender" ToolTipService.ToolTip="Gender for the TextToSpeech" VerticalAlignment="Center" Width="96"   HorizontalAlignment="Stretch"  IsTabStop="True" Margin="66,2,0,2" ></ComboBox>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal"  VerticalAlignment="Center">
-                    <TextBox x:Name="resultText" ToolTipService.ToolTip="Speech-To-Text Conversion result" Width="308" Height="100" IsTabStop="True"  TextWrapping="Wrap" AcceptsReturn="True" FontSize="12" IsReadOnly="False"  />
+                    <TextBox x:Name="resultText" ToolTipService.ToolTip="Speech-To-Text Conversion result" Width="308" Height="200" IsTabStop="True"  TextWrapping="Wrap" AcceptsReturn="True" FontSize="12" IsReadOnly="False" ScrollViewer.HorizontalScrollBarVisibility="Auto"  ScrollViewer.VerticalScrollBarVisibility="Auto"  />
                 </StackPanel>
 
 

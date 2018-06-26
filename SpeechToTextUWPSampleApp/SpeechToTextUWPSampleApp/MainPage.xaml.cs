@@ -30,8 +30,11 @@ namespace SpeechToTextUWPSampleApp
     public sealed partial class MainPage : Page
     {
         Windows.Media.Playback.MediaPlayer mediaPlayer;
-        SpeechToTextClient.SpeechToTextClient client;
-        ulong maxSize = 3840000;
+        SpeechClient.SpeechClient speechClient;
+        string lastSubscriptionKey;
+        string lastHostname;
+        string lastCustomEndpointID;
+        DateTime lastTokenDate;
         UInt16 level = 300;
         UInt16 duration = 1000;
         bool isRecordingInMemory = false;
@@ -149,6 +152,9 @@ namespace SpeechToTextUWPSampleApp
             // Logs event to refresh the TextBox
             logs.TextChanged += Logs_TextChanged;
 
+            // resultText event to refresh the TextBox
+            resultText.TextChanged += resultText_TextChanged;
+
             // Bind player to element
             mediaPlayer = new Windows.Media.Playback.MediaPlayer();
             mediaPlayerElement.SetMediaPlayer(mediaPlayer);
@@ -204,8 +210,7 @@ namespace SpeechToTextUWPSampleApp
             // Display OS, Device information
             LogMessage(SpeechToTextClient.SystemInformation.GetString());
             
-            // Create Cognitive Service SpeechToText Client
-            client = new SpeechToTextClient.SpeechToTextClient();
+
 
             // Initialize level and duration
             Level.Text = level.ToString();
@@ -213,19 +218,66 @@ namespace SpeechToTextUWPSampleApp
             Level.TextChanged += Level_TextChanged;
             Duration.TextChanged += Duration_TextChanged;
 
+            // Create Speech Client if possible 
+            await CreateSpeechClient();
 
+        }
+        async System.Threading.Tasks.Task<bool> CreateSpeechClient()
+        {
+            bool result = false;
+            if ((speechClient != null) &&
+                (string.Equals(lastSubscriptionKey, subscriptionKey.Text.ToString())) &&
+                (string.Equals(lastHostname, ComboHostname.SelectedItem.ToString())) &&
+                (string.Equals(lastCustomEndpointID, customEndpointID.Text)) &&
+                ((DateTime.Now - lastTokenDate) < TimeSpan.FromSeconds(60 * 5))
+                )
+                return true;
             // Cognitive Service SpeechToText GetToken 
             if (!string.IsNullOrEmpty(subscriptionKey.Text))
             {
-                LogMessage("Getting Token for subscription key: " + subscriptionKey.Text.ToString());
-                client.SetAPI(ComboHostname.SelectedItem.ToString(), customEndpointID.Text, (string)ComboAPI.SelectedItem, bUseWebSocket);
-                string s = await client.GetToken(subscriptionKey.Text);
-                if (!string.IsNullOrEmpty(s))
-                    LogMessage("Getting Token successful Token: " + s.ToString());
+                if(speechClient != null)
+                {
+                    await speechClient.Cleanup();
+                }
+                if (!string.IsNullOrEmpty(customEndpointID.Text))
+                {
+                    LogMessage("Creating Custom Speech Client: " + ComboHostname.SelectedItem.ToString() + " Key: " + subscriptionKey.Text.ToString() + " EndpointID: " + customEndpointID.Text);
+                    speechClient = await SpeechClient.SpeechClient.CreateCustomSpeechClient(ComboHostname.SelectedItem.ToString(), subscriptionKey.Text, customEndpointID.Text);
+                }
                 else
-                    LogMessage("Getting Token failed for subscription Key: " + subscriptionKey.Text);
-            }
+                {
+                    if (string.Equals("speech.platform.bing.com", ComboHostname.SelectedItem.ToString().ToLower()))
+                    {
+                        LogMessage("Creating Bing Speech Client: " + ComboHostname.SelectedItem.ToString() + " Key: " + subscriptionKey.Text.ToString());
+                        speechClient = await SpeechClient.SpeechClient.CreateBingSpeechClient(subscriptionKey.Text);
+                    }
+                    else
+                    {
+                        LogMessage("Creating Speech Client: " + ComboHostname.SelectedItem.ToString() + " Key: " + subscriptionKey.Text.ToString());
+                        speechClient = await SpeechClient.SpeechClient.CreateSpeechClient(ComboHostname.SelectedItem.ToString(), subscriptionKey.Text);
+                    }
+                }
+                if (speechClient != null)
+                {
+                    LogMessage("Speech Client successfully created");
+                    string s = speechClient.Token;
+                    if (!string.IsNullOrEmpty(s))
+                    {
+                        lastSubscriptionKey = subscriptionKey.Text.ToString();
+                        lastHostname = ComboHostname.SelectedItem.ToString();
+                        lastCustomEndpointID = customEndpointID.Text;
+                        lastTokenDate = DateTime.Now;
+                        LogMessage("Getting Token successful Token: " + s.ToString());
+                        result = true;
+                    }
+                    else
+                        LogMessage("Getting Token failed for subscription Key: " + subscriptionKey.Text);
 
+                }
+                else
+                    LogMessage("Error while creating the Speech Client");
+            }
+            return result;
         }
         /// <summary>
         /// This method is called when the EndpointID is changed
@@ -323,10 +375,10 @@ namespace SpeechToTextUWPSampleApp
             LogMessage("Suspending");
             var deferal = e.SuspendingOperation.GetDeferral();
             SaveSettingsAndState();
-            if (client.IsRecording())
+            if (speechClient.IsRecording())
             {
                 LogMessage("Stop Recording...");
-                await client.StopRecording();
+                await speechClient.StopRecording();
                 isRecordingInFile = false;
                 isRecordingInMemory = false;
                 isRecordingContinuously = false;
@@ -577,6 +629,17 @@ namespace SpeechToTextUWPSampleApp
             tbsv.ChangeView(null, tbsv.ScrollableHeight, null, true);
         }
         /// <summary>
+        /// This method is called when the content of the resultText TextBox changed  
+        /// The method scroll to the bottom of the TextBox
+        /// </summary>
+        void resultText_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            //  logs.Focus(FocusState.Programmatic);
+            // logs.Select(logs.Text.Length, 0);
+            var tbsv = GetFirstDescendantScrollViewer(resultText);
+            tbsv.ChangeView(null, tbsv.ScrollableHeight, null, true);
+        }
+        /// <summary>
         /// Retrieve the ScrollViewer associated with a control  
         /// </summary>
         ScrollViewer GetFirstDescendantScrollViewer(DependencyObject parent)
@@ -798,52 +861,39 @@ namespace SpeechToTextUWPSampleApp
             {
                 LogMessage("Sending text to Cognitive Services " + resultText.Text.ToString());
                 Window.Current.CoreWindow.PointerCursor = new Windows.UI.Core.CoreCursor(Windows.UI.Core.CoreCursorType.Wait, 1);
-
-                if (client != null)
+                await CreateSpeechClient();
+                if (speechClient != null)
                 {
-                    client.SetAPI(ComboHostname.SelectedItem.ToString(), customEndpointID.Text, (string)ComboAPI.SelectedItem, bUseWebSocket);
-                    if ((!client.HasToken()) && (!string.IsNullOrEmpty(subscriptionKey.Text)))
-                    {
-                        LogMessage("Getting Token for subscription key: " + subscriptionKey.Text.ToString());
-                        string token = await client.GetToken(subscriptionKey.Text);
-                        if (!string.IsNullOrEmpty(token))
-                        {
-                            LogMessage("Getting Token successful Token: " + token.ToString());
-                            // Save subscription key
-                            SaveSettingsAndState();
-                        }
-                    }
-                    if (client.HasToken())
-                    {
+                    // Save subscription key
+                    SaveSettingsAndState();
 
-                        string locale = textToSpeechLanguage.SelectedItem.ToString();
-                        string genderString = gender.SelectedItem.ToString();
+                    string locale = textToSpeechLanguage.SelectedItem.ToString();
+                    string genderString = gender.SelectedItem.ToString();
                         
-                        LogMessage("Sending text to TextToSpeech servcvice for language : " +locale);
-                        Windows.Storage.Streams.IInputStream stream = await client.TextToSpeech(resultText.Text, locale, genderString);
-                        if (stream != null)
-                        {
-                            LogMessage("Playing the audio stream ");
-                            //stream.ReadAsync(
-                            MemoryStream localStream = new MemoryStream();
-                            await stream.AsStreamForRead().CopyToAsync(localStream);
-                            // Stop the current stream
-                            mediaPlayer.Source = null;
-                            mediaPlayerElement.PosterSource = null;
-                            mediaPlayer.AutoPlay = true;
-                            // if a picture will be displayed
-                            // display or not popup
-                            // Audio or video
-                            mediaPlayer.Source = Windows.Media.Core.MediaSource.CreateFromStream(localStream.AsRandomAccessStream(), "audio/x-wav");
-                            mediaPlayer.Play();
-                        }
-                        else
-                            LogMessage("Error while readding speech buffer");
-
+                    LogMessage("Sending text to TextToSpeech servcvice for language : " +locale);
+                    Windows.Storage.Streams.IInputStream stream = await speechClient.TextToSpeech(resultText.Text, locale, genderString);
+                    if (stream != null)
+                    {
+                        LogMessage("Playing the audio stream ");
+                        //stream.ReadAsync(
+                        MemoryStream localStream = new MemoryStream();
+                        await stream.AsStreamForRead().CopyToAsync(localStream);
+                        // Stop the current stream
+                        mediaPlayer.Source = null;
+                        mediaPlayerElement.PosterSource = null;
+                        mediaPlayer.AutoPlay = true;
+                        // if a picture will be displayed
+                        // display or not popup
+                        // Audio or video
+                        mediaPlayer.Source = Windows.Media.Core.MediaSource.CreateFromStream(localStream.AsRandomAccessStream(), "audio/x-wav");
+                        mediaPlayer.Play();
                     }
                     else
-                        LogMessage("Authentication failed check your subscription Key: " + subscriptionKey.Text.ToString());
+                        LogMessage("Error while readding speech buffer");
+
                 }
+                else
+                    LogMessage("Authentication failed check your subscription Key: " + subscriptionKey.Text.ToString());
                 UpdateControls();
             }
             catch (Exception ex)
@@ -985,12 +1035,16 @@ namespace SpeechToTextUWPSampleApp
         {
             LogMessage("Audio Capture Error: " + message );
             LogMessage("Stop Recording...");
-            await client.StopRecording();
+            await speechClient.StopRecording();
             isRecordingInMemory = false;
-            client.AudioLevel -= Client_AudioLevel;
-            client.AudioCaptureError -= Client_AudioCaptureError;
-            ClearCanvas();
-            UpdateControls();
+            speechClient.AudioLevel -= Client_AudioLevel;
+            speechClient.AudioCaptureError -= Client_AudioCaptureError;
+            await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal,
+                () =>
+                {
+                    ClearCanvas();
+                    UpdateControls();
+                });
         }
         #endregion LevelAndError
 
@@ -1101,7 +1155,7 @@ namespace SpeechToTextUWPSampleApp
                              }
                          }
 
-                         if ((client == null) || (!client.IsRecording()))
+                         if ((speechClient == null) || (!speechClient.IsRecording()))
                          {
                              memoryRecordingButton.IsEnabled = true;
                              fileRecordingButton.IsEnabled = true;
@@ -1201,32 +1255,18 @@ namespace SpeechToTextUWPSampleApp
             try
             {
                 Window.Current.CoreWindow.PointerCursor = new Windows.UI.Core.CoreCursor(Windows.UI.Core.CoreCursorType.Wait, 1);
-
-                if (client != null)
+                await CreateSpeechClient();
+                if (speechClient != null)
                 {
-                    client.SetAPI(ComboHostname.SelectedItem.ToString(), customEndpointID.Text, (string)ComboAPI.SelectedItem, bUseWebSocket);
-                    if ((!client.HasToken()) && (!string.IsNullOrEmpty(subscriptionKey.Text)))
-                    {
-                        LogMessage("Getting Token for subscription key: " + subscriptionKey.Text.ToString());
-                        string token = await client.GetToken(subscriptionKey.Text);
-                        if (!string.IsNullOrEmpty(token))
+                        if (speechClient.IsRecording() == false)
                         {
-                            LogMessage("Getting Token successful Token: " + token.ToString());
-                            // Save subscription key
-                            SaveSettingsAndState();
-                        }
-                    }
-                    if (client.HasToken())
-                    {
-                        if (client.IsRecording() == false)
-                        {
-                            if (await client.CleanupRecording())
+                            if (await speechClient.Cleanup())
                             {
-                                if (await client.StartRecording(0))
+                                if (await speechClient.StartRecordingInMemory())
                                 {
                                     isRecordingInMemory = true;
-                                    client.AudioLevel += Client_AudioLevel;
-                                    client.AudioCaptureError += Client_AudioCaptureError;
+                                    speechClient.AudioLevel += Client_AudioLevel;
+                                    speechClient.AudioCaptureError += Client_AudioCaptureError;
                                     LogMessage("Start Recording...");
                                 }
                                 else
@@ -1238,29 +1278,30 @@ namespace SpeechToTextUWPSampleApp
                         else
                         {
                             LogMessage("Stop Recording...");
-                            await client.StopRecording();
+                            await speechClient.StopRecording();
                             isRecordingInMemory = false;
-                            client.AudioLevel -= Client_AudioLevel;
-                            client.AudioCaptureError -= Client_AudioCaptureError;
+                            speechClient.AudioLevel -= Client_AudioLevel;
+                            speechClient.AudioCaptureError -= Client_AudioCaptureError;
                             ClearCanvas();
                             string locale = speechToTextLanguage.SelectedItem.ToString();
                             string resulttype = ComboAPIResult.SelectedItem.ToString();
+                            string speechAPI = ComboAPI.SelectedItem.ToString();
                             LogMessage("Sending Memory Buffer...");
-                            SpeechToTextResponse result = await client.SendBuffer(locale, resulttype);
+                            SpeechClient.SpeechToTextResponse result = await speechClient.SendMemoryBuffer(speechAPI,locale, resulttype);
                             if (result != null)
                             {
                                 string httpError = result.GetHttpError();
                                 if (!string.IsNullOrEmpty(httpError))
                                 {
-                                    resultText.Text = httpError;
+                                    AddResultError(httpError);
                                     LogMessage("Http Error: " + httpError.ToString());
                                 }
                                 else
                                 {
                                     if (result.Status() == "error")
-                                        resultText.Text = "error";
+                                        AddResultError("error");
                                     else
-                                        resultText.Text = result.Result();
+                                        AddResultPhrase(result.Result());
                                     LogMessage("Result: " + result.ToString());
                                 }
                             }
@@ -1268,9 +1309,7 @@ namespace SpeechToTextUWPSampleApp
                                 LogMessage("Error while sending buffer");
 
                         }
-                    }
-                    else
-                        LogMessage("Authentication failed check your subscription Key: " + subscriptionKey.Text.ToString());
+
                 }
                 UpdateControls();
             }
@@ -1295,57 +1334,42 @@ namespace SpeechToTextUWPSampleApp
             {
                 Window.Current.CoreWindow.PointerCursor = new Windows.UI.Core.CoreCursor(Windows.UI.Core.CoreCursorType.Wait, 1);
 
-                if (client != null)
+                await CreateSpeechClient();
+                if (speechClient != null)
                 {
-                    client.SetAPI(ComboHostname.SelectedItem.ToString(), customEndpointID.Text, (string)ComboAPI.SelectedItem,bUseWebSocket);
-
-                    if ((!client.HasToken()) && (!string.IsNullOrEmpty(subscriptionKey.Text)))
+                    SaveSettingsAndState();
+                    if (speechClient.IsRecording() == false)
                     {
-                        LogMessage("Getting Token for subscription key: " + subscriptionKey.Text.ToString());
-                        string token = await client.GetToken(subscriptionKey.Text);
-                        if (!string.IsNullOrEmpty(token))
+                        if (await speechClient.Cleanup())
                         {
-                            LogMessage("Getting Token successful Token: " + token.ToString());
-                            // Save subscription key
-                            SaveSettingsAndState();
-                        }
-                    }
-                    if (client.HasToken())
-                    {
-                        if (client.IsRecording() == false)
-                        {
-                            if (await client.CleanupRecording())
+                            string speechAPI = ComboAPI.SelectedItem.ToString();
+                            string language = speechToTextLanguage.SelectedItem.ToString();
+                            string resultType = ComboAPIResult.SelectedItem.ToString();
+                            if (await speechClient.StartRecording(speechAPI, language, resultType))
                             {
-
-                                if (await client.StartContinuousRecording(maxSize, duration, level))
-                                {
-                                    isRecordingContinuously = true;
-                                    client.BufferReady += Client_BufferReady;
-                                    client.AudioLevel += Client_AudioLevel;
-                                    client.AudioCaptureError += Client_AudioCaptureError;
-                                    client.WebSocketEvent += Client_WebSocketEvent;
-                                    LogMessage("Start Recording...");
-                                }
-                                else
-                                    LogMessage("Start Recording failed");
+                                ClearResult();
+                                isRecordingContinuously = true;
+                                speechClient.AudioLevel += Client_AudioLevel;
+                                speechClient.AudioCaptureError += Client_AudioCaptureError;
+                                speechClient.WebSocketEvent += Client_WebSocketEvent;
+                                LogMessage("Start Recording...");
                             }
                             else
-                                LogMessage("CleanupRecording failed");
+                                LogMessage("Start Recording failed");
                         }
                         else
-                        {
-                            LogMessage("Stop Recording...");
-                            await client.StopRecording();
-                            isRecordingContinuously = false;
-                            client.BufferReady -= Client_BufferReady;
-                            client.AudioLevel -= Client_AudioLevel;
-                            client.AudioCaptureError -= Client_AudioCaptureError;
-                            client.WebSocketEvent -= Client_WebSocketEvent;
-                            ClearCanvas();
-                        }
+                            LogMessage("CleanupRecording failed");
                     }
                     else
-                        LogMessage("Authentication failed check your subscription Key: " + subscriptionKey.Text.ToString());
+                    {
+                        LogMessage("Stop Recording...");
+                        await speechClient.StopRecording();
+                        isRecordingContinuously = false;
+                        speechClient.AudioLevel -= Client_AudioLevel;
+                        speechClient.AudioCaptureError -= Client_AudioCaptureError;
+                        speechClient.WebSocketEvent -= Client_WebSocketEvent;
+                        ClearCanvas();
+                    }
                 }
                 UpdateControls();
             }
@@ -1356,6 +1380,7 @@ namespace SpeechToTextUWPSampleApp
             }
 
         }
+
         string GetPhrase(string Body)
         {
             string result = string.Empty;
@@ -1375,7 +1400,26 @@ namespace SpeechToTextUWPSampleApp
             }
             return result;
         }
-        private async void Client_WebSocketEvent(SpeechToTextClient.SpeechToTextClient sender, string Path, string Body)
+        string GetHypothesis(string Body)
+        {
+            string result = string.Empty;
+            if (!string.IsNullOrEmpty(Body))
+            {
+                int pos = Body.IndexOf("\"Text\"");
+                if (pos > 0)
+                {
+                    pos = Body.IndexOf(":\"", pos + 6);
+                    if (pos > 0)
+                    {
+                        int end = Body.IndexOf("\"", pos + 2);
+                        if (end > 0)
+                            result = Body.Substring(pos + 2, end - pos - 2);
+                    }
+                }
+            }
+            return result;
+        }
+        private async void Client_WebSocketEvent(SpeechClient.SpeechClient sender, string Path, string Body)
         {
             await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal,
            () =>
@@ -1387,14 +1431,15 @@ namespace SpeechToTextUWPSampleApp
                    case "turn.start":
                        break;
                    case "turn.end":
-                       client.WebSocketEvent -= Client_WebSocketEvent;
+                       speechClient.WebSocketEvent -= Client_WebSocketEvent;
                        break;
                    case "speech.enddetected":
                        break;
                    case "speech.phrase":
-                       resultText.Text += GetPhrase(Body) + "\r\n";
+                       AddResultPhrase(GetPhrase(Body));
                        break;
                    case "speech.hypothesis":
+                       AddResultHypothesis(GetHypothesis(Body));
                        break;
                    case "speech.startdetected":
                        break;
@@ -1407,50 +1452,33 @@ namespace SpeechToTextUWPSampleApp
 
 
         }
-
-        private async void Client_BufferReady(object sender)
+        int LastPhasePosition = 0;
+        string ResultText = string.Empty;
+        void ClearResult()
         {
-            await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal,
-           async () =>
-            {
-                SpeechToTextAudioStream stream;
-                while ((stream = client.GetAudioStream()) !=null)
-                {
-                    string locale = speechToTextLanguage.SelectedItem.ToString();
-                    string resulttype = ComboAPIResult.SelectedItem.ToString();
-                    double start = stream.startTime.TotalSeconds;
-                    double end = stream.endTime.TotalSeconds;
-                    LogMessage("Sending Sub-Buffer: " + stream.Size.ToString() + " bytes for buffer from: " + start.ToString() + " seconds to: " + end.ToString() + " seconds");
-                    SpeechToTextResponse result = await client.SendAudioStream(locale, resulttype, stream);
-                    if (result != null)
-                    {
-                        string httpError = result.GetHttpError();
-                        if (!string.IsNullOrEmpty(httpError))
-                        {
-                            resultText.Text = httpError;
-                            LogMessage("Http Error: " + httpError.ToString());
-                            DrawError();
-                        }
-                        else
-                        {
-                            if (result.Status() == "error")
-                            {
-                                resultText.Text = "error";
-                                DrawError();
-                            }
-                            else
-                            {
-                                resultText.Text = result.Result();
-                                DrawOk();
-                            }
-                            LogMessage("Result for buffer from: " + start.ToString() + " seconds to: " + end.ToString() + " seconds duration : " + (end-start).ToString() + " seconds \r\n" + result.ToString());
-                        }
-                    }
-                    else
-                        LogMessage("Error while sending buffer");
-                }
-            });
+            LastPhasePosition = 0;
+            ResultText = string.Empty;
+            resultText.Text = string.Empty;
         }
+        void AddResultPhrase(string phrase)
+        {
+
+            ResultText = ResultText.Substring(0, LastPhasePosition) + phrase + "\r\n";
+            LastPhasePosition = ResultText.Length;
+            resultText.Text = ResultText;
+        }
+        void AddResultHypothesis(string hypothesis)
+        {
+
+            ResultText = ResultText.Substring(0, LastPhasePosition) + hypothesis;
+            resultText.Text = ResultText;
+        }
+        void AddResultError(string error)
+        {
+            LastPhasePosition = 0;
+            resultText.Text = error;
+        }
+
 
         /// <summary>
         /// recordAudio method which :
@@ -1465,20 +1493,19 @@ namespace SpeechToTextUWPSampleApp
             try
             {
                 Window.Current.CoreWindow.PointerCursor = new Windows.UI.Core.CoreCursor(Windows.UI.Core.CoreCursorType.Wait, 1);
-                if (client != null)
+                await CreateSpeechClient();
+                if (speechClient != null)
                 {
-                    client.SetAPI(ComboHostname.SelectedItem.ToString(), customEndpointID.Text, (string)ComboAPI.SelectedItem, bUseWebSocket);
-
-                    if (client.IsRecording() == false)
+                    if (speechClient.IsRecording() == false)
                     {
-                        if (await client.CleanupRecording())
+                        if (await speechClient.Cleanup())
                         {
-                            if (await client.StartRecording(0))
+                            if (await speechClient.StartRecordingInMemory())
                             {
                                 isRecordingInFile = true;
-                                client.AudioLevel += Client_AudioLevel;
-                                client.AudioCaptureError += Client_AudioCaptureError;
-                                LogMessage("Start Recording...");
+                                speechClient.AudioLevel += Client_AudioLevel;
+                                speechClient.AudioCaptureError += Client_AudioCaptureError;
+                                LogMessage("Start Recording in memory...");
                             }
                             else
                                 LogMessage("Start Recording failed");
@@ -1489,12 +1516,12 @@ namespace SpeechToTextUWPSampleApp
                     else
                     {
                         LogMessage("Stop Recording...");
-                        await client.StopRecording();
+                        await speechClient.StopRecording();
                         isRecordingInFile = false;
-                        client.AudioLevel -= Client_AudioLevel;
-                        client.AudioCaptureError -= Client_AudioCaptureError;
+                        speechClient.AudioLevel -= Client_AudioLevel;
+                        speechClient.AudioCaptureError -= Client_AudioCaptureError;
                         ClearCanvas();
-                        if (client.GetBufferLength() > 0)
+                        if (speechClient.GetBufferLength() > 0)
                         {
                             var filePicker = new Windows.Storage.Pickers.FileSavePicker();
                             filePicker.DefaultFileExtension = ".wav";
@@ -1508,7 +1535,7 @@ namespace SpeechToTextUWPSampleApp
                             if (wavFile != null)
                             {
                                 string fileToken = Windows.Storage.AccessCache.StorageApplicationPermissions.FutureAccessList.Add(wavFile);
-                                if (await client.SaveBuffer(wavFile,0,0))
+                                if (await speechClient.SaveBuffer(wavFile))
                                 {
                                     mediaUri.Text = "file://" + wavFile.Path;
                                     LogMessage("Record buffer saved in file: " + wavFile.Path.ToString());
@@ -1574,58 +1601,50 @@ namespace SpeechToTextUWPSampleApp
             try
             {
                 Window.Current.CoreWindow.PointerCursor = new Windows.UI.Core.CoreCursor(Windows.UI.Core.CoreCursorType.Wait, 1);
-                if (client != null)
+                await CreateSpeechClient();
+                if (speechClient != null)
                 {
-                    client.SetAPI(ComboHostname.SelectedItem.ToString(), customEndpointID.Text, (string)ComboAPI.SelectedItem, bUseWebSocket);
-                    if ((!client.HasToken()) && (!string.IsNullOrEmpty(subscriptionKey.Text)))
+                    SaveSettingsAndState();
+                    string locale = speechToTextLanguage.SelectedItem.ToString();
+                    string resulttype = ComboAPIResult.SelectedItem.ToString();
+                    string apiType = ComboAPI.SelectedItem.ToString();
+                    var file = await GetFileFromLocalPathUrl(mediaUri.Text);
+                    if (file != null)
                     {
-                        LogMessage("Getting Token for subscription key: " + subscriptionKey.Text.ToString());
-                        string token = await client.GetToken(subscriptionKey.Text);
-                        if (!string.IsNullOrEmpty(token))
+                        string convertedText = string.Empty;
+                        ClearResult();
+                        if (bUseWebSocket)
                         {
-                            LogMessage("Getting Token successful Token: " + token.ToString());
-                            // Save subscription key
-                            SaveSettingsAndState();
+                            LogMessage("Sending StorageFile over WebSocket: " + file.Path.ToString());
+                            speechClient.WebSocketEvent += Client_WebSocketEvent;
+                            bool result = await speechClient.SendStorageFileOverWebSocket(file, ComboAPI.SelectedItem.ToString(), locale, resulttype);
                         }
-                    }
-
-                    if (client.HasToken())
-                    {
-                        string locale = speechToTextLanguage.SelectedItem.ToString();
-                        string resulttype = ComboAPIResult.SelectedItem.ToString();
-
-                        var file = await GetFileFromLocalPathUrl(mediaUri.Text);
-                        if (file != null)
+                        else
                         {
-                            string convertedText = string.Empty;
-                            LogMessage("Sending StorageFile: " + file.Path.ToString());
-                            if(bUseWebSocket)
-                                client.WebSocketEvent += Client_WebSocketEvent;
-                            resultText.Text = string.Empty;
-                            SpeechToTextResponse result = await client.SendStorageFile(file, locale,resulttype);
+                            SpeechClient.SpeechToTextResponse result = await speechClient.SendStorageFile(file, ComboAPI.SelectedItem.ToString(),locale, resulttype);
                             if (result != null)
                             {
                                 string httpError = result.GetHttpError();
                                 if (!string.IsNullOrEmpty(httpError))
                                 {
-                                    resultText.Text = httpError;
+                                    AddResultError(httpError);
                                     LogMessage("Http Error: " + httpError.ToString());
                                 }
                                 else
                                 {
                                     if (result.Status() == "error")
-                                        resultText.Text = "error";
+                                        AddResultError("error");
                                     else
-                                        resultText.Text = result.Result();
+                                        AddResultPhrase(result.Result());
                                     LogMessage("Result: " + result.ToString());
                                 }
                             }
                             else
                                 LogMessage("Error while sending file");
                         }
+                        
+
                     }
-                    else
-                        LogMessage("Authentication failed check your subscription Key: " + subscriptionKey.Text.ToString());
                 }
             }
             finally
@@ -1640,16 +1659,16 @@ namespace SpeechToTextUWPSampleApp
 
         private void subscriptionKey_TextChanged(object sender, TextChangedEventArgs e)
         {
-            if (client != null)
-                client.ClearToken();
+            if (speechClient != null)
+                speechClient.ClearToken();
         }
 
 
 
         private void ComboHostname_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (client != null)
-                client.ClearToken();
+            if (speechClient != null)
+                speechClient.ClearToken();
             if (ComboHostname.SelectedItem.ToString() == defaultBingSpeechHostname)
             {
                 subscriptionKey.Text = valueBingSpeechSubscription;

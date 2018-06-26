@@ -27503,12 +27503,12 @@
   },
   "project": {
     "restore": {
-      "projectUniqueName": "C:\\git\\flecoqui\\Windows10\\Samples\\SpeechToTextUWPSampleApp\\SpeechToTextUWPSampleApp\\SpeechToTextUWPSampleApp.csproj",
+      "projectUniqueName": "C:\\git\\flecoqui\\CognitiveServices\\SpeechToTextUWPSampleApp\\SpeechToTextUWPSampleApp\\SpeechToTextUWPSampleApp.csproj",
       "projectName": "SpeechToTextUWPSampleApp",
-      "projectPath": "C:\\git\\flecoqui\\Windows10\\Samples\\SpeechToTextUWPSampleApp\\SpeechToTextUWPSampleApp\\SpeechToTextUWPSampleApp.csproj",
-      "projectJsonPath": "C:\\git\\flecoqui\\Windows10\\Samples\\SpeechToTextUWPSampleApp\\SpeechToTextUWPSampleApp\\project.json",
+      "projectPath": "C:\\git\\flecoqui\\CognitiveServices\\SpeechToTextUWPSampleApp\\SpeechToTextUWPSampleApp\\SpeechToTextUWPSampleApp.csproj",
+      "projectJsonPath": "C:\\git\\flecoqui\\CognitiveServices\\SpeechToTextUWPSampleApp\\SpeechToTextUWPSampleApp\\project.json",
       "packagesPath": "C:\\Users\\flecoqui\\.nuget\\packages\\",
-      "outputPath": "C:\\git\\flecoqui\\Windows10\\Samples\\SpeechToTextUWPSampleApp\\SpeechToTextUWPSampleApp\\obj\\",
+      "outputPath": "C:\\git\\flecoqui\\CognitiveServices\\SpeechToTextUWPSampleApp\\SpeechToTextUWPSampleApp\\obj\\",
       "projectStyle": "ProjectJson",
       "configFilePaths": [
         "C:\\Users\\flecoqui\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -27521,8 +27521,8 @@
       "frameworks": {
         "uap10.0.10586": {
           "projectReferences": {
-            "C:\\git\\flecoqui\\Windows10\\Samples\\SpeechToTextUWPSampleApp\\SpeechToTextClient\\SpeechToTextClient.csproj": {
-              "projectPath": "C:\\git\\flecoqui\\Windows10\\Samples\\SpeechToTextUWPSampleApp\\SpeechToTextClient\\SpeechToTextClient.csproj"
+            "C:\\git\\flecoqui\\CognitiveServices\\SpeechToTextUWPSampleApp\\SpeechToTextClient\\SpeechToTextClient.csproj": {
+              "projectPath": "C:\\git\\flecoqui\\CognitiveServices\\SpeechToTextUWPSampleApp\\SpeechToTextClient\\SpeechToTextClient.csproj"
             }
           }
         }
