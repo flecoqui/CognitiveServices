@@ -20,7 +20,7 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using Windows.UI.ViewManagement;
-using SpeechToTextClient;
+
 
 namespace SpeechToTextUWPSampleApp
 {
@@ -153,7 +153,7 @@ namespace SpeechToTextUWPSampleApp
             logs.TextChanged += Logs_TextChanged;
 
             // resultText event to refresh the TextBox
-            resultText.TextChanged += resultText_TextChanged;
+            resultText.TextChanged += ResultText_TextChanged;
 
             // Bind player to element
             mediaPlayer = new Windows.Media.Playback.MediaPlayer();
@@ -208,15 +208,15 @@ namespace SpeechToTextUWPSampleApp
             Application.Current.Resuming += Current_Resuming;
             
             // Display OS, Device information
-            LogMessage(SpeechToTextClient.SystemInformation.GetString());
+            LogMessage(SystemInformation.GetString());
             
 
 
             // Initialize level and duration
-            Level.Text = level.ToString();
-            Duration.Text = duration.ToString();
-            Level.TextChanged += Level_TextChanged;
-            Duration.TextChanged += Duration_TextChanged;
+            //Level.Text = level.ToString();
+            //Duration.Text = duration.ToString();
+            //Level.TextChanged += Level_TextChanged;
+            //Duration.TextChanged += Duration_TextChanged;
 
             // Create Speech Client if possible 
             await CreateSpeechClient();
@@ -277,12 +277,14 @@ namespace SpeechToTextUWPSampleApp
                 else
                     LogMessage("Error while creating the Speech Client");
             }
+            else
+                LogMessage("Subscription Key required to create the Speech Client");
             return result;
         }
         /// <summary>
         /// This method is called when the EndpointID is changed
         /// </summary>
-        private void customEndpointID_TextChanged(object sender, TextChangedEventArgs e)
+        private void CustomEndpointID_TextChanged(object sender, TextChangedEventArgs e)
         {
             UpdateControls();
         }
@@ -291,11 +293,10 @@ namespace SpeechToTextUWPSampleApp
         /// </summary>
         private void Duration_TextChanged(object sender, TextChangedEventArgs e)
         {
-            TextBox tb = sender as TextBox;
-            if (tb != null)
+            if(sender is TextBox tb)
             {
-                uint n;
-                if (!uint.TryParse(tb.Text, out n))
+
+                if (!uint.TryParse(tb.Text, out uint n))
                 {
                     tb.Text = duration.ToString();
                 }
@@ -317,11 +318,9 @@ namespace SpeechToTextUWPSampleApp
         /// </summary>
         private void Level_TextChanged(object sender, TextChangedEventArgs e)
         {
-            TextBox tb = sender as TextBox;
-            if (tb != null)
+            if (sender is TextBox tb)
             {
-                uint n;
-                if (!uint.TryParse(tb.Text, out n))
+                if (!uint.TryParse(tb.Text, out uint n))
                 {
                     tb.Text = level.ToString();
                 }
@@ -355,10 +354,6 @@ namespace SpeechToTextUWPSampleApp
             LogMessage("Resuming");
             ReadSettingsAndState();
 
-            // if the application was continously recording
-            // restart recording
-            if (isRecordingContinuously == true)
-                ContinuousRecording_Click(null, null);
 
             // Resotre Playback Rate
             if (mediaPlayer.PlaybackSession.PlaybackRate != 1)
@@ -374,8 +369,8 @@ namespace SpeechToTextUWPSampleApp
         {
             LogMessage("Suspending");
             var deferal = e.SuspendingOperation.GetDeferral();
-            SaveSettingsAndState();
-            if (speechClient.IsRecording())
+
+            if ((speechClient != null) && (speechClient.IsRecording()))
             {
                 LogMessage("Stop Recording...");
                 await speechClient.StopRecording();
@@ -383,6 +378,7 @@ namespace SpeechToTextUWPSampleApp
                 isRecordingInMemory = false;
                 isRecordingContinuously = false;
             }
+            SaveSettingsAndState();
             deferal.Complete();
         }
 
@@ -398,7 +394,7 @@ namespace SpeechToTextUWPSampleApp
         const string keyLevel = "levelKey";
         const string keyDuration = "durationKey";
         const string keyWebSocket = "webSocketKey";
-        const string keyIsRecordingContinuously = "isRecordingContinuouslyKey";
+
         const string defaultBingSpeechHostname = "speech.platform.bing.com";
         const string defaultWestUSSpeechHostname = "westus.stt.speech.microsoft.com";
         const string defaultEastAsiaSpeechHostname = "eastasia.stt.speech.microsoft.com";
@@ -449,7 +445,7 @@ namespace SpeechToTextUWPSampleApp
             SaveSettingsValue(keyWebSocket, bUseWebSocket.ToString());
             SaveSettingsValue(keyLevel, level.ToString());
             SaveSettingsValue(keyDuration, duration.ToString());
-            SaveSettingsValue(keyIsRecordingContinuously,isRecordingContinuously.ToString());
+
             return true;
         }
         /// <summary>
@@ -511,9 +507,6 @@ namespace SpeechToTextUWPSampleApp
             s = ReadSettingsValue(keyDuration) as string;
             if (!string.IsNullOrEmpty(s))
                 UInt16.TryParse(s, out duration);
-            s = ReadSettingsValue(keyIsRecordingContinuously) as string;
-            if (!string.IsNullOrEmpty(s))
-                bool.TryParse(s, out isRecordingContinuously);
             s = ReadSettingsValue(keyWebSocket) as string;
             if (!string.IsNullOrEmpty(s))
                 bool.TryParse(s, out bUseWebSocket);
@@ -556,15 +549,13 @@ namespace SpeechToTextUWPSampleApp
         #region Logs
         void PushMessage(string Message)
         {
-            App app = Windows.UI.Xaml.Application.Current as App;
-            if (app != null)
+            if (Windows.UI.Xaml.Application.Current is App app)
                 app.MessageList.Enqueue(Message);
         }
         bool PopMessage(out string Message)
         {
             Message = string.Empty;
-            App app = Windows.UI.Xaml.Application.Current as App;
-            if (app != null)
+            if(Windows.UI.Xaml.Application.Current is App app)
                 return app.MessageList.TryDequeue(out Message);
             return false;
         }
@@ -589,8 +580,7 @@ namespace SpeechToTextUWPSampleApp
                 () =>
                 {
 
-                    string result;
-                    while (PopMessage(out result))
+                    while (PopMessage(out string result))
                     {
                         logs.Text += result;
                         if (logs.Text.Length > 16000)
@@ -632,7 +622,7 @@ namespace SpeechToTextUWPSampleApp
         /// This method is called when the content of the resultText TextBox changed  
         /// The method scroll to the bottom of the TextBox
         /// </summary>
-        void resultText_TextChanged(object sender, TextChangedEventArgs e)
+        void ResultText_TextChanged(object sender, TextChangedEventArgs e)
         {
             //  logs.Focus(FocusState.Programmatic);
             // logs.Select(logs.Text.Length, 0);
@@ -649,8 +639,7 @@ namespace SpeechToTextUWPSampleApp
             for (int i = 0; i < c; i++)
             {
                 var child = VisualTreeHelper.GetChild(parent, i);
-                var sv = child as ScrollViewer;
-                if (sv != null)
+                if(child is ScrollViewer sv)
                     return sv;
                 sv = GetFirstDescendantScrollViewer(child);
                 if (sv != null)
@@ -665,7 +654,7 @@ namespace SpeechToTextUWPSampleApp
         /// <summary>
         /// Mute method 
         /// </summary>
-        private void mute_Click(object sender, RoutedEventArgs e)
+        private void Mute_Click(object sender, RoutedEventArgs e)
         {
             LogMessage("Toggle Mute");
             mediaPlayer.IsMuted = !mediaPlayer.IsMuted;
@@ -674,7 +663,7 @@ namespace SpeechToTextUWPSampleApp
         /// <summary>
         /// Volume Up method 
         /// </summary>
-        private void volumeUp_Click(object sender, RoutedEventArgs e)
+        private void VolumeUp_Click(object sender, RoutedEventArgs e)
         {
             LogMessage("Volume Up");
             mediaPlayer.Volume = (mediaPlayer.Volume + 0.10 <= 1 ? mediaPlayer.Volume + 0.10 : 1);
@@ -683,7 +672,7 @@ namespace SpeechToTextUWPSampleApp
         /// <summary>
         /// Volume Down method 
         /// </summary>
-        private void volumeDown_Click(object sender, RoutedEventArgs e)
+        private void VolumeDown_Click(object sender, RoutedEventArgs e)
         {
             LogMessage("Volume Down");
             mediaPlayer.Volume = (mediaPlayer.Volume - 0.10 >= 0 ? mediaPlayer.Volume - 0.10 : 0);
@@ -839,7 +828,7 @@ namespace SpeechToTextUWPSampleApp
         /// <summary>
         /// Play method which plays the video with the MediaElement from position 0
         /// </summary>
-        private void play_Click(object sender, RoutedEventArgs e)
+        private void Play_Click(object sender, RoutedEventArgs e)
         {
             try
             {
@@ -855,7 +844,7 @@ namespace SpeechToTextUWPSampleApp
         /// <summary>
         /// TextToSpeech method which use TextToSpeech Cognitive Swervices 
         /// </summary>
-        private async void textToSpeech_Click(object sender, RoutedEventArgs e)
+        private async void TextToSpeech_Click(object sender, RoutedEventArgs e)
         {
             try
             {
@@ -910,7 +899,7 @@ namespace SpeechToTextUWPSampleApp
         /// <summary>
         /// Stop method which stops the video currently played by the MediaElement
         /// </summary>
-        private void stop_Click(object sender, RoutedEventArgs e)
+        private void Stop_Click(object sender, RoutedEventArgs e)
         {
             try
             {
@@ -931,7 +920,7 @@ namespace SpeechToTextUWPSampleApp
         /// <summary>
         /// Play method which plays the video currently paused by the MediaElement
         /// </summary>
-        private void playPause_Click(object sender, RoutedEventArgs e)
+        private void PlayPause_Click(object sender, RoutedEventArgs e)
         {
             try
             {
@@ -951,7 +940,7 @@ namespace SpeechToTextUWPSampleApp
         /// <summary>
         /// Pause method which pauses the video currently played by the MediaElement
         /// </summary>
-        private void pausePlay_Click(object sender, RoutedEventArgs e)
+        private void PausePlay_Click(object sender, RoutedEventArgs e)
         {
             try
             {
@@ -1159,7 +1148,10 @@ namespace SpeechToTextUWPSampleApp
                          {
                              memoryRecordingButton.IsEnabled = true;
                              fileRecordingButton.IsEnabled = true;
-                             continuousRecordingButton.IsEnabled = true;
+                             if ((bUseWebSocket) && (ComboAPI.SelectedItem.ToString() == "conversation"))
+                                 continuousRecordingButton.IsEnabled = true;
+                             else
+                                 continuousRecordingButton.IsEnabled = false;
 
                              memoryRecordingButton.Content = "\xE717";
                              fileRecordingButton.Content = "\xE720";
@@ -1176,7 +1168,12 @@ namespace SpeechToTextUWPSampleApp
                              else
                                  fileRecordingButton.IsEnabled = false;
                              if (isRecordingContinuously == true)
-                                 continuousRecordingButton.IsEnabled = true;
+                             { 
+                                 if ((bUseWebSocket) && (ComboAPI.SelectedItem.ToString() == "conversation"))
+                                     continuousRecordingButton.IsEnabled = true;
+                                 else
+                                     continuousRecordingButton.IsEnabled = false;
+                             }
                              else
                                  continuousRecordingButton.IsEnabled = false;
 
@@ -1258,36 +1255,49 @@ namespace SpeechToTextUWPSampleApp
                 await CreateSpeechClient();
                 if (speechClient != null)
                 {
-                        if (speechClient.IsRecording() == false)
+                    if (speechClient.IsRecording() == false)
+                    {
+                        if (await speechClient.Cleanup())
                         {
-                            if (await speechClient.Cleanup())
+                            if (await speechClient.StartRecordingInMemory())
                             {
-                                if (await speechClient.StartRecordingInMemory())
-                                {
-                                    isRecordingInMemory = true;
-                                    speechClient.AudioLevel += Client_AudioLevel;
-                                    speechClient.AudioCaptureError += Client_AudioCaptureError;
-                                    LogMessage("Start Recording...");
-                                }
-                                else
-                                    LogMessage("Start Recording failed");
+                                ClearResult();
+                                isRecordingInMemory = true;
+                                speechClient.AudioLevel += Client_AudioLevel;
+                                speechClient.AudioCaptureError += Client_AudioCaptureError;
+                                LogMessage("Start Recording...");
                             }
                             else
-                                LogMessage("CleanupRecording failed");
+                                LogMessage("Start Recording failed");
+                        }
+                        else
+                            LogMessage("CleanupRecording failed");
+                    }
+                    else
+                    {
+                        LogMessage("Stop Recording...");
+                        await speechClient.StopRecording();
+                        isRecordingInMemory = false;
+                        speechClient.AudioLevel -= Client_AudioLevel;
+                        speechClient.AudioCaptureError -= Client_AudioCaptureError;
+                        ClearCanvas();
+                        string locale = speechToTextLanguage.SelectedItem.ToString();
+                        string resulttype = ComboAPIResult.SelectedItem.ToString();
+                        string speechAPI = ComboAPI.SelectedItem.ToString();
+                        if (bUseWebSocket == true)
+                        {
+                            LogMessage("Sending Memory Buffer over WebSocket...");
+                            speechClient.WebSocketEvent += Client_WebSocketEvent;
+                            bool result = await speechClient.SendMemoryBufferOverWebSocket(speechAPI, locale, resulttype);
+                            if (result == true)
+                                LogMessage("Sending Memory Buffer over WebSocket successful");
+                            else
+                                LogMessage("Error while sending buffer");
                         }
                         else
                         {
-                            LogMessage("Stop Recording...");
-                            await speechClient.StopRecording();
-                            isRecordingInMemory = false;
-                            speechClient.AudioLevel -= Client_AudioLevel;
-                            speechClient.AudioCaptureError -= Client_AudioCaptureError;
-                            ClearCanvas();
-                            string locale = speechToTextLanguage.SelectedItem.ToString();
-                            string resulttype = ComboAPIResult.SelectedItem.ToString();
-                            string speechAPI = ComboAPI.SelectedItem.ToString();
-                            LogMessage("Sending Memory Buffer...");
-                            SpeechClient.SpeechToTextResponse result = await speechClient.SendMemoryBuffer(speechAPI,locale, resulttype);
+                            LogMessage("Sending Memory Buffer over REST API...");
+                            SpeechClient.SpeechToTextResponse result = await speechClient.SendMemoryBuffer(speechAPI, locale, resulttype);
                             if (result != null)
                             {
                                 string httpError = result.GetHttpError();
@@ -1309,6 +1319,7 @@ namespace SpeechToTextUWPSampleApp
                                 LogMessage("Error while sending buffer");
 
                         }
+                    }
 
                 }
                 UpdateControls();
@@ -1327,8 +1338,14 @@ namespace SpeechToTextUWPSampleApp
         /// </summary>
         private async void ContinuousRecording_Click(object sender, RoutedEventArgs e)
         {
+            ClearResult();
+            await LaunchContinuousRecording();
+        }
+        private async System.Threading.Tasks.Task<bool> LaunchContinuousRecording()
+        {
+            bool result = false;
             if (bInProgress == true)
-                return;
+                return result;
             bInProgress = true;
             try
             {
@@ -1340,6 +1357,7 @@ namespace SpeechToTextUWPSampleApp
                     SaveSettingsAndState();
                     if (speechClient.IsRecording() == false)
                     {
+                        ClearCanvas();
                         if (await speechClient.Cleanup())
                         {
                             string speechAPI = ComboAPI.SelectedItem.ToString();
@@ -1347,12 +1365,13 @@ namespace SpeechToTextUWPSampleApp
                             string resultType = ComboAPIResult.SelectedItem.ToString();
                             if (await speechClient.StartRecording(speechAPI, language, resultType))
                             {
-                                ClearResult();
+
                                 isRecordingContinuously = true;
                                 speechClient.AudioLevel += Client_AudioLevel;
                                 speechClient.AudioCaptureError += Client_AudioCaptureError;
                                 speechClient.WebSocketEvent += Client_WebSocketEvent;
                                 LogMessage("Start Recording...");
+                                result = true;
                             }
                             else
                                 LogMessage("Start Recording failed");
@@ -1378,6 +1397,7 @@ namespace SpeechToTextUWPSampleApp
                 bInProgress = false;
                 Window.Current.CoreWindow.PointerCursor = new Windows.UI.Core.CoreCursor(Windows.UI.Core.CoreCursorType.Arrow, 1);
             }
+            return result;
 
         }
 
@@ -1419,27 +1439,32 @@ namespace SpeechToTextUWPSampleApp
             }
             return result;
         }
-        private async void Client_WebSocketEvent(SpeechClient.SpeechClient sender, string Path, string Body)
+        private async void Client_WebSocketEvent(SpeechClient.SpeechClient sender, string Path, SpeechClient.SpeechToTextResponse response)
         {
             await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal,
-           () =>
+           async () =>
            {
-               LogMessage("Received WebSocket: " + Path + " Message: " + Body);
-
+               if(response != null)
+                    LogMessage("Received WebSocket: " + Path + " Message: " + response.ToString());
+               else
+                    LogMessage("Received WebSocket: " + Path );
                switch (Path.ToLower())
                {
                    case "turn.start":
                        break;
                    case "turn.end":
                        speechClient.WebSocketEvent -= Client_WebSocketEvent;
+                       if (isRecordingContinuously == true)
+                           await LaunchContinuousRecording();
                        break;
                    case "speech.enddetected":
                        break;
                    case "speech.phrase":
-                       AddResultPhrase(GetPhrase(Body));
+                       AddResultPhrase(response.Result());
                        break;
                    case "speech.hypothesis":
-                       AddResultHypothesis(GetHypothesis(Body));
+                        AddResultHypothesis(response.Result());
+
                        break;
                    case "speech.startdetected":
                        break;
@@ -1523,19 +1548,22 @@ namespace SpeechToTextUWPSampleApp
                         ClearCanvas();
                         if (speechClient.GetBufferLength() > 0)
                         {
-                            var filePicker = new Windows.Storage.Pickers.FileSavePicker();
-                            filePicker.DefaultFileExtension = ".wav";
-                            filePicker.SuggestedFileName = "record.wav";
-                            filePicker.FileTypeChoices.Add("WAV files", new List<string>() { ".wav" });
-                            filePicker.SuggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.VideosLibrary;
-                            filePicker.SettingsIdentifier = "WavPicker";
-                            filePicker.CommitButtonText = "Save buffer into a WAV File";
 
+
+                            var filePicker = new Windows.Storage.Pickers.FileSavePicker()
+                            {
+                                DefaultFileExtension = ".wav",
+                                SuggestedFileName = "record.wav",
+                                SuggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.VideosLibrary,
+                                SettingsIdentifier = "WavPicker",
+                                CommitButtonText = "Save buffer into a WAV File"
+                            };
+                            filePicker.FileTypeChoices.Add("WAV files", new List<string>() { ".wav" });
                             var wavFile = await filePicker.PickSaveFileAsync();
                             if (wavFile != null)
                             {
                                 string fileToken = Windows.Storage.AccessCache.StorageApplicationPermissions.FutureAccessList.Add(wavFile);
-                                if (await speechClient.SaveBuffer(wavFile))
+                                if (await speechClient.SaveMemoryBuffer(wavFile))
                                 {
                                     mediaUri.Text = "file://" + wavFile.Path;
                                     LogMessage("Record buffer saved in file: " + wavFile.Path.ToString());
@@ -1564,7 +1592,7 @@ namespace SpeechToTextUWPSampleApp
         /// <summary>
         /// open method which select a WAV file on disk
         /// </summary>
-        private async void open_Click(object sender, RoutedEventArgs e)
+        private async void Open_Click(object sender, RoutedEventArgs e)
         {
             try
             {
@@ -1593,7 +1621,7 @@ namespace SpeechToTextUWPSampleApp
         /// sendWAVFile method which :
         /// - sends the audio sample in a WAV file towards the SpeechToText REST API
         /// </summary>
-        private async void sendWAVFile_Click(object sender, RoutedEventArgs e)
+        private async void SendWAVFile_Click(object sender, RoutedEventArgs e)
         {
             if (bInProgress == true)
                 return;
@@ -1657,7 +1685,7 @@ namespace SpeechToTextUWPSampleApp
 
 
 
-        private void subscriptionKey_TextChanged(object sender, TextChangedEventArgs e)
+        private void SubscriptionKey_TextChanged(object sender, TextChangedEventArgs e)
         {
             if (speechClient != null)
                 speechClient.ClearToken();

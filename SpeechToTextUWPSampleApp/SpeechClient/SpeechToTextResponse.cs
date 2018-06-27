@@ -36,10 +36,10 @@ namespace SpeechClient
         private const string LOWCONFKey = "LOWCONF";
         private const string requestidKey = "requestid";
 
-        private int HIGHCONF;
-        private int MIDCONF;
-        private int LOWCONF;
-        private string requestid;
+        private readonly int HIGHCONF;
+        private readonly int MIDCONF;
+        private readonly int LOWCONF;
+        private readonly string requestid;
         public SpeechToTextConfidence()
         {
             HIGHCONF = 0;
@@ -78,11 +78,11 @@ namespace SpeechClient
         private const string displayKey = "Display";
         private const string maskedITNKey = "MaskedITN";
 
-        private double confidence;
-        private string lexical;
-        private string ITN;
-        private string maskedITN;
-        private string display;
+        private readonly double confidence;
+        private readonly string lexical;
+        private readonly string ITN;
+        private readonly string maskedITN;
+        private readonly string display;
 
         public SpeechToTextResult()
         {
@@ -136,12 +136,12 @@ namespace SpeechClient
         private const string lexicalKey = "lexical";
         private const string propertiesKey = "properties";
 
-        private string status;
-        private string scenario;
-        private string name;
-        private string lexical;
-        private string HttpError;
-        private SpeechToTextConfidence properties;
+        private readonly string status;
+        private readonly string scenario;
+        private readonly string name;
+        private readonly string lexical;
+        private readonly string HttpError;
+        private readonly SpeechToTextConfidence properties;
 
         public SpeechToTextHeader()
         {
@@ -203,11 +203,12 @@ namespace SpeechClient
         private const string DurationKey = "Duration";
         private const string NBestKey = "NBest";
         private const string DisplayTextKey = "DisplayText";
+        private const string TextKey = "Text";
 
-        private string recognitionStatus;
-        private  double offset;
-        private double duration;
-        private string displayText;
+        private readonly string recognitionStatus;
+        private readonly double offset;
+        private readonly double duration;
+        private readonly string displayText;
 
 
         //{
@@ -224,8 +225,8 @@ namespace SpeechClient
         //}
 
         private ObservableCollection<SpeechToTextResult> results;
-        private string HttpError;
-        private string displayString;
+        private readonly string HttpError;
+        private readonly string displayString;
         public override string ToString()
         {
             if(!string.IsNullOrEmpty(displayString))
@@ -251,6 +252,9 @@ namespace SpeechClient
                 offset = jsonObject.GetNamedNumber(OffsetKey, 0);
                 duration = jsonObject.GetNamedNumber(DurationKey, 0);
                 displayText = jsonObject.GetNamedString(DisplayTextKey, "");
+                if(string.IsNullOrEmpty(displayText))
+                    displayText = jsonObject.GetNamedString(TextKey, "");
+
                 results = new ObservableCollection<SpeechToTextResult>();
                 if (results != null)
                 {
@@ -267,6 +271,35 @@ namespace SpeechClient
             {
                 HttpError = httpError;
             }
+        }
+        public SpeechToTextResponse(string jsonString)
+        {
+
+            if (!string.IsNullOrEmpty(jsonString))
+            {
+                JsonObject jsonObject = JsonObject.Parse(jsonString);
+                Newtonsoft.Json.Linq.JObject obj = Newtonsoft.Json.Linq.JObject.Parse(jsonString);
+                displayString = obj.ToString();
+                recognitionStatus = jsonObject.GetNamedString(RecognitionStatusKey, "");
+                offset = jsonObject.GetNamedNumber(OffsetKey, 0);
+                duration = jsonObject.GetNamedNumber(DurationKey, 0);
+                displayText = jsonObject.GetNamedString(DisplayTextKey, "");
+                if (string.IsNullOrEmpty(displayText))
+                    displayText = jsonObject.GetNamedString(TextKey, "");
+
+                results = new ObservableCollection<SpeechToTextResult>();
+                if (results != null)
+                {
+                    foreach (IJsonValue jsonValue in jsonObject.GetNamedArray(NBestKey, new JsonArray()))
+                    {
+                        if (jsonValue.ValueType == JsonValueType.Object)
+                        {
+                            results.Add(new SpeechToTextResult(jsonValue.GetObject()));
+                        }
+                    }
+                }
+            }
+            HttpError = string.Empty;
         }
         public string Result()
         {

@@ -73,14 +73,14 @@
                         <TextBlock x:Name="labelSubscriptionID" Text="Speech-To-Text Subscription Key:" HorizontalAlignment="Left" />
                     </StackPanel>
                     <StackPanel Orientation="Vertical"  VerticalAlignment="Center">
-                        <TextBox x:Name="subscriptionKey" ToolTipService.ToolTip="SubscriptionKey associated with the Cognitive Service Speech-To-Text Account" Width="308" IsTabStop="True" TextChanged="subscriptionKey_TextChanged" HorizontalAlignment="Left"  Text=""/>
+                        <TextBox x:Name="subscriptionKey" ToolTipService.ToolTip="SubscriptionKey associated with the Cognitive Service Speech-To-Text Account" Width="308" IsTabStop="True" TextChanged="SubscriptionKey_TextChanged" HorizontalAlignment="Left"  Text=""/>
                     </StackPanel>
 
                     <StackPanel Orientation="Horizontal"  VerticalAlignment="Center">
                         <TextBlock x:Name="labelCustomEndpointID" Text="Custom Speech Endpoint ID:" HorizontalAlignment="Left" />
                     </StackPanel>
                     <StackPanel Orientation="Vertical"  VerticalAlignment="Center">
-                        <TextBox x:Name="customEndpointID" ToolTipService.ToolTip="Custom Endpoint ID (GUID) associated with the Cognitive Service Custom Speech Account (www.cris.ai). Only required for Custom Serivces." Width="308" IsTabStop="True" TextChanged="customEndpointID_TextChanged" HorizontalAlignment="Left"  Text=""/>
+                        <TextBox x:Name="customEndpointID" ToolTipService.ToolTip="Custom Endpoint ID (GUID) associated with the Cognitive Service Custom Speech Account (www.cris.ai). Only required for Custom Serivces." Width="308" IsTabStop="True" TextChanged="CustomEndpointID_TextChanged" HorizontalAlignment="Left"  Text=""/>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal"  >
                         <TextBlock x:Name="labelAPISelection" Text="Speech API:" HorizontalAlignment="Left" VerticalAlignment="Center"/>
@@ -109,28 +109,30 @@
                     <StackPanel Orientation="Horizontal"  VerticalAlignment="Center">
                         <TextBlock x:Name="labelUri" Text="Audio file path:" VerticalAlignment="Center" HorizontalAlignment="Left" Width="176"  />
                         <Button IsEnabled="False" Content="&#xE720;" x:Name="fileRecordingButton" ToolTipService.ToolTip="Record microphone into a local WAV file" FontFamily="Segoe MDL2 Assets" IsTabStop="True" Height="42" Width="42" Margin="1,1,1,1" Click="FileRecording_Click"  />
-                        <Button IsEnabled="False" Content="&#xE8E5;" x:Name="openButton" HorizontalAlignment="Right"  ToolTipService.ToolTip="Open the WAV file" FontFamily="Segoe MDL2 Assets" IsTabStop="True" Height="42" Width="42" Margin="1,1,1,1" Click="open_Click" />
-                        <Button IsEnabled="False" Content="&#xE898;" x:Name="convertWAVButton"  ToolTipService.ToolTip="Speech-To-Text with local WAV file sent to Cognitive Services" FontFamily="Segoe MDL2 Assets" IsTabStop="True" Height="42" Width="42" Margin="1,1,1,1" Click="sendWAVFile_Click" />
+                        <Button IsEnabled="False" Content="&#xE8E5;" x:Name="openButton" HorizontalAlignment="Right"  ToolTipService.ToolTip="Open the WAV file" FontFamily="Segoe MDL2 Assets" IsTabStop="True" Height="42" Width="42" Margin="1,1,1,1" Click="Open_Click" />
+                        <Button IsEnabled="False" Content="&#xE898;" x:Name="convertWAVButton"  ToolTipService.ToolTip="Speech-To-Text with local WAV file sent to Cognitive Services" FontFamily="Segoe MDL2 Assets" IsTabStop="True" Height="42" Width="42" Margin="1,1,1,1" Click="SendWAVFile_Click" />
                     </StackPanel>
                     <StackPanel Orientation="Horizontal"  VerticalAlignment="Center">
                         <TextBox x:Name="mediaUri" ToolTipService.ToolTip="Path or Uri of the WAV file to play/test" IsTabStop="True"  Width="308" />
                     </StackPanel>
                     <StackPanel Orientation="Horizontal"  VerticalAlignment="Center">
-                        <Button IsEnabled="False" Content="&#xE768;" x:Name="playButton" ToolTipService.ToolTip="Open the current stream Uri to be played in streaming mode"  FontFamily="Segoe MDL2 Assets" IsTabStop="True" Height="42" Width="42" Margin="1,1,1,1" Click="play_Click"/>
-                        <Button IsEnabled="False" Content="&#xE768;" x:Name="playPauseButton" ToolTipService.ToolTip="Pause the stream currently played by the MediaElement"  FontFamily="Segoe MDL2 Assets" FontSize="10" IsTabStop="True" Height="42" Width="42" Margin="1,1,1,1" Click="playPause_Click"/>
-                        <Button IsEnabled="False" Content="&#xE769;" x:Name="pausePlayButton" ToolTipService.ToolTip="Resume the stream currently puased by the MediaElement"   FontFamily="Segoe MDL2 Assets" FontSize="10" IsTabStop="True" Height="42" Width="42" Margin="1,1,1,1" Click="pausePlay_Click"/>
-                        <Button IsEnabled="False" Content="&#xE71A;" x:Name="stopButton" ToolTipService.ToolTip="Stop the stream currently played by the MediaElement"   FontFamily="Segoe MDL2 Assets" IsTabStop="True" Height="42" Width="42" Margin="1,1,1,1" Click="stop_Click"/>
-                        <Button IsEnabled="False" Content="&#xE74F;" x:Name="muteButton" ToolTipService.ToolTip="Mute the audio" FontFamily="Segoe MDL2 Assets" IsTabStop="True" Height="42" Width="42" Margin="1,1,1,1" Click="mute_Click" />
-                        <Button IsEnabled="False" Content="&#xE767;" x:Name="volumeUpButton" ToolTipService.ToolTip="Volume up" FontFamily="Segoe MDL2 Assets" FontSize="20" IsTabStop="True" Height="42" Width="42" Margin="1,1,1,1" Click="volumeUp_Click" />
-                        <Button IsEnabled="False" Content="&#xE767;" x:Name="volumeDownButton" ToolTipService.ToolTip="Volume down"  FontFamily="Segoe MDL2 Assets" FontSize="10" IsTabStop="True" Height="42" Width="42" Margin="1,1,1,1" Click="volumeDown_Click" />
+                        <Button IsEnabled="False" Content="&#xE768;" x:Name="playButton" ToolTipService.ToolTip="Open the current stream Uri to be played in streaming mode"  FontFamily="Segoe MDL2 Assets" IsTabStop="True" Height="42" Width="42" Margin="1,1,1,1" Click="Play_Click"/>
+                        <Button IsEnabled="False" Content="&#xE768;" x:Name="playPauseButton" ToolTipService.ToolTip="Pause the stream currently played by the MediaElement"  FontFamily="Segoe MDL2 Assets" FontSize="10" IsTabStop="True" Height="42" Width="42" Margin="1,1,1,1" Click="PlayPause_Click"/>
+                        <Button IsEnabled="False" Content="&#xE769;" x:Name="pausePlayButton" ToolTipService.ToolTip="Resume the stream currently puased by the MediaElement"   FontFamily="Segoe MDL2 Assets" FontSize="10" IsTabStop="True" Height="42" Width="42" Margin="1,1,1,1" Click="PausePlay_Click"/>
+                        <Button IsEnabled="False" Content="&#xE71A;" x:Name="stopButton" ToolTipService.ToolTip="Stop the stream currently played by the MediaElement"   FontFamily="Segoe MDL2 Assets" IsTabStop="True" Height="42" Width="42" Margin="1,1,1,1" Click="Stop_Click"/>
+                        <Button IsEnabled="False" Content="&#xE74F;" x:Name="muteButton" ToolTipService.ToolTip="Mute the audio" FontFamily="Segoe MDL2 Assets" IsTabStop="True" Height="42" Width="42" Margin="1,1,1,1" Click="Mute_Click" />
+                        <Button IsEnabled="False" Content="&#xE767;" x:Name="volumeUpButton" ToolTipService.ToolTip="Volume up" FontFamily="Segoe MDL2 Assets" FontSize="20" IsTabStop="True" Height="42" Width="42" Margin="1,1,1,1" Click="VolumeUp_Click" />
+                        <Button IsEnabled="False" Content="&#xE767;" x:Name="volumeDownButton" ToolTipService.ToolTip="Volume down"  FontFamily="Segoe MDL2 Assets" FontSize="10" IsTabStop="True" Height="42" Width="42" Margin="1,1,1,1" Click="VolumeDown_Click" />
                     </StackPanel>
                     <StackPanel Orientation="Horizontal"  VerticalAlignment="Center">
-                        <Button IsEnabled="False" Content="&#xE717;" x:Name="memoryRecordingButton" ToolTipService.ToolTip="Speech-To-Text with microphone live recording sent to Cognitive Services" FontFamily="Segoe MDL2 Assets" IsTabStop="True" Height="42" Width="42" Margin="1,1,1,1" Click="MemoryRecording_Click" />
-                        <Button IsEnabled="False" Content="&#xE895;" x:Name="continuousRecordingButton" ToolTipService.ToolTip="Continuous Speech-To-Text with microphone live recording sent to Cognitive Services" FontFamily="Segoe MDL2 Assets" IsTabStop="True" Height="42" Width="42" Margin="1,1,1,1" Click="ContinuousRecording_Click" />
+                        <Button IsEnabled="False" Content="&#xE717;" x:Name="memoryRecordingButton" ToolTipService.ToolTip="Capture microphone input in memory and send the result to Cognitive Services" FontFamily="Segoe MDL2 Assets" IsTabStop="True" Height="42" Width="42" Margin="1,1,1,1" Click="MemoryRecording_Click" />
+                        <Button IsEnabled="False" Content="&#xE895;" x:Name="continuousRecordingButton" ToolTipService.ToolTip="Continuous Speech-To-Text recognition with microphone WebSocket and Conversation mode required" FontFamily="Segoe MDL2 Assets" IsTabStop="True" Height="42" Width="42" Margin="1,1,1,1" Click="ContinuousRecording_Click" />
+                       <!--
                         <TextBlock x:Name="labelLevel" Text="Level:" HorizontalAlignment="Right" VerticalAlignment="Center" Width="40" />
                         <TextBox x:Name="Level" ToolTipService.ToolTip="Minimum Audio Level to start recording during continuous listening (0- 65535)" VerticalAlignment="Center" IsTabStop="True"  MaxWidth="60" MinWidth="60" Text="65535" />
                         <TextBlock x:Name="labelDuration" Text="Duration:" HorizontalAlignment="Right" VerticalAlignment="Center" Width="64" />
                         <TextBox x:Name="Duration" ToolTipService.ToolTip="Duration in milliseconds of the audio level measurement slot" IsTabStop="True"  MinWidth="56" MaxWidth="56" Text="1000" VerticalAlignment="Center" />
+-->
                     </StackPanel>
                     <StackPanel Orientation="Horizontal"  VerticalAlignment="Center">
                         <Canvas x:Name="CanvasGraph" Width="310" Height="40" Background="#50FFFFFF" Visibility="Visible" />
@@ -145,7 +147,7 @@
                 </StackPanel>
                 <StackPanel Orientation="Horizontal"  VerticalAlignment="Center">
                     <TextBlock x:Name="labelText" Text="Result:" HorizontalAlignment="Left" VerticalAlignment="Center" />
-                    <Button IsEnabled="False" Content="&#xE969;" x:Name="textToSpeechButton" ToolTipService.ToolTip="Test Text to Speech feature"  FontFamily="Segoe MDL2 Assets" IsTabStop="True" Height="42" Width="42" Margin="1,1,1,1" Click="textToSpeech_Click"/>
+                    <Button IsEnabled="False" Content="&#xE969;" x:Name="textToSpeechButton" ToolTipService.ToolTip="Test Text to Speech feature"  FontFamily="Segoe MDL2 Assets" IsTabStop="True" Height="42" Width="42" Margin="1,1,1,1" Click="TextToSpeech_Click"/>
                     <TextBlock x:Name="genderText" Text="Gender:" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5,0,0,0"/>
                     <ComboBox  x:Name="gender" ToolTipService.ToolTip="Gender for the TextToSpeech" VerticalAlignment="Center" Width="96"   HorizontalAlignment="Stretch"  IsTabStop="True" Margin="66,2,0,2" ></ComboBox>
                 </StackPanel>

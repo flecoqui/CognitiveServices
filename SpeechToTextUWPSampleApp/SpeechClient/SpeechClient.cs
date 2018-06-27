@@ -1,4 +1,14 @@
-﻿using System;
+﻿//*********************************************************
+//
+// Copyright (c) Microsoft. All rights reserved.
+// This code is licensed under the MIT License (MIT).
+// THIS CODE IS PROVIDED *AS IS* WITHOUT WARRANTY OF
+// ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING ANY
+// IMPLIED WARRANTIES OF FITNESS FOR A PARTICULAR
+// PURPOSE, MERCHANTABILITY, OR NON-INFRINGEMENT.
+//
+//********************************************************
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,7 +24,7 @@ namespace SpeechClient
     /// Event which returns the position of the buffer ready to be sent 
     /// This event is fired with continuous recording
     /// </summary>
-    public delegate void WebSocketEventHandler(SpeechClient sender, string Path, string Body);
+    public delegate void WebSocketEventHandler(SpeechClient sender, string Path, SpeechToTextResponse response);
 
 
     /// <summary>
@@ -40,7 +50,7 @@ namespace SpeechClient
         public string CustomEndPointID { get; set; }
         public string Token { get; set; }
 
-        private TimeSpan GetTokenPeriod = TimeSpan.FromSeconds(60);
+        private readonly TimeSpan GetTokenPeriod = TimeSpan.FromSeconds(60);
         private Windows.System.Threading.ThreadPoolTimer GetTokenPeriodicTimer;
 
         private bool bWebSocketReady = false;
@@ -62,7 +72,7 @@ namespace SpeechClient
         private const string CustomSpeechMaskUrl = "https://{0}/speech/recognition/{1}/cognitiveservices/v1?cid={2}";
         private const string SpeechMaskWebSocketUrl = "wss://{0}/speech/recognition/{1}/cognitiveservices/v1";
         private const string CustomSpeechMaskWebSocketUrl = "wss://{0}/speech/recognition/{1}/cognitiveservices/v1?cid={2}";
-        private string apiSynthesizeString = "synthesize";
+        private readonly string apiSynthesizeString = "synthesize";
         public SpeechClient()
         {
             Hostname = string.Empty;
@@ -581,6 +591,17 @@ namespace SpeechClient
                             }
                         }
                         await mediaCapture.StartRecordToStreamAsync(MEP, randomAudioStream);
+                        var t = Task.Run(async () =>
+                        {
+                            try
+                            {
+                                await AnalysingSpeechStream(randomAudioStream, RecordingToken);
+                            }
+                            catch (Exception ex)
+                            {
+                                System.Diagnostics.Debug.WriteLine("Exception while analysing Speech Config and WAV file: " + ex.Message);
+                            }
+                        }, RecordingToken);
                         bResult = true;
                         isRecording = true;
                         System.Diagnostics.Debug.WriteLine("Recording in audio stream...");
@@ -632,7 +653,8 @@ namespace SpeechClient
                         Windows.Web.Http.HttpStreamContent content = null;
                         if (randomAudioStream != null)
                         {
-                            content = new Windows.Web.Http.HttpStreamContent(randomAudioStream.AsStream().AsInputStream());
+                            var InputStream = randomAudioStream.GetInputStreamAt(0);
+                            content = new Windows.Web.Http.HttpStreamContent(InputStream);
                             //content.Headers.ContentLength = STTStream.GetLength();
                             //System.Diagnostics.Debug.WriteLine("REST API Post Content Length: " + content.Headers.ContentLength.ToString());
                             content.Headers.TryAppendWithoutValidation("ContentType", "audio/wav; codec=\"audio/pcm\"; samplerate=16000");
@@ -695,7 +717,7 @@ namespace SpeechClient
         /// </param>        
         /// <return>The result of the SpeechToText REST API.
         /// </return>
-        public IAsyncOperation<bool> SendMemoryBufferOverWebSocket(Windows.Storage.StorageFile wavFile, string speechAPI, string language, string resulttype)
+        public IAsyncOperation<bool> SendMemoryBufferOverWebSocket(string speechAPI, string language, string resulttype)
         {
             return Task.Run<bool>(async () =>
             {
@@ -742,6 +764,7 @@ namespace SpeechClient
                                         System.Diagnostics.Debug.WriteLine("Message Start not received after 5000 ms");
                                     }
                                 });
+                                return true;
                             }
                         }
                     }
@@ -805,30 +828,42 @@ namespace SpeechClient
         {
             return Task.Run<bool>(async () =>
             {
-                if (isRecordingInitialized)
+                try
                 {
-                    // If a recording is in progress during cleanup, stop it to save the recording
-                    if (isRecording)
+                    if (isRecordingInitialized)
                     {
-                        await StopRecording();
+                        // If a recording is in progress during cleanup, stop it to save the recording
+                        if (isRecording)
+                        {
+                            await StopRecording();
+                        }
+                        isRecordingInitialized = false;
                     }
-                    isRecordingInitialized = false;
-                }
 
-                if (mediaCapture != null)
-                {
-                    mediaCapture.RecordLimitationExceeded -= mediaCapture_RecordLimitationExceeded;
-                    mediaCapture.Failed -= mediaCapture_Failed;
-                    mediaCapture.Dispose();
-                    mediaCapture = null;
+                    if (mediaCapture != null)
+                    {
+                        mediaCapture.RecordLimitationExceeded -= MediaCapture_RecordLimitationExceeded;
+                        mediaCapture.Failed -= MediaCapture_Failed;
+                        mediaCapture.Dispose();
+                        mediaCapture = null;
+                    }
+                    if (GetTokenPeriodicTimer != null)
+                    {
+                        GetTokenPeriodicTimer.Cancel();
+                        GetTokenPeriodicTimer = null;
+                    }
+                    if (webSocket != null)
+                        CleanupWebSocket();
+                    if (randomAudioStream != null)
+                    {
+                        randomAudioStream.Dispose();
+                        randomAudioStream = null;
+                    }
                 }
-                if(GetTokenPeriodicTimer!=null)
+                catch(Exception ex)
                 {
-                    GetTokenPeriodicTimer.Cancel();
-                    GetTokenPeriodicTimer = null;
+                    System.Diagnostics.Debug.WriteLine("Exception while cleaning up the SpeechClient: " + ex.Message);
                 }
-                if(webSocket!=null)
-                    CleanupWebSocket();
                 return true;
             }).AsAsyncOperation<bool>();
         }
@@ -846,7 +881,7 @@ namespace SpeechClient
         /// </param>
         /// <return>true if successful.
         /// </return>
-        public IAsyncOperation<bool> SaveBuffer(Windows.Storage.StorageFile wavFile)
+        public IAsyncOperation<bool> SaveMemoryBuffer(Windows.Storage.StorageFile wavFile)
         {
             return Task.Run<bool>(async () =>
             {
@@ -859,6 +894,7 @@ namespace SpeechClient
                         {
                             if ((stream != null) && (randomAudioStream != null))
                             {
+                                randomAudioStream.Seek(0);
                                 stream.SetLength(0);
                                 await randomAudioStream.AsStream().CopyToAsync(stream);
                                 System.Diagnostics.Debug.WriteLine("Audio Stream stored in: " + wavFile.Path);
@@ -1387,7 +1423,7 @@ namespace SpeechClient
                                     }
                                     else
                                         break;
-                                    var amplitude = Decode(arr).Select(Math.Abs).Average(x => x);
+                                    var amplitude = Decode(dataArray).Select(Math.Abs).Average(x => x);
                                     if (AudioLevel != null)
                                         this.AudioLevel(this, amplitude);
                                 }
@@ -1420,6 +1456,48 @@ namespace SpeechClient
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine("Exception while sending Speech Stream: " + ex.Message);
+            }
+            return result;
+        }
+        async System.Threading.Tasks.Task<bool> AnalysingSpeechStream(Windows.Storage.Streams.IRandomAccessStream wavStream, System.Threading.CancellationToken token)
+        {
+            bool result = false;
+            try
+            {
+                if (wavStream != null)
+                {
+                    int Len = GetWAVHeaderLength(wavStream);
+                    if (Len > 0)
+                    {
+                        ulong index = (ulong)Len;
+                        uint length = 4096;
+                        byte[] dataArray = new byte[length];
+
+                        while (!token.IsCancellationRequested)
+                        {
+                            Windows.Storage.Streams.IInputStream iStream = wavStream.GetInputStreamAt(index);
+                            if (iStream != null)
+                            {
+
+                                if (wavStream.Size > index + length)
+                                {
+                                    iStream.ReadAsync(dataArray.AsBuffer(), length, Windows.Storage.Streams.InputStreamOptions.Partial).AsTask().Wait();
+                                    index += length;
+                                    var amplitude = Decode(dataArray).Select(Math.Abs).Average(x => x);
+                                    if (AudioLevel != null)
+                                        this.AudioLevel(this, amplitude);
+                                }
+                                else
+                                    await System.Threading.Tasks.Task.Delay(10);
+                            }
+                        }
+                    }
+                }
+                result = true;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine("Exception while analysing Speech Stream: " + ex.Message);
             }
             return result;
         }
@@ -1623,8 +1701,8 @@ namespace SpeechClient
                     AudioProcessing = Windows.Media.AudioProcessing.Raw
 
                 });
-                mediaCapture.RecordLimitationExceeded += mediaCapture_RecordLimitationExceeded;
-                mediaCapture.Failed += mediaCapture_Failed;
+                mediaCapture.RecordLimitationExceeded += MediaCapture_RecordLimitationExceeded;
+                mediaCapture.Failed += MediaCapture_Failed;
                 System.Diagnostics.Debug.WriteLine("Device Initialized Successfully...");
                 isRecordingInitialized = true;
             }
@@ -1634,20 +1712,18 @@ namespace SpeechClient
             }
             return isRecordingInitialized;
         }
-        async void mediaCapture_Failed(Windows.Media.Capture.MediaCapture sender, Windows.Media.Capture.MediaCaptureFailedEventArgs errorEventArgs)
+        async void MediaCapture_Failed(Windows.Media.Capture.MediaCapture sender, Windows.Media.Capture.MediaCaptureFailedEventArgs errorEventArgs)
         {
             System.Diagnostics.Debug.WriteLine("Fatal Error " + errorEventArgs.Message);
             await StopRecording();
-            if (AudioCaptureError != null)
-                AudioCaptureError(this, errorEventArgs.Message);
+            AudioCaptureError?.Invoke(this, errorEventArgs.Message);
         }
 
-        async void mediaCapture_RecordLimitationExceeded(Windows.Media.Capture.MediaCapture sender)
+        async void MediaCapture_RecordLimitationExceeded(Windows.Media.Capture.MediaCapture sender)
         {
             System.Diagnostics.Debug.WriteLine("Stopping Record on exceeding max record duration");
             await StopRecording();
-            if (AudioCaptureError != null)
-                AudioCaptureError(this, "Error Media Capture: Record Limitation Exceeded");
+            AudioCaptureError?.Invoke(this, "Error Media Capture: Record Limitation Exceeded");
         }
         string GetAzureRegion(string SpeechHostName)
         {
@@ -1676,32 +1752,32 @@ namespace SpeechClient
                         WebSocketMessage wsm = WebSocketMessage.CreateSocketMessage(message);
                         if (wsm != null)
                         {
+                            SpeechToTextResponse sr = new SpeechToTextResponse(wsm.Body);
                             switch (wsm.Path.ToLower())
                             {
                                 case "turn.start":
                                     WebSocketInitializedEvent.Set();
-                                    if (WebSocketEvent != null) WebSocketEvent(this, wsm.Path.ToLower(), wsm.Body);
+                                    WebSocketEvent?.Invoke(this, wsm.Path.ToLower(), sr);
                                     break;
                                 case "turn.end":
                                     bWebSocketReady = false;
-                                    if (AudioCaptureError != null)
-                                        AudioCaptureError(this, "Received end of conversation from the service");
-                                    if (WebSocketEvent != null) WebSocketEvent(this, wsm.Path.ToLower(), wsm.Body);
+                                    AudioCaptureError?.Invoke(this, "Received end of conversation from the service");
+                                    WebSocketEvent?.Invoke(this, wsm.Path.ToLower(), sr);
                                     break;
                                 case "speech.enddetected":
-                                    if (WebSocketEvent != null) WebSocketEvent(this, wsm.Path.ToLower(), wsm.Body);
+                                    WebSocketEvent?.Invoke(this, wsm.Path.ToLower(), sr);
                                     break;
                                 case "speech.phrase":
-                                    if (WebSocketEvent != null) WebSocketEvent(this, wsm.Path.ToLower(), wsm.Body);
+                                    WebSocketEvent?.Invoke(this, wsm.Path.ToLower(), sr);
                                     break;
                                 case "speech.hypothesis":
-                                    if (WebSocketEvent != null) WebSocketEvent(this, wsm.Path.ToLower(), wsm.Body);
+                                    WebSocketEvent?.Invoke(this, wsm.Path.ToLower(), sr);
                                     break;
                                 case "speech.startdetected":
-                                    if (WebSocketEvent != null) WebSocketEvent(this, wsm.Path.ToLower(), wsm.Body);
+                                    WebSocketEvent?.Invoke(this, wsm.Path.ToLower(), sr);
                                     break;
                                 case "speech.fragment":
-                                    if (WebSocketEvent != null) WebSocketEvent(this, wsm.Path.ToLower(), wsm.Body);
+                                    WebSocketEvent?.Invoke(this, wsm.Path.ToLower(), sr);
                                     break;
                                 default:
                                     break;

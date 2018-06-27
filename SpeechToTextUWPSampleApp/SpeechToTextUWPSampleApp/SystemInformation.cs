@@ -18,7 +18,7 @@ using Windows.Security.ExchangeActiveSyncProvisioning;
 using Windows.System.Profile;
 using Windows.Devices.Enumeration.Pnp;
 
-namespace SpeechToTextClient
+namespace SpeechToTextUWPSampleApp
 {
     public static class SystemInformation
     {
