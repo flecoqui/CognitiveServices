@@ -1466,6 +1466,9 @@ namespace SpeechClient
             {
                 if (wavStream != null)
                 {
+                    // Wait for the first audio samples before getting the lenght of the header 
+                    while(wavStream.Size< 4096) await System.Threading.Tasks.Task.Delay(10);
+
                     int Len = GetWAVHeaderLength(wavStream);
                     if (Len > 0)
                     {

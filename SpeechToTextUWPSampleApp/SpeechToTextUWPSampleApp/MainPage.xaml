@@ -141,7 +141,7 @@
             </StackPanel>
             <StackPanel x:Name="SubTitlePanel" Grid.Row="1" Grid.RowSpan="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="5"  >
                 <StackPanel Orientation="Horizontal"  >
-                    <TextBlock x:Name="labelTextToSpeechLanguage" Text="Speech-To-Text Language:" HorizontalAlignment="Right" VerticalAlignment="Center" />
+                    <TextBlock x:Name="labelTextToSpeechLanguage" Text="Text-To-Speech Language:" HorizontalAlignment="Right" VerticalAlignment="Center" />
                     <ComboBox  x:Name="textToSpeechLanguage" ToolTipService.ToolTip="Language for Speech-To-Text" VerticalAlignment="Center" HorizontalAlignment="Stretch"  IsTabStop="True" Margin="38,2,0,2" Width="95" >
                     </ComboBox>
                 </StackPanel>
