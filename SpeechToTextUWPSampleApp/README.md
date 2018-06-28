@@ -7,14 +7,27 @@
 
 Overview
 --------------
+This sample application can use the following Cognitive Services:
+- Microsoft Speech API or Bing Speech services: documentation is available [here](https://docs.microsoft.com/en-us/azure/cognitive-services/speech/home)
+- Custom Speech service: the documentation is available [here](https://docs.microsoft.com/en-us/azure/cognitive-services/custom-speech-service/cognitive-services-custom-speech-home)
+- Speech Service (Preview): the documentation is available [here](https://docs.microsoft.com/en-us/azure/cognitive-services/speech-service/)
+
+Those 3 services are accesible through:
+
+- a REST API for the Speech-To-Text described [here](https://docs.microsoft.com/en-us/azure/cognitive-services/Speech/getstarted/getstartedrest?tabs=Powershell)  
+
+- a WebSocket protocol for the Speech-To-Text described [here](https://docs.microsoft.com/en-us/azure/cognitive-services/Speech/api-reference-rest/websocketprotocol) 
+- a REST API for the Text-To-Speech described [here](https://docs.microsoft.com/en-us/azure/cognitive-services/Speech/API-Reference-REST/BingVoiceOutput)
+
+
 This Speech-To-Text and Text-To-Speech UWP Sample Application  can:
 
 - **Record**: record spoken audio into a WAV file, 
 - **Play**: play the WAV files stored on the local disk,
 - **Convert WAV file**: Convert the WAV file to text with Cognitive Services,
 - **Convert live audio**: Convert live audio to text with Cognitive Services, the audio buffer is sent to Cogntive Services at the end of the recording session.
-- **Convert continuously live audio**: Convert continuously live audio to text with Cognitive Services, in that case, the audio buffers are sent to Cognitive Services if the audio level is sufficient during a configurable period.
-- **Convert Text**: Convert a text into a WAV stream associated with the current language,
+- **Convert continuously live audio**: Convert continuously live audio to text with Cognitive Services using the conversation mode only available through the WebSocket API.
+- **Convert Text**: Convert a text into a WAV stream associated with the current language (Text-To-Speech),
 
 The spoken audio is recorded into a WAV file in the following format:
 
@@ -66,10 +79,23 @@ Once the application is installed on your device, you can launch it and the main
 
 The application is used to record spoken audio into a WAV file, play the WAV files stored on the local disk, convert the WAV file to text, convert live audio to text and convert continuously live audio to text .
 
-### Entering your subscription Key
-Once the application is launched, you can enter your subscription key which will be used for the communication with Speech-To-Text Cognitive Services.
+### Selecting your service (Bing Speech, Custom Speech or Speech)
+Once the application is launched, you can select the service you want to use in selecting the hostname associated with your service. "speech.platform.bing.com" is associated with Bing Speech, the other hostnames "region.stt.speech.microsoft.com" are associated to Speech Service or Custom Speech services.
 
-![](https://raw.githubusercontent.com/flecoqui/CognitiveServices/master/SpeechToTextUWPSampleApp/Docs/subscriptionkey.png)
+![](https://raw.githubusercontent.com/flecoqui/CognitiveServices/master/SpeechToTextUWPSampleApp/Docs/hostname.png)
+
+### Entering your subscription Key and your customEndpointID
+Once the hostname is selected, you can enter your subscription key which will be used for the communication with Speech-To-Text Cognitive Services. If you select Custom Speech you need to enter the Custom Speech Endpoint ID as well. 
+
+Bing speech selection:
+![](https://raw.githubusercontent.com/flecoqui/CognitiveServices/master/SpeechToTextUWPSampleApp/Docs/bingkey.png)
+
+Custom speech selection:
+![](https://raw.githubusercontent.com/flecoqui/CognitiveServices/master/SpeechToTextUWPSampleApp/Docs/customkey.png)
+
+Speech service selection:
+![](https://raw.githubusercontent.com/flecoqui/CognitiveServices/master/SpeechToTextUWPSampleApp/Docs/speechkey.png)
+
 
 ### Recording Spoken Audio into a WAV file
 With the application you can record the spoken audio. 
@@ -77,9 +103,6 @@ Click on the button "Record" to start the recording.
 
 ![](https://raw.githubusercontent.com/flecoqui/CognitiveServices/master/SpeechToTextUWPSampleApp/Docs/record.png)
 
-Now you can speak, you can see the audio level in cyan
-
-![](https://raw.githubusercontent.com/flecoqui/CognitiveServices/master/SpeechToTextUWPSampleApp/Docs/stopliverecord.png)
 
 after few seconds click on the same button "Stop Record" to stop the recording.
 
@@ -120,15 +143,20 @@ Once the application is playing an audio file it's possible to switch off the au
 ### Converting Spoken Audio WAV file to Text (Speech-To-Text)
 With the application, you can convert to text the WAV file you have just recorded. 
 First, check the path of the your audio file is correct in the Path Edit box,
-then select the language in the "Language" Combo Box: 
+then select the language in the "Speech-To-Text Language" Combo Box: 
 
 ![](https://raw.githubusercontent.com/flecoqui/CognitiveServices/master/SpeechToTextUWPSampleApp/Docs/language.png)
 
-You can select the conversation model: interactive, conversation, dictation with "Cognitive Services Speech Recognition API"  Combo Box: 
+You can select the way to exchange information with the Cognitive Services either through the REST API or through the Web Socket protocol. Web socket protocol support conversation mode, which is not the case for the REST API: 
+
+![](https://raw.githubusercontent.com/flecoqui/CognitiveServices/master/SpeechToTextUWPSampleApp/Docs/rest.png)
+![](https://raw.githubusercontent.com/flecoqui/CognitiveServices/master/SpeechToTextUWPSampleApp/Docs/websocket.png)
+
+You can select the conversation model: interactive, conversation, dictation with "Cognitive Services Speech Recognition API"  Combo Box. the conversation mode is only available when the WebSocket protocol is selected: 
 
 ![](https://raw.githubusercontent.com/flecoqui/CognitiveServices/master/SpeechToTextUWPSampleApp/Docs/mode.png)
 
-You can also select the result type: simle or detailed  with "Cognitive Services Speech Result type"  Combo Box: 
+You can also select the result type: simple or detailed  with "Cognitive Services Speech Result type"  Combo Box: 
 
 ![](https://raw.githubusercontent.com/flecoqui/CognitiveServices/master/SpeechToTextUWPSampleApp/Docs/resulttype.png)
 
@@ -151,10 +179,6 @@ Then click on the button "Convert" to start the recording of Live Spoken Audio.
 
 ![](https://raw.githubusercontent.com/flecoqui/CognitiveServices/master/SpeechToTextUWPSampleApp/Docs/liverecord.png) 
 
-Now you can speak, you can see the audio level in cyan
-
-![](https://raw.githubusercontent.com/flecoqui/CognitiveServices/master/SpeechToTextUWPSampleApp/Docs/stopliverecord.png)
-
 after few seconds click on the same button "Stop Convert" to stop the recording and transmit the audio buffer to Cognitive Services.
 
 ![](https://raw.githubusercontent.com/flecoqui/CognitiveServices/master/SpeechToTextUWPSampleApp/Docs/stopliverecordbutton.png) 
@@ -170,16 +194,9 @@ First, select the language in the "Language" Combo Box:
 
 ![](https://raw.githubusercontent.com/flecoqui/CognitiveServices/master/SpeechToTextUWPSampleApp/Docs/language.png).
 
-For continuous recording, you can define the two following parameters:
+For continuous recording, you need to select conversation mode and WebSocket communication.
 
-1. The minimum audio level average necessary to trigger the recording, it's a value between 0 and 65535. By default the value is 300. You can tune this value after several microphone tests.
-2. The duration in milliseconds for the calculation of the audio level average . With this parameter you define the period during which the audio level is measured. By default the value is 1000 ms.  
-
-![](https://raw.githubusercontent.com/flecoqui/CognitiveServices/master/SpeechToTextUWPSampleApp/Docs/levelduration.png).
-
-As soon as the audio level average is over the Level, all the audio samples will be recorded till the audio level average becomes below the same level.
-
-![](https://raw.githubusercontent.com/flecoqui/CognitiveServices/master/SpeechToTextUWPSampleApp/Docs/graph.png).
+![](https://raw.githubusercontent.com/flecoqui/CognitiveServices/master/SpeechToTextUWPSampleApp/Docs/continuous.png).
 
 Then click on the button "Continuous Record" to start the recording of Live Spoken Audio.
 
@@ -189,18 +206,6 @@ Now you can speak, you can see the audio level in cyan
 
 ![](https://raw.githubusercontent.com/flecoqui/CognitiveServices/master/SpeechToTextUWPSampleApp/Docs/audiolevel.png)
 
-once the audio level is sufficient the Live Spoken Audio is recorded till the audio level become too low. Then the audio buffer is sent to Cognitive Services.
-The result is displayed, a green rectangle is displayed, if the conversion is successul:
-
-![](https://raw.githubusercontent.com/flecoqui/CognitiveServices/master/SpeechToTextUWPSampleApp/Docs/result_ok.png) 
-
-a red rectangle is displayed, if the conversion failed:
-
-![](https://raw.githubusercontent.com/flecoqui/CognitiveServices/master/SpeechToTextUWPSampleApp/Docs/result_error.png) 
-
-Moreover, if the application is suspended, the continuous recording is stopped. When the application will resume, the continous recording will start automatically.
-
-![](https://raw.githubusercontent.com/flecoqui/CognitiveServices/master/SpeechToTextUWPSampleApp/Docs/resuming.png) 
 
 IF you want to stop the continuous recording click on the same button:
 
@@ -209,7 +214,7 @@ IF you want to stop the continuous recording click on the same button:
 ### Converting text to speech  (Text-To-Speech)
 With the application, you can also convert a text into speech . 
 First, enter your text in the Result text box, 
-then select the language in the "Language" Combo Box: 
+then select the language in the "Text-To-Speech Language" Combo Box: 
 
 ![](https://raw.githubusercontent.com/flecoqui/CognitiveServices/master/SpeechToTextUWPSampleApp/Docs/language.png)
 
