@@ -8,16 +8,16 @@
 Overview
 --------------
 This sample application can use the following Cognitive Services:
-- Microsoft Speech API or Bing Speech services: documentation is available [here](https://docs.microsoft.com/en-us/azure/cognitive-services/speech/home)
-- Custom Speech service: the documentation is available [here](https://docs.microsoft.com/en-us/azure/cognitive-services/custom-speech-service/cognitive-services-custom-speech-home)
-- Speech Service (Preview): the documentation is available [here](https://docs.microsoft.com/en-us/azure/cognitive-services/speech-service/)
+- **Microsoft Speech API** or **Bing Speech** services: documentation is available [here](https://docs.microsoft.com/en-us/azure/cognitive-services/speech/home)
+- **Custom Speech** service: the documentation is available [here](https://docs.microsoft.com/en-us/azure/cognitive-services/custom-speech-service/cognitive-services-custom-speech-home)
+- **Speech Service** (Preview): the documentation is available [here](https://docs.microsoft.com/en-us/azure/cognitive-services/speech-service/)
 
-Those 3 services are accesible through:
+Those 3 services are accessible through:
 
-- a REST API for the Speech-To-Text described [here](https://docs.microsoft.com/en-us/azure/cognitive-services/Speech/getstarted/getstartedrest?tabs=Powershell)  
+- a **REST API for the Speech-To-Text** described [here](https://docs.microsoft.com/en-us/azure/cognitive-services/Speech/getstarted/getstartedrest?tabs=Powershell)  
 
-- a WebSocket protocol for the Speech-To-Text described [here](https://docs.microsoft.com/en-us/azure/cognitive-services/Speech/api-reference-rest/websocketprotocol) 
-- a REST API for the Text-To-Speech described [here](https://docs.microsoft.com/en-us/azure/cognitive-services/Speech/API-Reference-REST/BingVoiceOutput)
+- a **WebSocket protocol for the Speech-To-Text** described [here](https://docs.microsoft.com/en-us/azure/cognitive-services/Speech/api-reference-rest/websocketprotocol) 
+- a **REST API for the Text-To-Speech** described [here](https://docs.microsoft.com/en-us/azure/cognitive-services/Speech/API-Reference-REST/BingVoiceOutput)
 
 
 This Speech-To-Text and Text-To-Speech UWP Sample Application  can:
@@ -88,12 +88,15 @@ Once the application is launched, you can select the service you want to use in 
 Once the hostname is selected, you can enter your subscription key which will be used for the communication with Speech-To-Text Cognitive Services. If you select Custom Speech you need to enter the Custom Speech Endpoint ID as well. 
 
 Bing speech selection:
+
 ![](https://raw.githubusercontent.com/flecoqui/CognitiveServices/master/SpeechToTextUWPSampleApp/Docs/bingkey.png)
 
 Custom speech selection:
+
 ![](https://raw.githubusercontent.com/flecoqui/CognitiveServices/master/SpeechToTextUWPSampleApp/Docs/customkey.png)
 
 Speech service selection:
+
 ![](https://raw.githubusercontent.com/flecoqui/CognitiveServices/master/SpeechToTextUWPSampleApp/Docs/speechkey.png)
 
 
