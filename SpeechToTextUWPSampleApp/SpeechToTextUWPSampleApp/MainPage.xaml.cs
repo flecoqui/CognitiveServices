@@ -878,7 +878,7 @@ namespace SpeechToTextUWPSampleApp
                         mediaPlayer.Play();
                     }
                     else
-                        LogMessage("Error while readding speech buffer");
+                        LogMessage("Error while reading speech buffer");
 
                 }
                 else
