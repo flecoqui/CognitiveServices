@@ -1254,9 +1254,7 @@ namespace SpeechClient
                  "Path: speech.config" + Environment.NewLine +
                  "x-timestamp: " + DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ss.fffK") + Environment.NewLine +
                  "content-type: application/json; charset=utf-8" + Environment.NewLine + Environment.NewLine +
-                 "{ \"context\":{ \"system\":{ \"version\":\"1.0.00000\"},\"os\":{ \"platform\":\"Unity\",\"name\":\"Unity\",\"version\":\"\"},\"device\":{ \"manufacturer\":\"SpeechSample\",\"model\":\"UnitySpeechSample\",\"version\":\"1.0.00000\"} } }";
-
-                //"{\"context\": {\"system\": { \"version\":  \"2.0.12341\"},\"os\": {\"platform\": \"Windows\",\"name\": \"Windows 10\",\"version\": \"10.0.0.0\" },\"device\": {\"manufacturer\": \"Contoso\",\"model\": \"Fabrikan\",\"version\": \"7.341\"}}}}";
+                 "{ \"context\":{ \"system\":{ \"version\":\"2.0.12341\"},\"os\":{ \"platform\":\"Windows\",\"name\":\"Windows 10\",\"version\":\"10.0.17763.253\"},\"device\":{ \"manufacturer\":\"Contoso\",\"model\":\"Fabrikan\",\"version\":\"7.341\"} } }";
 
                 System.Diagnostics.Debug.Write(payload);
                 using (var dataWriter = new Windows.Storage.Streams.DataWriter(webSocket.OutputStream))
