@@ -20,7 +20,10 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using Windows.UI.ViewManagement;
-
+using Windows.Media;
+using Windows.Media.Capture;
+using Windows.Media.MediaProperties;
+using Windows.Devices.Enumeration;
 
 namespace SpeechToTextUWPSampleApp
 {
@@ -209,8 +212,9 @@ namespace SpeechToTextUWPSampleApp
             
             // Display OS, Device information
             LogMessage(SystemInformation.GetString());
-            
 
+            await FillComboRecordingDevices();
+            // If there is no device mounted on the desired panel, return the first device found.
 
             // Initialize level and duration
             //Level.Text = level.ToString();
@@ -221,6 +225,46 @@ namespace SpeechToTextUWPSampleApp
             // Create Speech Client if possible 
             await CreateSpeechClient();
 
+        }
+        const string defaultDeviceLabel = "Default Device";
+        private async System.Threading.Tasks.Task<bool> FillComboRecordingDevices()
+        {
+            ComboDevice.Items.Add(defaultDeviceLabel);
+            var allVideoDevices = await DeviceInformation.FindAllAsync(DeviceClass.AudioCapture);
+            foreach (var d in allVideoDevices)
+            {
+                ComboDevice.Items.Add(d.Name);
+            }
+            if (ComboDevice.Items.Count > 0)
+            {
+                ComboDevice.SelectedIndex = 0;
+                return true;
+            }
+            return false;
+        }
+        private async System.Threading.Tasks.Task<string> GetCurrentRecordingDeviceId()
+        {
+            string result = string.Empty;
+            if (ComboDevice.Items.Count > 0)
+            {
+                
+                string name = ComboDevice.SelectedItem as string;
+                if (!string.IsNullOrEmpty(name))
+                {
+                    if (string.Equals(name, defaultDeviceLabel))
+                        return string.Empty;
+                    var allVideoDevices = await DeviceInformation.FindAllAsync(DeviceClass.AudioCapture);
+                    foreach (var d in allVideoDevices)
+                    {
+                        if (string.Equals(name, d.Name))
+                        {
+                            result = d.Id;
+                            break;
+                        }
+                    }
+                }
+            }
+            return result;
         }
         async System.Threading.Tasks.Task<bool> CreateSpeechClient()
         {
@@ -1259,7 +1303,7 @@ namespace SpeechToTextUWPSampleApp
                     {
                         if (await speechClient.Cleanup())
                         {
-                            if (await speechClient.StartRecordingInMemory())
+                            if (await speechClient.StartRecordingInMemory(await GetCurrentRecordingDeviceId()))
                             {
                                 ClearResult();
                                 isRecordingInMemory = true;
@@ -1363,7 +1407,7 @@ namespace SpeechToTextUWPSampleApp
                             string speechAPI = ComboAPI.SelectedItem.ToString();
                             string language = speechToTextLanguage.SelectedItem.ToString();
                             string resultType = ComboAPIResult.SelectedItem.ToString();
-                            if (await speechClient.StartRecording(speechAPI, language, resultType))
+                            if (await speechClient.StartRecording(speechAPI, language, resultType, await GetCurrentRecordingDeviceId()))
                             {
 
                                 isRecordingContinuously = true;
@@ -1525,7 +1569,7 @@ namespace SpeechToTextUWPSampleApp
                     {
                         if (await speechClient.Cleanup())
                         {
-                            if (await speechClient.StartRecordingInMemory())
+                            if (await speechClient.StartRecordingInMemory(await GetCurrentRecordingDeviceId()))
                             {
                                 isRecordingInFile = true;
                                 speechClient.AudioLevel += Client_AudioLevel;

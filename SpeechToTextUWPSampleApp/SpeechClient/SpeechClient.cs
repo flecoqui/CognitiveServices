@@ -413,13 +413,13 @@ namespace SpeechClient
         /// </param>
         /// <return>return true if successful.
         /// </return>
-        public IAsyncOperation<bool> StartRecording(string speechAPI, string language, string resulttype)
+        public IAsyncOperation<bool> StartRecording(string speechAPI, string language, string resulttype, string RecordingDeviceID)
         {
             return Task.Run<bool>(async () =>
             {
                 bool bResult = false;
                 if (isRecordingInitialized != true)
-                    await InitializeRecording();
+                    await InitializeRecording(RecordingDeviceID);
                 if (randomAudioStream != null)
                 {
                     randomAudioStream.Dispose();
@@ -484,6 +484,7 @@ namespace SpeechClient
                                     speechUrl = string.Format(CustomSpeechMaskWebSocketUrl, Hostname, speechAPI, CustomEndPointID) + "&language=" + language + "&format=" + resulttype;
                                 CreateWebSocket();
 
+                                await GetToken();
                                 webSocket.SetRequestHeader("Authorization", Token);
                                 webSocket.SetRequestHeader("X-ConnectionId", Guid.NewGuid().ToString("N"));
                                 await webSocket.ConnectAsync(new Uri(speechUrl));
@@ -538,13 +539,13 @@ namespace SpeechClient
         /// </param>
         /// <return>return true if successful.
         /// </return>
-        public IAsyncOperation<bool> StartRecordingInMemory()
+        public IAsyncOperation<bool> StartRecordingInMemory(string RecordingDeviceID)
         {
             return Task.Run<bool>(async () =>
             {
                 bool bResult = false;
                 if (isRecordingInitialized != true)
-                    await InitializeRecording();
+                    await InitializeRecording(RecordingDeviceID);
                 if (randomAudioStream != null)
                 {
                     randomAudioStream.Dispose();
@@ -1685,7 +1686,7 @@ namespace SpeechClient
         #endregion
         #region private
         
-        private async System.Threading.Tasks.Task<bool> InitializeRecording()
+        private async System.Threading.Tasks.Task<bool> InitializeRecording(string DeviceID)
         {
             isRecordingInitialized = false;
             try
@@ -1693,15 +1694,22 @@ namespace SpeechClient
                 // Initialize MediaCapture
                 mediaCapture = new Windows.Media.Capture.MediaCapture();
 
-                await mediaCapture.InitializeAsync(new Windows.Media.Capture.MediaCaptureInitializationSettings
-                {
-                    //VideoSource = screenCapture.VideoSource,
-                    //      AudioSource = screenCapture.AudioSource,
-                    StreamingCaptureMode = Windows.Media.Capture.StreamingCaptureMode.Audio,
-                    MediaCategory = Windows.Media.Capture.MediaCategory.Other,
-                    AudioProcessing = Windows.Media.AudioProcessing.Raw
+                if (!string.IsNullOrEmpty(DeviceID))
+                    await mediaCapture.InitializeAsync(new Windows.Media.Capture.MediaCaptureInitializationSettings
+                    {
+                        AudioDeviceId = DeviceID, 
+                        StreamingCaptureMode = Windows.Media.Capture.StreamingCaptureMode.Audio,
+                        MediaCategory = Windows.Media.Capture.MediaCategory.Other,
+                        AudioProcessing = Windows.Media.AudioProcessing.Raw
+                    });
+                else
+                    await mediaCapture.InitializeAsync(new Windows.Media.Capture.MediaCaptureInitializationSettings
+                    {
+                        StreamingCaptureMode = Windows.Media.Capture.StreamingCaptureMode.Audio,
+                        MediaCategory = Windows.Media.Capture.MediaCategory.Other,
+                        AudioProcessing = Windows.Media.AudioProcessing.Raw
+                    });
 
-                });
                 mediaCapture.RecordLimitationExceeded += MediaCapture_RecordLimitationExceeded;
                 mediaCapture.Failed += MediaCapture_Failed;
                 System.Diagnostics.Debug.WriteLine("Device Initialized Successfully...");

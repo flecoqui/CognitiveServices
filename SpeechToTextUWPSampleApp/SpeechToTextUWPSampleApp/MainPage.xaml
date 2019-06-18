@@ -105,7 +105,14 @@
                         <ComboBox  x:Name="speechToTextLanguage" ToolTipService.ToolTip="Language for Speech-To-Text" VerticalAlignment="Center" HorizontalAlignment="Stretch"  IsTabStop="True" Margin="40,2,0,2" Width="95" >
                         </ComboBox>
                     </StackPanel>
-
+                    <StackPanel Orientation="Horizontal"  VerticalAlignment="Center">
+                        <TextBlock Text="Recording devices:" VerticalAlignment="Center" HorizontalAlignment="Left" Width="176"  />
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal"  VerticalAlignment="Center">
+                        <StackPanel Orientation="Vertical"  VerticalAlignment="Center">
+                            <ComboBox x:Name="ComboDevice" ToolTipService.ToolTip="Select the recording device" Width="308" IsTabStop="True"   HorizontalAlignment="Left" SelectionChanged="ComboHostname_SelectionChanged"/>
+                        </StackPanel>
+                    </StackPanel>
                     <StackPanel Orientation="Horizontal"  VerticalAlignment="Center">
                         <TextBlock x:Name="labelUri" Text="Audio file path:" VerticalAlignment="Center" HorizontalAlignment="Left" Width="176"  />
                         <Button IsEnabled="False" Content="&#xE720;" x:Name="fileRecordingButton" ToolTipService.ToolTip="Record microphone into a local WAV file" FontFamily="Segoe MDL2 Assets" IsTabStop="True" Height="42" Width="42" Margin="1,1,1,1" Click="FileRecording_Click"  />
