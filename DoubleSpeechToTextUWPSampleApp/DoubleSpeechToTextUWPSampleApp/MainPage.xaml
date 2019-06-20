@@ -1,0 +1,175 @@
+﻿<Page
+    x:Class="DoubleSpeechToTextUWPSampleApp.MainPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:DoubleSpeechToTextUWPSampleApp"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+    <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto"  HorizontalScrollMode="Disabled" VerticalScrollMode="Enabled" ZoomMode="Disabled" >
+
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup>
+                <VisualState x:Name="wideState">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="640" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="SubTitlePanel.(Grid.Column)" Value="1"/>
+                        <Setter Target="SubTitlePanel.(Grid.Row)" Value="0"/>
+                        <Setter Target="SubTitlePanel.(Grid.RowSpan)" Value="2"/>
+                        <Setter Target="SubTitlePanel.(Grid.ColumnSpan)" Value="1"/>
+                        <Setter Target="TitlePanel.(Grid.Row)" Value="0"></Setter>
+                        <Setter Target="TitlePanel.(Grid.RowSpan)" Value="1"></Setter>
+                        <Setter Target="TitlePanel.(Grid.Column)" Value="0"></Setter>
+                        <Setter Target="TitlePanel.(Grid.ColumnSpan)" Value="1"></Setter>
+
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="narrowState">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="0" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="SubTitlePanel.(Grid.Column)" Value="0"/>
+                        <Setter Target="SubTitlePanel.(Grid.Row)" Value="1"/>
+                        <Setter Target="SubTitlePanel.(Grid.RowSpan)" Value="1"/>
+                        <Setter Target="SubTitlePanel.(Grid.ColumnSpan)" Value="2"/>
+                        <Setter Target="TitlePanel.(Grid.Row)" Value="0"></Setter>
+                        <Setter Target="TitlePanel.(Grid.RowSpan)" Value="1"></Setter>
+                        <Setter Target="TitlePanel.(Grid.Column)" Value="0"></Setter>
+                        <Setter Target="TitlePanel.(Grid.ColumnSpan)" Value="2"></Setter>
+
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+        <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="320"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <StackPanel x:Name="TitlePanel" Grid.Row="0" Grid.RowSpan="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="5"  >
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Top" >
+                    <Image x:Name="TestLogo" Source="Assets/StoreLogo.png" VerticalAlignment="Center" Margin="3,3,3,3" Stretch="Fill" Width="40" Height="40" />
+                    <TextBlock x:Name="TestTitle" VerticalAlignment="Center" TextWrapping="Wrap">Double-Speech-To-Text UWP Sample App</TextBlock>
+                </StackPanel>
+                <StackPanel x:Name="ButtonPanel" VerticalAlignment="Top"  >
+                    <StackPanel Orientation="Horizontal"  VerticalAlignment="Center">
+                        <TextBlock x:Name="labelHostname" Text="Speech Service hostname:" HorizontalAlignment="Left" />
+                    </StackPanel>
+                    <StackPanel Orientation="Vertical"  VerticalAlignment="Center">
+                        <ComboBox x:Name="ComboHostname" ToolTipService.ToolTip="Speech-To-Text host name, by default speech.platform.bing.com" Width="308" IsTabStop="True"   HorizontalAlignment="Left" SelectionChanged="ComboHostname_SelectionChanged"/>
+                    </StackPanel>
+
+                    <StackPanel Orientation="Horizontal"  VerticalAlignment="Center">
+                        <TextBlock x:Name="labelSubscriptionID" Text="Speech-To-Text Subscription Key:" HorizontalAlignment="Left" />
+                    </StackPanel>
+                    <StackPanel Orientation="Vertical"  VerticalAlignment="Center">
+                        <TextBox x:Name="subscriptionKey" ToolTipService.ToolTip="SubscriptionKey associated with the Cognitive Service Speech-To-Text Account" Width="308" IsTabStop="True" TextChanged="SubscriptionKey_TextChanged" HorizontalAlignment="Left"  Text=""/>
+                    </StackPanel>
+
+                    <StackPanel Orientation="Horizontal"  VerticalAlignment="Center">
+                        <TextBlock x:Name="labelCustomEndpointID" Text="Custom Speech Endpoint ID:" HorizontalAlignment="Left" />
+                    </StackPanel>
+                    <StackPanel Orientation="Vertical"  VerticalAlignment="Center">
+                        <TextBox x:Name="customEndpointID" ToolTipService.ToolTip="Custom Endpoint ID (GUID) associated with the Cognitive Service Custom Speech Account (www.cris.ai). Only required for Custom Serivces." Width="308" IsTabStop="True" TextChanged="CustomEndpointID_TextChanged" HorizontalAlignment="Left"  Text=""/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal"  >
+                        <TextBlock x:Name="labelAPISelection" Text="Speech API:" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                        <ToggleSwitch HorizontalAlignment="Right" Margin="100,2,2,2" x:Name="SpeechApiType" MinWidth="100"
+                                          OffContent="REST"
+                                          OnContent="WebSocket"
+                                          VerticalAlignment="Center"
+                                          Toggled="SpeechApiType_Toggled"
+                              ToolTipService.ToolTip="Configure the Speech Client to use either REST API or WebSocket"    >
+                        </ToggleSwitch>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal"  >
+                        <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center">Recognition API:</TextBlock>
+                        <ComboBox x:Name="ComboAPI" ToolTipService.ToolTip="Cognitive Services Speech Recognition API: interactive, dictation plus conversation for WebSocket  " Width="180" Margin="20,2,0,2" SelectionChanged="ComboAPI_SelectionChanged" ></ComboBox>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal"  >
+                        <TextBlock VerticalAlignment="Center">Result Type:</TextBlock>
+                        <ComboBox x:Name="ComboAPIResult" ToolTipService.ToolTip="Cognitive Services Speech Recognition Result API (simple or detailed) " Width="180" Margin="50,2,0,2" ></ComboBox>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal"  >
+                        <TextBlock x:Name="labelLanguage" Text="Speech-To-Text Language:" HorizontalAlignment="Right" VerticalAlignment="Center" />
+                        <ComboBox  x:Name="speechToTextLanguage" ToolTipService.ToolTip="Language for Speech-To-Text" VerticalAlignment="Center" HorizontalAlignment="Stretch"  IsTabStop="True" Margin="40,2,0,2" Width="95" >
+                        </ComboBox>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal"  VerticalAlignment="Center">
+                        <TextBlock Text="Recording device 1:" VerticalAlignment="Center" HorizontalAlignment="Left" Width="130"  />
+                        <Button IsEnabled="False" Content="&#xE895;" x:Name="continuousRecordingButton" ToolTipService.ToolTip="Continuous Speech-To-Text recognition with microphone WebSocket and Conversation mode required" FontFamily="Segoe MDL2 Assets" IsTabStop="True" Height="42" Width="42" Margin="1,1,1,1" Click="ContinuousRecording_Click" />
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal"  VerticalAlignment="Center">
+                        <StackPanel Orientation="Vertical"  VerticalAlignment="Center">
+                            <ComboBox x:Name="ComboDevice1" ToolTipService.ToolTip="Select the recording device" Width="308" IsTabStop="True"   HorizontalAlignment="Left" SelectionChanged="ComboHostname_SelectionChanged"/>
+                        </StackPanel>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal"  VerticalAlignment="Center">
+                        <Canvas x:Name="CanvasGraph1" Width="310" Height="40" Background="#50FFFFFF" Visibility="Visible" />
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal"  VerticalAlignment="Center">
+                        <TextBlock Text="Recording device 2:" VerticalAlignment="Center" HorizontalAlignment="Left" Width="130"  />
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal"  VerticalAlignment="Center">
+                        <StackPanel Orientation="Vertical"  VerticalAlignment="Center">
+                            <ComboBox x:Name="ComboDevice2" ToolTipService.ToolTip="Select the recording device" Width="308" IsTabStop="True"   HorizontalAlignment="Left" SelectionChanged="ComboHostname_SelectionChanged"/>
+                        </StackPanel>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal"  VerticalAlignment="Center">
+                        <!--
+                        <TextBlock x:Name="labelLevel" Text="Level:" HorizontalAlignment="Right" VerticalAlignment="Center" Width="40" />
+                        <TextBox x:Name="Level" ToolTipService.ToolTip="Minimum Audio Level to start recording during continuous listening (0- 65535)" VerticalAlignment="Center" IsTabStop="True"  MaxWidth="60" MinWidth="60" Text="65535" />
+                        <TextBlock x:Name="labelDuration" Text="Duration:" HorizontalAlignment="Right" VerticalAlignment="Center" Width="64" />
+                        <TextBox x:Name="Duration" ToolTipService.ToolTip="Duration in milliseconds of the audio level measurement slot" IsTabStop="True"  MinWidth="56" MaxWidth="56" Text="1000" VerticalAlignment="Center" />
+-->
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal"  VerticalAlignment="Center">
+                        <Canvas x:Name="CanvasGraph2" Width="310" Height="40" Background="#50FFFFFF" Visibility="Visible" />
+                    </StackPanel>
+                </StackPanel>
+            </StackPanel>
+            <StackPanel x:Name="SubTitlePanel" Grid.Row="1" Grid.RowSpan="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="5"  >
+                <StackPanel Orientation="Horizontal"  />
+                <StackPanel Orientation="Horizontal"  VerticalAlignment="Center">
+                    <TextBlock x:Name="labelText1" Text="Device 1 transcription:" HorizontalAlignment="Left" VerticalAlignment="Center" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal"  VerticalAlignment="Center">
+                    <TextBox x:Name="resultText1" ToolTipService.ToolTip="Speech-To-Text Conversion result" Width="308" Height="256" IsTabStop="True"  TextWrapping="Wrap" AcceptsReturn="True" FontSize="12" IsReadOnly="False" ScrollViewer.HorizontalScrollBarVisibility="Auto"  ScrollViewer.VerticalScrollBarVisibility="Auto"  />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal"  VerticalAlignment="Center">
+                    <TextBlock x:Name="labelText2" Text="Device 2 transcription:" HorizontalAlignment="Left" VerticalAlignment="Center" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal"  VerticalAlignment="Center">
+                    <TextBox x:Name="resultText2" ToolTipService.ToolTip="Speech-To-Text Conversion result" Width="308" Height="256" IsTabStop="True"  TextWrapping="Wrap" AcceptsReturn="True" FontSize="12" IsReadOnly="False" ScrollViewer.HorizontalScrollBarVisibility="Auto"  ScrollViewer.VerticalScrollBarVisibility="Auto"  />
+                </StackPanel>
+
+
+
+
+
+
+                <MediaPlayerElement x:Name="mediaPlayerElement" AutoPlay="True" AreTransportControlsEnabled="False"   HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Stretch="Uniform"   />
+
+            </StackPanel>
+            <Grid Grid.Row="2"  Grid.ColumnSpan="2" Margin="2,2,2,2">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <TextBlock x:Name="labelLog" Text="Logs:"  />
+                <TextBox  Grid.Row="2"  x:Name="logs"  IsTabStop="True"   MaxHeight="640" MinHeight="200"  ScrollViewer.HorizontalScrollBarVisibility="Auto"  ScrollViewer.VerticalScrollBarVisibility="Auto" TextWrapping="NoWrap" AcceptsReturn="True" FontSize="12" IsReadOnly="True"  Visibility="Visible" Text="" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" >
+                </TextBox>
+            </Grid>
+        </Grid>
+    </ScrollViewer>
+</Page>
