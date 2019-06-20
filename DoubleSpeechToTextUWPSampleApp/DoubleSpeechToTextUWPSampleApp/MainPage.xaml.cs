@@ -637,9 +637,10 @@ namespace DoubleSpeechToTextUWPSampleApp
         {
             string s = ReadSettingsValue(keyHostname) as string;
             if (!string.IsNullOrEmpty(s))
-                ComboHostname.SelectedItem = s;
+                valueSpeechHostname = s;
             else
-                ComboHostname.SelectedItem = defaultBingSpeechHostname;
+                valueSpeechHostname = defaultBingSpeechHostname;
+            ComboHostname.SelectedItem = valueSpeechHostname;
 
             //valueBingSpeechSubscription = ReadSettingsValue(keyBingSpeechSubscription) as string;
             //if (valueBingSpeechSubscription ==null) valueBingSpeechSubscription = string.Empty;
@@ -1495,6 +1496,17 @@ namespace DoubleSpeechToTextUWPSampleApp
                 speechClient1.ClearToken();
             if (speechClient2 != null)
                 speechClient2.ClearToken();
+            if (ComboHostname.SelectedItem.ToString() == valueSpeechHostname)
+            {
+                subscriptionKey.Text = valueSpeechSubscription;
+                customEndpointID.Text = valueSpeechEndPointID;
+            }
+            else
+            {
+                subscriptionKey.Text = string.Empty;
+                customEndpointID.Text = string.Empty;
+            }
+
             //if (ComboHostname.SelectedItem.ToString() == defaultBingSpeechHostname)
             //{
             //    subscriptionKey.Text = valueBingSpeechSubscription;

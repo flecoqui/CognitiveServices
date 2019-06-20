@@ -1807,6 +1807,13 @@ namespace SpeechClient
         {
             System.Diagnostics.Debug.WriteLine("WebSocket_Closed; Code: " + args.Code + ", Reason: \"" + args.Reason + "\"");
             // Add additional code here to handle the WebSocket being closed.
+            bWebSocketReady = false;
+            AudioCaptureError?.Invoke(this, "Received WebSocket Closed Event: " + args.Reason);
+            SpeechToTextResponse sr = new SpeechToTextResponse(string.Empty,args.Reason);
+            if (args.Code == 1000)
+                WebSocketEvent?.Invoke(this, "speech.maxdurationreached", sr);
+            else
+                WebSocketEvent?.Invoke(this, "speech.websocketclosed", sr);
             if (webSocket != null)
                 webSocket.Dispose();
             webSocket = null;
