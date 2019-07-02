@@ -93,7 +93,13 @@ namespace SpeechToTextUWPSampleApp
                 "vi-VN",
                 "zh-CN",
                 "zh-HK",
-                "zh-TW"
+                "zh-TW",
+                "de-DE-KatjaNeural",
+                "en-US-GuyNeural",
+                "en-US-JessaNeural",
+                "it-IT-ElsaNeural",
+                "zh-CN-XiaoxiaoNeural"
+
                 };
 
         string[] SpeechToTextLanguageArray =

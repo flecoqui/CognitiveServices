@@ -1229,6 +1229,27 @@ namespace SpeechClient
                     else
                         voiceName = "Microsoft Server Speech Text to Speech Voice (zh-TW, Zhiwei, Apollo)";
                     break;
+
+                case "de-DE-KatjaNeural":
+                    voiceName = "Microsoft Server Speech Text to Speech Voice (de-DE, KatjaNeural)";
+                    break;
+
+                case "en-US-GuyNeural":
+                    voiceName = "Microsoft Server Speech Text to Speech Voice (en-US, GuyNeural)";
+                    break;
+
+                case "en-US-JessaNeural":
+                    voiceName = "Microsoft Server Speech Text to Speech Voice (en-US, JessaNeural)";
+                    break;
+
+                case "it-IT-ElsaNeural":
+                    voiceName = "Microsoft Server Speech Text to Speech Voice (it-IT, ElsaNeural)";
+                    break;
+
+                case "zh-CN-XiaoxiaoNeural":
+                    voiceName = "Microsoft Server Speech Text to Speech Voice (zh-CN, XiaoxiaoNeural)";
+                    break;
+
             }
             return voiceName;
 
