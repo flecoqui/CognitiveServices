@@ -98,8 +98,8 @@ namespace SpeechToTextUWPSampleApp
                 "en-US-GuyNeural",
                 "en-US-JessaNeural",
                 "it-IT-ElsaNeural",
-                "zh-CN-XiaoxiaoNeural"
-
+                "zh-CN-XiaoxiaoNeural",
+                "fr-FR-HortenseNeural"
                 };
 
         string[] SpeechToTextLanguageArray =
@@ -1447,7 +1447,6 @@ namespace SpeechToTextUWPSampleApp
         /// </summary>
         private async void ContinuousRecording_Click(object sender, RoutedEventArgs e)
         {
-            ClearResult();
             await LaunchContinuousRecording();
         }
         private async System.Threading.Tasks.Task<bool> LaunchContinuousRecording()
@@ -1470,6 +1469,7 @@ namespace SpeechToTextUWPSampleApp
                     SaveSettingsAndState();
                     if (speechClient.IsRecording() == false)
                     {
+                        ClearResult();
                         ClearCanvas();
                         if (await speechClient.Cleanup())
                         {

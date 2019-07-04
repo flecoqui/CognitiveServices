@@ -970,7 +970,12 @@ namespace SpeechClient
                     if (string.Equals(Hostname, "speech.platform.bing.com"))
                         speechUrl = "https://" + Hostname + "/" + apiSynthesizeString;
                     else
-                        speechUrl = "https://" + Hostname.Replace("stt", "tts") + "/cognitiveservices/v1";
+                    {
+                        if(lang.ToLower() == "fr-fr-hortenseneural")
+                            speechUrl = "https://" + Hostname.Replace("stt", "tts") + "/cognitiveservices/v1?traffictype=test";
+                        else
+                            speechUrl = "https://" + Hostname.Replace("stt", "tts") + "/cognitiveservices/v1";
+                    }
                     System.Threading.CancellationTokenSource cts = new System.Threading.CancellationTokenSource();
                     hc.DefaultRequestHeaders.Clear();
                     hc.DefaultRequestHeaders.TryAppendWithoutValidation("Authorization", Token);
@@ -1230,23 +1235,27 @@ namespace SpeechClient
                         voiceName = "Microsoft Server Speech Text to Speech Voice (zh-TW, Zhiwei, Apollo)";
                     break;
 
-                case "de-DE-KatjaNeural":
+                case "de-de-katjaneural":
                     voiceName = "Microsoft Server Speech Text to Speech Voice (de-DE, KatjaNeural)";
                     break;
 
-                case "en-US-GuyNeural":
+                case "en-us-guyneural":
                     voiceName = "Microsoft Server Speech Text to Speech Voice (en-US, GuyNeural)";
                     break;
 
-                case "en-US-JessaNeural":
+                case "fr-fr-hortenseneural":
+                    voiceName = "Microsoft Server Speech Text to Speech Voice (fr-FR, HortenseNeural)";
+                    break;
+
+                case "en-us-jessaneural":
                     voiceName = "Microsoft Server Speech Text to Speech Voice (en-US, JessaNeural)";
                     break;
 
-                case "it-IT-ElsaNeural":
+                case "it-it-elsaneural":
                     voiceName = "Microsoft Server Speech Text to Speech Voice (it-IT, ElsaNeural)";
                     break;
 
-                case "zh-CN-XiaoxiaoNeural":
+                case "zh-cn-xiaoxiaoneural":
                     voiceName = "Microsoft Server Speech Text to Speech Voice (zh-CN, XiaoxiaoNeural)";
                     break;
 
