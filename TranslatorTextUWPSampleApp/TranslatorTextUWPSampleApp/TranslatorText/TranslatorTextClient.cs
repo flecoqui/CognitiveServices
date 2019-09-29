@@ -12,9 +12,87 @@ using System;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.IO;
+using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace TranslatorText
 {
+
+    public class TranslationProperty
+    {
+        public string name;
+        public string nativeName;
+        public string dir;
+    }
+    public class ScriptProperty
+    {
+        public string code;
+        public string name;
+        public string nativeName;
+        public string dir;
+    }
+    public class ScriptItem
+    {
+        public string code;
+        public string name;
+        public string nativeName;
+        public string dir;
+        public List<ScriptProperty> toScripts;
+    }
+    public class TransliterationProperty
+    {
+        public string name;
+        public string nativeName;
+        public List<ScriptItem> scripts;
+    }
+    public class DictionaryItem
+    {
+        public string name;
+        public string nativeName;
+        public string dir;
+        public string code;
+    }
+    public class DictionaryProperty
+    {
+        public string name;
+        public string nativeName;
+        public string dir;
+        public List<DictionaryItem> translations;
+    }
+    public class GetLanguageResult
+    {
+        public System.Collections.Generic.Dictionary<string, TranslationProperty>  translation;
+        public System.Collections.Generic.Dictionary<string, TransliterationProperty> transliteration;
+        public System.Collections.Generic.Dictionary<string, DictionaryProperty> dictionary;
+    }
+    public class TextItem
+    {
+        public string text;
+        public string to;
+    }
+    public class TranslationItem
+    {
+        public List<TextItem> translations;
+    }
+    public class TranslationResult
+    {
+        public List<TranslationItem> translations;
+    }
+    public class LanguageItem
+    {
+        public string language;
+        public double score;
+        public bool isTranslationSupported;
+        public bool isTransliterationSupported;
+    }
+    public class LanguageResult
+    {
+        public string language;
+        public double score;
+        public bool isTranslationSupported;
+        public bool isTransliterationSupported;
+        public List<LanguageItem> alternatives;
+    }
     /// <summary>
     /// class TranslatorTextClient: TranslatorText UWP Client
     /// </summary>
@@ -27,11 +105,18 @@ namespace TranslatorText
         private string SubscriptionKey;
         private string Token;
         private const string AuthUrl = "https://api.cognitive.microsoft.com/sts/v1.0/issueToken";
-        private const string BaseUrl = "http://api.microsofttranslator.com/v2/Http.svc/";
-        private const string LanguagesUri = "GetLanguagesForTranslate";
-        private const string TranslateUri = "Translate?text={0}&to={1}&contentType=text/plain";
-        private const string TranslateWithFromUri = "Translate?text={0}&from={1}&to={2}&contentType=text/plain";
-        private const string DetectUri = "Detect?text={0}";
+        //private const string BaseUrl = "http://api.microsofttranslator.com/v2/Http.svc/";
+        private const string BaseUrl = "https://api.cognitive.microsofttranslator.com/";
+//        private const string LanguagesUri = "GetLanguagesForTranslate";
+        private const string LanguagesUri = "languages?api-version=3.0";
+//        private const string TranslateUri = "Translate?text={0}&to={1}&contentType=text/plain";
+//        private const string TranslateWithFromUri = "Translate?text={0}&from={1}&to={2}&contentType=text/plain";
+
+        private const string TranslateUri = "translate?api-version=3.0&to={0}&contentType=text/plain";
+        private const string TranslateWithFromUri = "translate?api-version=3.0&from={0}&to={1}&contentType=text/plain";
+
+        //private const string DetectUri = "Detect?text={0}";
+        private const string DetectUri = "detect?api-version=3.0";
         private const string ArrayNamespace = "http://schemas.microsoft.com/2003/10/Serialization/Arrays";
 
 
@@ -178,9 +263,21 @@ namespace TranslatorText
                         {
                             case Windows.Web.Http.HttpStatusCode.Ok:
                                 var b = await hrm.Content.ReadAsBufferAsync();
-                                string result = System.Text.UTF8Encoding.UTF8.GetString(b.ToArray());
-                                if (!string.IsNullOrEmpty(result))
+                                string json = System.Text.UTF8Encoding.UTF8.GetString(b.ToArray());
+                                if (!string.IsNullOrEmpty(json))
                                 {
+                                  
+                                    
+                                    var result = JsonConvert.DeserializeObject<GetLanguageResult>(json);
+                                    if(result!=null)
+                                    {
+                                        foreach(var keyval in result.translation)
+                                        {
+                                            r.Add(keyval.Key, keyval.Value.name);
+                                        }
+                                    }
+                                    
+                                    /*
                                     System.Xml.Linq.XNamespace ns = ArrayNamespace;
                                     var doc = System.Xml.Linq.XDocument.Parse(result);
 
@@ -198,6 +295,7 @@ namespace TranslatorText
                                         {
                                         }
                                     });
+                                    */
                                 }
                                 break;
                             case Windows.Web.Http.HttpStatusCode.Forbidden:
@@ -258,33 +356,54 @@ namespace TranslatorText
                     string uriString = null;
                     if (string.IsNullOrWhiteSpace(FromLang))
                     {
-                        uriString = string.Format(TranslateUri, Uri.EscapeDataString(Text), ToLang);
+//                        uriString = string.Format(TranslateUri, Uri.EscapeDataString(Text), ToLang);
+                        uriString = string.Format(TranslateUri,  ToLang);
                     }
                     else
                     {
-                        uriString = string.Format(TranslateWithFromUri, Uri.EscapeDataString(Text), FromLang, ToLang);
+//                        uriString = string.Format(TranslateWithFromUri, Uri.EscapeDataString(Text), FromLang, ToLang);
+                        uriString = string.Format(TranslateWithFromUri,  FromLang, ToLang);
                     }
                     Windows.Web.Http.HttpClient hc = new Windows.Web.Http.HttpClient();
                     System.Threading.CancellationTokenSource cts = new System.Threading.CancellationTokenSource();
                     hc.DefaultRequestHeaders.TryAppendWithoutValidation("Authorization", Token);
+                   
                     Windows.Web.Http.HttpResponseMessage hrm = null;
-                    System.Diagnostics.Debug.WriteLine("REST API Get");
+                    System.Diagnostics.Debug.WriteLine("REST API POST");
                     IProgress<Windows.Web.Http.HttpProgress> progress = new Progress<Windows.Web.Http.HttpProgress>(ProgressHandler);
+                    Windows.Web.Http.HttpStringContent content = new Windows.Web.Http.HttpStringContent("[{ \"Text\":\""+ Text +"\"}]" );
+                    content.Headers.ContentType = new Windows.Web.Http.Headers.HttpMediaTypeHeaderValue("application/json");
+                    //"Application/JSON";
 
-                    hrm = await hc.GetAsync(new Uri(BaseUrl + uriString)).AsTask(cts.Token, progress);
+
+                    hrm = await hc.PostAsync(new Uri(BaseUrl + uriString),content).AsTask(cts.Token, progress);
                     if (hrm != null)
                     {
                         switch (hrm.StatusCode)
                         {
                             case Windows.Web.Http.HttpStatusCode.Ok:
                                 var b = await hrm.Content.ReadAsBufferAsync();
-                                string result = System.Text.UTF8Encoding.UTF8.GetString(b.ToArray());
+                                string json = System.Text.UTF8Encoding.UTF8.GetString(b.ToArray());
+
+                                
+                                List<TranslationItem>  result = JsonConvert.DeserializeObject<List<TranslationItem>>(json);
+                                if (result != null)
+                                {
+                                    foreach (var val in result)
+                                    {
+                                        var text = val.translations.FirstOrDefault();
+                                        r = text.text;
+                                        break;
+                                    }
+                                }
+                                /*
                                 if (!string.IsNullOrEmpty(result))
                                 {
                                     System.Xml.Linq.XNamespace ns = ArrayNamespace;
                                     var doc = System.Xml.Linq.XDocument.Parse(result);
                                     r = doc.Root.Value;
                                 }
+                                */
                                 break;
                             case Windows.Web.Http.HttpStatusCode.Forbidden:
                                 string token = await RenewToken();
@@ -336,28 +455,40 @@ namespace TranslatorText
                 try
                 {
                     string uriString = null;
-                    uriString = string.Format(DetectUri, Uri.EscapeDataString(Text));
+//                    uriString = string.Format(DetectUri, Uri.EscapeDataString(Text));
+                    uriString = string.Format(DetectUri);
                     Windows.Web.Http.HttpClient hc = new Windows.Web.Http.HttpClient();
                     System.Threading.CancellationTokenSource cts = new System.Threading.CancellationTokenSource();
                     hc.DefaultRequestHeaders.TryAppendWithoutValidation("Authorization", Token);
                     Windows.Web.Http.HttpResponseMessage hrm = null;
-                    System.Diagnostics.Debug.WriteLine("REST API Get");
+                    System.Diagnostics.Debug.WriteLine("REST API Post");
                     IProgress<Windows.Web.Http.HttpProgress> progress = new Progress<Windows.Web.Http.HttpProgress>(ProgressHandler);
+                    Windows.Web.Http.HttpStringContent content = new Windows.Web.Http.HttpStringContent("[{ \"Text\":\"" + Text + "\"}]");
+                    content.Headers.ContentType = new Windows.Web.Http.Headers.HttpMediaTypeHeaderValue("application/json");
 
-                    hrm = await hc.GetAsync(new Uri(BaseUrl + uriString)).AsTask(cts.Token, progress);
+                    hrm = await hc.PostAsync(new Uri(BaseUrl + uriString),content).AsTask(cts.Token, progress);
                     if (hrm != null)
                     {
                         switch (hrm.StatusCode)
                         {
                             case Windows.Web.Http.HttpStatusCode.Ok:
                                 var b = await hrm.Content.ReadAsBufferAsync();
-                                string result = System.Text.UTF8Encoding.UTF8.GetString(b.ToArray());
+                                string json = System.Text.UTF8Encoding.UTF8.GetString(b.ToArray());
+                                List<LanguageResult> result = JsonConvert.DeserializeObject<List<LanguageResult>>(json);
+                                if (result != null)
+                                {
+                                   // r = json;
+                                    var lang = result.FirstOrDefault();
+                                    r = lang.language;
+                                }
+                                /*
                                 if (!string.IsNullOrEmpty(result))
                                 {
                                     System.Xml.Linq.XNamespace ns = ArrayNamespace;
                                     var doc = System.Xml.Linq.XDocument.Parse(result);
                                     r = doc.Root.Value;
                                 }
+                                */
                                 break;
                             case Windows.Web.Http.HttpStatusCode.Forbidden:
                                 string token = await RenewToken();
