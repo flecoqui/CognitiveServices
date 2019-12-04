@@ -44,7 +44,8 @@ namespace FaceUWPSampleApp
 
 
         static public MainPage Current = null;
-        FaceClient.FaceClient client;
+        List<PersonDetected> listpd = null;
+       FaceClient.FaceClient client;
         const string defaultFaceHostname = "northeurope.api.cognitive.microsoft.com";
         string FaceHostname = defaultFaceHostname;
         string FaceSubscriptionKey = string.Empty;
@@ -111,7 +112,35 @@ namespace FaceUWPSampleApp
             ComboVisualFeatures.Items.Add("returnRecognitionModel");
             ComboVisualFeatures.SelectedIndex = 0;
 
+            ComboMaxCandidates.Items.Clear();
+            ComboMaxCandidates.Items.Add("1");
+            ComboMaxCandidates.Items.Add("2");
+            ComboMaxCandidates.Items.Add("3");
+            ComboMaxCandidates.Items.Add("4");
+            ComboMaxCandidates.Items.Add("5");
+            ComboMaxCandidates.SelectedItem = "1";
 
+            ComboThreshold.Items.Clear();
+            ComboThreshold.Items.Add("0.95");
+            ComboThreshold.Items.Add("0.90");
+            ComboThreshold.Items.Add("0.85");
+            ComboThreshold.Items.Add("0.80");
+            ComboThreshold.Items.Add("0.75");
+            ComboThreshold.Items.Add("0.70");
+            ComboThreshold.Items.Add("0.65");
+            ComboThreshold.Items.Add("0.60");
+            ComboThreshold.Items.Add("0.55");
+            ComboThreshold.Items.Add("0.50");
+            ComboThreshold.Items.Add("0.45");
+            ComboThreshold.Items.Add("0.40");
+            ComboThreshold.Items.Add("0.35");
+            ComboThreshold.Items.Add("0.30");
+            ComboThreshold.Items.Add("0.25");
+            ComboThreshold.Items.Add("0.20");
+            ComboThreshold.Items.Add("0.15");
+            ComboThreshold.Items.Add("0.10");
+            ComboThreshold.Items.Add("0.05");
+            ComboThreshold.SelectedItem = "0.50";
 
             // Get Subscription ID from the local settings
             ReadSettingsAndState();
@@ -919,6 +948,7 @@ namespace FaceUWPSampleApp
         private async void startCamera_Click(object sender, RoutedEventArgs e)
         {
             isPreviewingVideo = !isPreviewingVideo;
+            ClearCanvas();
             previewButton.IsEnabled = false;
             try
 
@@ -964,6 +994,7 @@ namespace FaceUWPSampleApp
         /// </summary>
         private async void openPicture_Click(object sender, RoutedEventArgs e)
         {
+
             try
             {
                 var filePicker = new Windows.Storage.Pickers.FileOpenPicker();
@@ -982,6 +1013,7 @@ namespace FaceUWPSampleApp
                     await SetPictureUrl("file://" + jpgFile.Path);
                     PreviewControl.Visibility = Visibility.Collapsed;
                     pictureElement.Visibility = Visibility.Visible;
+                    ClearCanvas();
                     UpdateControls();
                 }
             }
@@ -1054,8 +1086,18 @@ namespace FaceUWPSampleApp
                                                 LogMessage("Identifying face: " + f.faceId);
                                                 ident.faceIds.Add(f.faceId);
                                             }
-                                            ident.maxNumOfCandidatesReturned = 1;
-                                            ident.confidenceThreshold = 0.5;
+                                            int MaxCandiates = 1;
+                                            var can = ComboMaxCandidates.SelectedItem as string;
+                                            if(!string.IsNullOrEmpty(can))
+                                                int.TryParse(can, out MaxCandiates);
+                                            ident.maxNumOfCandidatesReturned = MaxCandiates;
+
+                                            double Threshold = 0.5;
+                                            var thr = ComboThreshold.SelectedItem as string;
+                                            if (!string.IsNullOrEmpty(thr))
+                                                double.TryParse(thr, out Threshold);
+                                            ident.confidenceThreshold = Threshold;
+
                                             ident.largePersonGroupId = group.personGroupId;
                                             response = await client.IdentifyFaces(subscriptionKey.Text.ToString(), Hostname.Text, ident.largePersonGroupId, ident.maxNumOfCandidatesReturned, ident.confidenceThreshold, ident.faceIds);
                                             if (response != null)
@@ -1072,7 +1114,7 @@ namespace FaceUWPSampleApp
                                                     List<IdentifyResult> listIdentify = JsonConvert.DeserializeObject<List<IdentifyResult>>(response.Result());
                                                     if (listIdentify != null)
                                                     {
-                                                        List<PersonDetected> listpd = new List<PersonDetected>();
+                                                        listpd = new List<PersonDetected>();
                                                         foreach (var f in listIdentify)
                                                         {
                                                             PersonDetected pd = new PersonDetected();
@@ -1247,6 +1289,10 @@ namespace FaceUWPSampleApp
                 pictureElement.Width = nWidth;
                 pictureElement.Height = nHeight;
             }
+            FacesCanvas.Width = backgroundVideo.ActualWidth;
+            FacesCanvas.Height = backgroundVideo.ActualHeight;
+
+            HighlightDetectedFaces(listpd);
         }
         /// <summary>
         /// Resize the preview to match with the BackgroundVideo size
@@ -1279,6 +1325,8 @@ namespace FaceUWPSampleApp
                     }
                     PreviewControl.Width = nWidth;
                     PreviewControl.Height = nHeight;
+                    FacesCanvas.Width = backgroundVideo.ActualWidth;
+                    FacesCanvas.Height = backgroundVideo.ActualHeight;
                 }
 
             }
@@ -1595,6 +1643,11 @@ namespace FaceUWPSampleApp
             FacesCanvas.FlowDirection = _mirroringPreview ? FlowDirection.RightToLeft : FlowDirection.LeftToRight;
         }
         */
+        private void ClearCanvas()
+        {
+            listpd = null;
+            FacesCanvas.Children.Clear();
+        }
         /// <summary>
         /// Iterates over all detected faces, creating and adding Rectangles to the FacesCanvas as face bounding boxes
         /// </summary>
@@ -1603,7 +1656,8 @@ namespace FaceUWPSampleApp
         {
             // Remove any existing rectangles from previous events
             FacesCanvas.Children.Clear();
-
+            if (faces == null)
+                return;
             // For each detected face
             for (int i = 0; i < faces.Count; i++)
             {
@@ -1649,8 +1703,25 @@ namespace FaceUWPSampleApp
                     // Highlight the first face in the set
                     faceBoundingBox.Stroke = (i == 0 ? new SolidColorBrush(Colors.Blue) : new SolidColorBrush(Colors.DeepSkyBlue));
 
+                    TextBlock tb = new TextBlock();
+                    
+                    tb = new TextBlock { Text = faces[i].name, FontSize = 14 };
+                    tb.Measure(new Size(Double.PositiveInfinity, Double.PositiveInfinity));
+                    tb.Foreground = new SolidColorBrush(Colors.Blue);
+                    if (Y+yOffset-tb.ActualHeight -2 > 0)
+                    {
+                        Canvas.SetLeft(tb, X + xOffset + (faceBoundingBox.Width / 2) - (tb.ActualWidth / 2));
+                        Canvas.SetTop(tb, Y + yOffset - tb.ActualHeight - 2);
+                    }
+                    else
+                    {
+                        Canvas.SetLeft(tb, X + xOffset + (faceBoundingBox.Width/2) - (tb.ActualWidth/2));
+                        Canvas.SetTop(tb, Y + yOffset + faceBoundingBox.Height +2 );
+
+                    }
                     // Add grid to canvas containing all face UI objects
                     FacesCanvas.Children.Add(faceBoundingBox);
+                    FacesCanvas.Children.Add(tb);
 
                 }
 

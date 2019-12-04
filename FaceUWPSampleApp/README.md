@@ -3,17 +3,19 @@
   samplefwlink: http://go.microsoft.com/fwlink/p/?LinkId=620563&clcid=0x409
 --->
 
-# Cognitive Services Vision UWP Sample Application
+# Cognitive Services Face UWP Sample Application
 
 Overview
 --------------
-This Vision UWP Sample Application  can:
+This Face UWP Sample Application  can:
 
-- **Take a picture**: take a picture with your Windows 10 device camera, 
-- **Open a picture**: open a picture stored on your Windows 10 device,
-- **Analyse a picture**: Analyse a picture with Cognitive Service Computer Vision and/or Custom Vision,
+- **Create, Update and Delete a group of persons** 
+- **Create, Update and Delete a person in a group of persons** 
+- **Associated a picture with a person** 
+- **Train a model for a group of person** 
+- **Take a picture and try to identify the persons** 
 
-In order to use the application you need a Cognitive Services Computer Vision key or a Custom Vision Key.
+In order to use the application you need a Cognitive Services Face key.
 You can sign up [here](https://www.microsoft.com/cognitive-services/en-us/sign-up)  
 
 
@@ -21,11 +23,8 @@ Installing the application
 ----------------------------
 You can install the application on:
 
-- **Personal Computer Platform**: a desktop running Windows 10 RS1
-- **Windows 10 Mobile Platform**: a phone running Windows 10 RS1
-
-The applications packages for x86, x64 and ARM are available there :
-[ZIP file of the application x86, x64, ARM Packages](https://github.com/flecoqui/CognitiveServices/raw/master/FaceUWPSampleApp/Releases/LatestRelease.zip)
+- **Personal Computer Platform**: a desktop running Windows 10
+- **Windows 10 Mobile Platform**: a phone running Windows 10RS1
 
 
 **Personal Computer installation:**
@@ -46,7 +45,7 @@ The applications packages for x86, x64 and ARM are available there :
 7.  Tap on the file FaceUWPSampleApp_1.0.XX.O_x86_x64_arm.appxbundle to install the application
 
 
-Using the application with Computer Vision Cognitive Service
+Using the application with Computer Face Cognitive Service
 ----------------------------
 Once the application is installed on your device, you can launch it and the main page will be displayed after few seconds.
 
@@ -55,16 +54,16 @@ Once the application is installed on your device, you can launch it and the main
 ![](https://raw.githubusercontent.com/flecoqui/CognitiveServices/master/FaceUWPSampleApp/Docs/main.png)
 
 The application is used to take picture, open picture and analyze the picture with Cognitive Services.
-As you use the application with Computer Vision service, verify the Check Box Custom Vision is unchecked. 
+As you use the application with Computer Face service, verify the Check Box Custom Face is unchecked. 
 
 ### Entering your subscription Key
-Then you can enter the subscription key associated with the Computer Vision Cognitive Service which will be used for the communication Computer Vision Cognitive Services.
+Then you can enter the subscription key associated with the Computer Face Cognitive Service which will be used for the communication Computer Face Cognitive Services.
 
 ![](https://raw.githubusercontent.com/flecoqui/CognitiveServices/master/FaceUWPSampleApp/Docs/subscriptionkey.png)
 
 
 ### Entering the hostname
-Then you can enter the hostname associated with the url of your Computer Vision Cognitive Service. The format is usually region.api.cognitive.microsoft.com.
+Then you can enter the hostname associated with the url of your Computer Face Cognitive Service. The format is usually region.api.cognitive.microsoft.com.
 
 ![](https://raw.githubusercontent.com/flecoqui/CognitiveServices/master/FaceUWPSampleApp/Docs/hostname.png)
 
@@ -108,7 +107,7 @@ After few seconds, the result is displayed in the Log field:
 ![](https://raw.githubusercontent.com/flecoqui/CognitiveServices/master/FaceUWPSampleApp/Docs/result.png)
 
 
-Using the application with Custom Vision Cognitive Service
+Using the application with Custom Face Cognitive Service
 ----------------------------
 Once the application is installed on your device, you can launch it and the main page will be displayed after few seconds.
 
@@ -116,23 +115,23 @@ Once the application is installed on your device, you can launch it and the main
 
 ![](https://raw.githubusercontent.com/flecoqui/CognitiveServices/master/FaceUWPSampleApp/Docs/maincustom.png)
 
-As you will use the application with Custom Vision service, verify the Check Box Custom Vision is checked. 
+As you will use the application with Custom Face service, verify the Check Box Custom Face is checked. 
 
 ![](https://raw.githubusercontent.com/flecoqui/CognitiveServices/master/FaceUWPSampleApp/Docs/customcheck.png)
 
 ### Entering your subscription Key
-Then you can enter the subscription key associated with the Computer Vision Cognitive Service which will be used for the communication Computer Vision Cognitive Services.
+Then you can enter the subscription key associated with the Computer Face Cognitive Service which will be used for the communication Computer Face Cognitive Services.
 
 ![](https://raw.githubusercontent.com/flecoqui/CognitiveServices/master/FaceUWPSampleApp/Docs/subscriptionkeycustom.png)
 
 
 ### Entering the hostname
-Then you can enter the hostname associated with the url of your Computer Vision Cognitive Service. The format is usually region.api.cognitive.microsoft.com.
+Then you can enter the hostname associated with the url of your Computer Face Cognitive Service. The format is usually region.api.cognitive.microsoft.com.
 
 ![](https://raw.githubusercontent.com/flecoqui/CognitiveServices/master/FaceUWPSampleApp/Docs/hostnamecustom.png)
 
 ### Entering the ProjectID and optionnally the IterationID
-Then you can enter the Project ID associated with the Custom Vision Model and optionnally the Iteration ID of the model. If you leave this field empty the service will use the latest model.
+Then you can enter the Project ID associated with the Custom Face Model and optionnally the Iteration ID of the model. If you leave this field empty the service will use the latest model.
 
 ![](https://raw.githubusercontent.com/flecoqui/CognitiveServices/master/FaceUWPSampleApp/Docs/optionscustom.png)
 
@@ -189,7 +188,7 @@ Building the application
 Next steps
 --------------
 
-The Vision UWP Sample Applicaton could be improved to support the following features:
+The Face UWP Sample Applicaton could be improved to support the following features:
 <p/>
 
 1. Better Camera usage
