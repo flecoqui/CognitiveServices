@@ -1222,7 +1222,26 @@ namespace DoubleSpeechToTextUWPSampleApp
         private async void ContinuousRecording_Click(object sender, RoutedEventArgs e)
         {
             ClearResult();
-            await LaunchContinuousRecording();
+            if (((speechClient1 !=null) &&(speechClient1.IsRecording() == true))||
+                ((speechClient2 != null) && (speechClient2.IsRecording() == true)))
+            {
+                AddResult1Phrase("Stopping device1");
+                LogMessage("Stop Recording for all devices...");
+                await speechClient1.StopRecording();
+                isRecordingContinuously = false;
+                speechClient1.AudioLevel -= Client_AudioLevel;
+                speechClient1.AudioCaptureError -= Client_AudioCaptureError;
+                speechClient1.WebSocketEvent -= Client_WebSocketEvent;
+                AddResult2Phrase("Stopping device2");
+                await speechClient2.StopRecording();
+                speechClient2.AudioLevel -= Client_AudioLevel;
+                speechClient2.AudioCaptureError -= Client_AudioCaptureError;
+                speechClient2.WebSocketEvent -= Client_WebSocketEvent;
+                ClearCanvas();
+                UpdateControls();
+            }
+            else
+               await LaunchContinuousRecording();
         }
         private async System.Threading.Tasks.Task<bool> LaunchContinuousRecording()
         {
@@ -1243,6 +1262,71 @@ namespace DoubleSpeechToTextUWPSampleApp
                     valueSpeechEndPointID = customEndpointID.Text;
 
                     SaveSettingsAndState();
+                    if (speechClient1.IsRecording() == false)
+                    {
+                        ClearCanvas();
+                        AddResult1Phrase("Starting device1");
+
+                        if (await speechClient1.Cleanup())
+                        {
+                            string speechAPI = ComboAPI.SelectedItem.ToString();
+                            string language = speechToTextLanguage.SelectedItem.ToString();
+                            string resultType = ComboAPIResult.SelectedItem.ToString();
+                            string recordResult = await GetCurrentRecordingDeviceId1();
+                            if (recordResult != null)
+                            {
+                                if (await speechClient1.StartRecording(speechAPI, language, resultType, recordResult))
+                                {
+
+                                    isRecordingContinuously = true;
+                                    speechClient1.AudioLevel += Client_AudioLevel;
+                                    speechClient1.AudioCaptureError += Client_AudioCaptureError;
+                                    speechClient1.WebSocketEvent += Client_WebSocketEvent;
+                                    LogMessage("Start Recording for device 1...");
+                                    result = true;
+                                }
+                                else
+                                    LogMessage("Start Recording failed for device 1");
+                            }
+                            else
+                                LogMessage("No record for device 1");
+                        }
+                        else
+                            LogMessage("CleanupRecording failed for device 1");
+
+                    }
+                    if (speechClient2.IsRecording() == false)
+                    { 
+                        if (await speechClient2.Cleanup())
+                        {
+                            AddResult2Phrase("Starting device2");
+                            string speechAPI = ComboAPI.SelectedItem.ToString();
+                            string language = speechToTextLanguage.SelectedItem.ToString();
+                            string resultType = ComboAPIResult.SelectedItem.ToString();
+                            string recordResult = await GetCurrentRecordingDeviceId2();
+                            if (recordResult != null)
+                            {
+                                if (await speechClient2.StartRecording(speechAPI, language, resultType, recordResult))
+                                {
+
+                                    isRecordingContinuously = true;
+                                    speechClient2.AudioLevel += Client_AudioLevel;
+                                    speechClient2.AudioCaptureError += Client_AudioCaptureError;
+                                    speechClient2.WebSocketEvent += Client_WebSocketEvent;
+                                    LogMessage("Start Recording for device 2...");
+                                    result = true;
+                                }
+                                else
+                                    LogMessage("Start Recording failed for device 2");
+                            }
+                            else
+                                LogMessage("No record for device 2");
+                        }
+                        else
+                            LogMessage("CleanupRecording failed for device 2");
+
+                    }
+                    /*
                     if ((speechClient1.IsRecording() == false)&&
                         (speechClient2.IsRecording() == false))
                     {
@@ -1315,7 +1399,8 @@ namespace DoubleSpeechToTextUWPSampleApp
                         speechClient2.AudioCaptureError -= Client_AudioCaptureError;
                         speechClient2.WebSocketEvent -= Client_WebSocketEvent;
                         ClearCanvas();
-                    }
+                    }*/
+
                 }
                 UpdateControls();
             }
@@ -1386,6 +1471,10 @@ namespace DoubleSpeechToTextUWPSampleApp
                        break;
                    case "speech.maxdurationreached":
                    case "turn.end":
+                       if (speechClient == speechClient1)
+                            AddResult1Phrase("Stopping device1");
+                        else
+                            AddResult2Phrase("Stopping device2");
                        speechClient.WebSocketEvent -= Client_WebSocketEvent;
                        if (isRecordingContinuously == true)
                            await LaunchContinuousRecording();
