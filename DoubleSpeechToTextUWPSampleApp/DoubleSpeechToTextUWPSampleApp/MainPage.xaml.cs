@@ -227,8 +227,10 @@ namespace DoubleSpeechToTextUWPSampleApp
             ComboDevice1.Items.Add(NoDeviceLabel);
             ComboDevice1.Items.Add(defaultDeviceLabel);
             var allVideoDevices = await DeviceInformation.FindAllAsync(DeviceClass.AudioCapture);
+            LogMessage("List of Devices");
             foreach (var d in allVideoDevices)
             {
+                LogMessage("Device Name: " + d.Name + " id: " + d.Id.ToString());
                 ComboDevice1.Items.Add(d.Name);
             }
             if (ComboDevice1.Items.Count > 0)

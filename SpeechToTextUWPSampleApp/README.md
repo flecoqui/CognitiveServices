@@ -8,9 +8,9 @@
 Overview
 --------------
 This sample application can use the following Cognitive Services:
-- **Microsoft Speech API** or **Bing Speech** services: documentation is available [here](https://docs.microsoft.com/en-us/azure/cognitive-services/speech/home)
 - **Custom Speech** service: the documentation is available [here](https://docs.microsoft.com/en-us/azure/cognitive-services/custom-speech-service/cognitive-services-custom-speech-home)
-- **Speech Service** (Preview): the documentation is available [here](https://docs.microsoft.com/en-us/azure/cognitive-services/speech-service/)
+- **Speech Service** : the documentation is available [here](https://docs.microsoft.com/en-us/azure/cognitive-services/speech-service/)
+- **Face Service** : the documentation is available [here](https://docs.microsoft.com/en-us/azure/cognitive-services/speech-service/)
 
 Those 3 services are accessible through:
 
