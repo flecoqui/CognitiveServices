@@ -39,14 +39,17 @@ namespace CSAudioTool
                 GetFormat(Format, out sampleRate, out channels);
                 Console.WriteLine("Start converting file: " + Input);
                 WaveFormat format = new WaveFormat(sampleRate, channels);
+                WdlResamplingSampleProvider resampler;
                 using (var inputReader = new AudioFileReader(Input))
                 {
-                    var resampler = new WdlResamplingSampleProvider(inputReader, sampleRate);
-                    // convert our stereo ISampleProvider to mono
-                    var mono = new StereoToMonoSampleProvider(resampler);
-                    mono.LeftVolume = 1.0f; // keep the left channel
-                    mono.RightVolume = 1.0f; // keep the right channel
-                    WaveFileWriter.CreateWaveFile16(outputFilePath, mono);
+                    if (inputReader.WaveFormat.Channels == 2)
+                    {
+                        var mono = new StereoToMonoSampleProvider(inputReader);
+                        resampler = new WdlResamplingSampleProvider(mono, sampleRate);
+                    }
+                    else
+                        resampler = new WdlResamplingSampleProvider(inputReader, sampleRate);
+                    WaveFileWriter.CreateWaveFile16(outputFilePath, resampler);
 
                     /*
                      * 
@@ -59,6 +62,11 @@ namespace CSAudioTool
                 Console.WriteLine("Converting done");
                 bResult = true;
 
+            }
+            else
+            {
+                Console.WriteLine("File " + Input + " doesn't exist");
+                Console.WriteLine(string.Format(InformationCSAudioTool, VersionString));
             }
             return bResult;
         }

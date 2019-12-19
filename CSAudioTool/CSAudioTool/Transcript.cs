@@ -67,76 +67,85 @@ namespace CSAudioTool
         static async Task<bool> TranscriptFromFile(String Input, String Region, String Key, string Lang)
         {
             bool bResult = false;
-            var audioConfig = AudioConfig.FromWavFileInput(Input);
 
-            var config = SpeechConfig.FromSubscription(Key, Region);
-            var language = Lang;
-            config.SpeechRecognitionLanguage = language;
-            config.OutputFormat = OutputFormat.Simple;
-            var stopRecognition = new TaskCompletionSource<int>();
-            // Creates a speech recognizer using microphone as audio input.
-            using (var recognizer = new SpeechRecognizer(config, audioConfig))
+            if (File.Exists(Input))
             {
-                // Starts recognizing.
-                Console.WriteLine("Starting Transcript from File...");
-                // Subscribes to events.
-                recognizer.Recognizing += (s, e) =>
-                {
-                    DisplayTranscript(e.Result.OffsetInTicks, e.Result.Duration, e.Result.Text, false);
-                };
+                var audioConfig = AudioConfig.FromWavFileInput(Input);
 
-                recognizer.Recognized += (s, e) =>
+                var config = SpeechConfig.FromSubscription(Key, Region);
+                var language = Lang;
+                config.SpeechRecognitionLanguage = language;
+                config.OutputFormat = OutputFormat.Simple;
+                var stopRecognition = new TaskCompletionSource<int>();
+                // Creates a speech recognizer using microphone as audio input.
+                using (var recognizer = new SpeechRecognizer(config, audioConfig))
                 {
-                    if (e.Result.Reason == ResultReason.RecognizedSpeech)
+                    // Starts recognizing.
+                    Console.WriteLine("Starting Transcript from File...");
+                    // Subscribes to events.
+                    recognizer.Recognizing += (s, e) =>
                     {
-                        if (!string.IsNullOrEmpty(e.Result.Text))
+                        DisplayTranscript(e.Result.OffsetInTicks, e.Result.Duration, e.Result.Text, false);
+                    };
+
+                    recognizer.Recognized += (s, e) =>
+                    {
+                        if (e.Result.Reason == ResultReason.RecognizedSpeech)
                         {
-                            DisplayTranscript(e.Result.OffsetInTicks, e.Result.Duration, e.Result.Text, true);
+                            if (!string.IsNullOrEmpty(e.Result.Text))
+                            {
+                                DisplayTranscript(e.Result.OffsetInTicks, e.Result.Duration, e.Result.Text, true);
+                            }
                         }
-                    }
-                    else if (e.Result.Reason == ResultReason.NoMatch)
+                        else if (e.Result.Reason == ResultReason.NoMatch)
+                        {
+                            Console.WriteLine($"NOMATCH: Speech could not be recognized.");
+                        }
+                    };
+
+
+                    recognizer.Canceled += (s, e) =>
                     {
-                        Console.WriteLine($"NOMATCH: Speech could not be recognized.");
-                    }
-                };
+                        Console.WriteLine($"CANCELED: Reason={e.Reason}");
 
+                        if (e.Reason == CancellationReason.Error)
+                        {
+                            Console.WriteLine($"CANCELED: ErrorCode={e.ErrorCode}");
+                            Console.WriteLine($"CANCELED: ErrorDetails={e.ErrorDetails}");
+                            Console.WriteLine($"CANCELED: Did you update the subscription info?");
+                        }
 
-                recognizer.Canceled += (s, e) =>
-                {
-                    Console.WriteLine($"CANCELED: Reason={e.Reason}");
+                        stopRecognition.TrySetResult(0);
 
-                    if (e.Reason == CancellationReason.Error)
+                    };
+
+                    recognizer.SessionStarted += (s, e) =>
                     {
-                        Console.WriteLine($"CANCELED: ErrorCode={e.ErrorCode}");
-                        Console.WriteLine($"CANCELED: ErrorDetails={e.ErrorDetails}");
-                        Console.WriteLine($"CANCELED: Did you update the subscription info?");
-                    }
-
-                    stopRecognition.TrySetResult(0);
-                    
-                };
-
-                recognizer.SessionStarted += (s, e) =>
-                {
                     //Console.WriteLine("\nTranscript Session started");
                 };
 
-                recognizer.SessionStopped += (s, e) =>
-                {
-                    Console.WriteLine("\nTranscript from file Stopped");
-                    stopRecognition.TrySetResult(0);
-                    
-                };
+                    recognizer.SessionStopped += (s, e) =>
+                    {
+                        Console.WriteLine("\nTranscript from file Stopped");
+                        stopRecognition.TrySetResult(0);
 
-                // Starts continuous recognition. Uses StopContinuousRecognitionAsync() to stop recognition.
-                await recognizer.StartContinuousRecognitionAsync().ConfigureAwait(false);
+                    };
 
-                // Waits for completion.
-                // Use Task.WaitAny to keep the task rooted.
-                Task.WaitAny(new[] { stopRecognition.Task });
+                    // Starts continuous recognition. Uses StopContinuousRecognitionAsync() to stop recognition.
+                    await recognizer.StartContinuousRecognitionAsync().ConfigureAwait(false);
 
-                // Stops recognition.
-                await recognizer.StopContinuousRecognitionAsync().ConfigureAwait(false);
+                    // Waits for completion.
+                    // Use Task.WaitAny to keep the task rooted.
+                    Task.WaitAny(new[] { stopRecognition.Task });
+
+                    // Stops recognition.
+                    await recognizer.StopContinuousRecognitionAsync().ConfigureAwait(false);
+                }
+            }
+            else
+            {
+                Console.WriteLine("File " + Input + " doesn't exist");
+                Console.WriteLine(string.Format(InformationCSAudioTool, VersionString));
             }
 
             return bResult;

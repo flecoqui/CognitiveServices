@@ -34,7 +34,7 @@ namespace CSAudioTool
             if (File.Exists(Input))
             {
                 Console.WriteLine("Start parsing file: " + Input);
-                using (var inputReader = new AudioFileReader(Input))
+                using (var inputReader = new WaveFileReader(Input))
                 {
                     Console.WriteLine("Sample Rate:              " + inputReader.WaveFormat.SampleRate.ToString());
                     Console.WriteLine("Channels:                 " + inputReader.WaveFormat.Channels.ToString());
@@ -47,6 +47,12 @@ namespace CSAudioTool
                 Console.WriteLine("Parsing done");
                 bResult = true;
             }
+            else
+            {
+                Console.WriteLine("File " + Input + " doesn't exist");
+                Console.WriteLine(string.Format(InformationCSAudioTool, VersionString));
+            }
+
             return bResult;
         }
     }

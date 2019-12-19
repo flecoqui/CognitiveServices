@@ -48,6 +48,12 @@ namespace CSAudioTool
                 Console.WriteLine("Playing stopped");
 
             }
+            else
+            {
+                Console.WriteLine("File " + Input + " doesn't exist");
+                Console.WriteLine(string.Format(InformationCSAudioTool, VersionString));
+            }
+
             return bResult;
         }
     }
