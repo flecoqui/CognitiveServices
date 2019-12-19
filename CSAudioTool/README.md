@@ -1,4 +1,4 @@
-<img src="Docs/CSAudioTool_logo.png">
+<img src="Docs/CSAudioTOOL_logo.png">
 
 # What is CSAudioTool?
 CSAudioTool is a Cognitive Service Audio Tool used to prepare and test audio files with Microsoft Cognitive Speech Services. The first version is specifically dedicated to Microsoft Cognitive Speech Services .
@@ -12,7 +12,7 @@ For instance, with CSAudioTool version 1.0 you can
 As CSAudioTool is based on .Net Core, the application can be installed on any operating system supporting .Net Core (Windows, Mac OS, Ubuntu, Debian, Centos, Red Hat).
 The current version is limited to Windows operating system.
 
-<img src="Docs/CSAudioTool_Architecture.png" width="600">
+<img src="Docs/CSAudioTOOL_Architecture.png" width="600">
 
 
 The script to build the different release for each operating system is avaiable [here](https://github.com/flecoqui/CognitiveServices/tree/master/CSAudioTool/Scripts)
@@ -21,21 +21,21 @@ The script to build the different release for each operating system is avaiable 
 - [Windows latest release](https://github.com/flecoqui/CognitiveServices/raw/master/CSAudioTool/Releases/LatestRelease.win.zip) </p>
 
     [win-download]:                 https://github.com/flecoqui/CognitiveServices/raw/master/CSAudioTool/Releases/LatestRelease.win.zip
-    [CSAudioTool-version-badge]:            https://cdn.rawgit.com/flecoqui/CognitiveServices/master/CSAudioTool/Docs/CSAudioToolbuild.svg
+    [CSAudioTool-version-badge]:            https://cdn.rawgit.com/flecoqui/CognitiveServices/master/CSAudioTool/Docs/csaudiotoolbuild.svg
     [![Github Release][CSAudioTool-version-badge]][win-download]
 
 
 - [Linux (Ubuntu, Centos, Debian,...)  latest release](https://github.com/flecoqui/CognitiveServices/raw/master/CSAudioTool/Releases/LatestRelease.linux.tar.gz)</p>
 
     [linux-download]:                 https://github.com/flecoqui/CognitiveServices/raw/master/CSAudioTool/Releases/LatestRelease.linux.tar.gz
-    [CSAudioTool-version-badge]:            https://cdn.rawgit.com/flecoqui/CognitiveServices/master/CSAudioTool/Docs/CSAudioToolbuild.svg
+    [CSAudioTool-version-badge]:            https://cdn.rawgit.com/flecoqui/CognitiveServices/master/CSAudioTool/Docs/csaudiotoolbuild.svg
     [![Github Release][CSAudioTool-version-badge]][linux-download]
 
 
 - [Linux (Lightweight distributions using musl like Alpine Linux) latest release](https://github.com/flecoqui/CognitiveServices/raw/master/CSAudioTool/Releases/LatestRelease.linux-musl.tar.gz)</p>
 
     [linux-musl-download]:                 https://github.com/flecoqui/CognitiveServices/raw/master/CSAudioTool/Releases/LatestRelease.linux-musl.tar.gz
-    [CSAudioTool-version-badge]:            https://cdn.rawgit.com/flecoqui/CognitiveServices/master/CSAudioTool/Docs/CSAudioToolbuild.svg
+    [CSAudioTool-version-badge]:            https://cdn.rawgit.com/flecoqui/CognitiveServices/master/CSAudioTool/Docs/csaudiotoolbuild.svg
     [![Github Release][CSAudioTool-version-badge]][linux-musl-download]
 
 
@@ -43,7 +43,7 @@ The script to build the different release for each operating system is avaiable 
 
 
     [rhel-download]:                 https://github.com/flecoqui/CognitiveServices/raw/master/CSAudioTool/Releases/LatestRelease.rhel.tar.gz
-    [CSAudioTool-version-badge]:            https://cdn.rawgit.com/flecoqui/CognitiveServices/master/CSAudioTool/Docs/CSAudioToolbuild.svg
+    [CSAudioTool-version-badge]:            https://cdn.rawgit.com/flecoqui/CognitiveServices/master/CSAudioTool/Docs/csaudiotoolbuild.svg
     [![Github Release][CSAudioTool-version-badge]][rhel-download]
 
 
@@ -51,7 +51,7 @@ The script to build the different release for each operating system is avaiable 
 
 
     [osx-download]:                 https://github.com/flecoqui/CognitiveServices/raw/master/CSAudioTool/Releases/LatestRelease.osx.tar.gz
-    [CSAudioTool-version-badge]:            https://cdn.rawgit.com/flecoqui/CognitiveServices/master/CSAudioTool/Docs/CSAudioToolbuild.svg
+    [CSAudioTool-version-badge]:            https://cdn.rawgit.com/flecoqui/CognitiveServices/master/CSAudioTool/Docs/csaudiotoolbuild.svg
     [![Github Release][CSAudioTool-version-badge]][osx-download]
 
 
@@ -67,14 +67,14 @@ The script to build the different release for each operating system is avaiable 
 
 # Features area
 
-The Adaptive Streaming Tool (CSAudioTool) is an Open Source command line tool supporting several features. This chapter describes how to launch a feature from a command line.
+The Cognitive Service Audio Tool (CSAudioTool) is an Open Source command line tool supporting several features. This chapter describes how to launch a feature from a command line.
 
-##  Push feature: 
+##  Transcript feature: 
 This feature pushes a Smooth Streaming VOD asset towards Live ingestion point to emulate a Live Channel based on VOD Asset. The Live ingestion point can be either an IIS Media Services or an Azure Media Services ingestion point.
 
 ### Syntax
 
-    CSAudioTool --push     --input <inputLocalISMFile> --output <outputLiveUri>
+    CSAudioTool --parse     --input <inputLocalISMFile> --output <outputLiveUri>
             [--minbitrate <bitrate b/s>  --maxbitrate <bitrate b/s> --loop <loopCounter>]
             [--name <service name> --counterperiod <periodinseconds>]
             [--tracefile <path> --tracesize <size in bytes> ]
@@ -113,7 +113,7 @@ The live stream can be played opening the url: http://testsmoothlive-testamsmedi
 
 
 
-##  Pull feature: 
+##  Capture feature: 
 Create VOD asset from an existing Smooth Streaming VOD asset or a Live Smooth Streaming channel already online.
 
 
@@ -166,7 +166,7 @@ The isma and ismv files are available under C:\CSAudioTool\testdvr\a38e6323-95e9
 
 
 
-##  PullPush feature: 
+##  Convert feature: 
 Route an existing Live Stream towards an Azure Media Service Live ingestion point or an IIS Media Service ingestion point.
 
 ### Syntax
@@ -379,6 +379,69 @@ Installing the service on Windows:
 
     CSAudioTool.exe --install --configfile C:\CSAudioTool\config\CSAudioTool.windows.xml
 
+##  Device feature: 
+Parsing isma and ismv files
+
+### Syntax
+
+    CSAudioTool --parse    --input <inputLocalISMXFile> 
+            [--tracefile <path> --tracesize <size in bytes> ]
+            [--tracelevel <none|information|error|warning|verbose>]
+            [--consolelevel <none|information|error|warning|verbose>]
+
+| option | value type | default value | Description | 
+| :--- | :--- | :--- |  :--- | 
+|--input| string | null | Path to the local ISMV or ISMA file on the disk|
+|--tracefile| string | null  | path of the file where the trace will be stored |
+|--tracesize| int |0  | maximum size of the trace file|
+|--tracelevel| string | information  | trace level: none (no log in the trace file), information, error, warning, verbose |
+|--consolelevel&nbsp;  &nbsp; &nbsp;&nbsp; | string | information  | console level: none (no log in the console), information, error, warning, verbose |
+
+
+### Examples
+
+Parsing an ISMA file and displaying the MP4 boxes hierarchy:
+
+    CSAudioTool.exe --parse --input C:\CSAudioTool\testdvr\5f2ce531-d508-49fb-8152-647eba422aec\Audio_0.isma
+
+Parsing an ISMV file, displaying the MP4 boxes hierarchy and the content of each box in hexadecimal:
+
+    CSAudioTool.exe --parse --input C:\CSAudioTool\testdvr\5f2ce531-d508-49fb-8152-647eba422aec\Video_0.ismv --consolelevel verbose
+
+
+##  Service feature (Windows Platform only): 
+Install, start, stop and uninstall CSAudioTool as Windows Service. This feature is only available on Windows. For Linux, the [installation script](https://github.com/flecoqui/CSAudioTool/blob/master/Azure/101-vm-CSAudioTool-release-universal/install-software.sh) automatically install CSAudioTool as a service. 
+
+
+### Syntax
+
+Installing the Windows Service
+
+    CSAudioTool --install --configfile  <configFile>
+
+| option | value type | default value | Description | 
+| :--- | :--- | :--- |  :--- | 
+|--configfile| string | null | Path to the XML config File|
+
+Uninstalling the Windows Service
+
+    CSAudioTool --uninstall
+
+
+Starting the Windows Service
+
+    CSAudioTool --start
+
+Stopping the Windows Service
+
+    CSAudioTool --stop
+
+
+### Examples
+
+Installing the service on Windows:
+
+    CSAudioTool.exe --install --configfile C:\CSAudioTool\config\CSAudioTool.windows.xml
 
 
 # Building CSAudioTool
@@ -451,759 +514,7 @@ This service will run simulatenously 2 captures, storing the audio and video chu
 The logs files will be available under /CSAudioTool/log.
 
 
-# Deploying CSAudioTool in Azure
 
-## Deploying CSAudioTool in a single Virtual Machine
-
-This [Azure Resource Manager template](https://github.com/flecoqui/CSAudioTool/tree/master/Azure/101-vm-CSAudioTool-release-universal) allow you to deploy a single virtual machine in Azure. You can select the operating system running on this virtual machine, it can be Windows Server 2016, Ubuntu, Debian, Centos or Redhat.
-During the installation of the virtual machine, CSAudioTool will be installed as a service, if the virtual machine reboots it will start  the CSAudioTool feature define in the configuration associated with the deployment.
-By default this service will launch the 2 Pull features to capture the audio and video chunks of this sample Live asset: http://b028.wpc.azureedge.net/80B028/Samples/a38e6323-95e9-4f1f-9b38-75eba91704e4/5f2ce531-d508-49fb-8152-647eba422aec.ism/manifest during 3600 seconds.
-
-
-![](https://raw.githubusercontent.com/flecoqui/CSAudioTool/master/Docs/singlevm.png)
-
-
-
-The configuration files ([CSAudioTool.linux.xml](https://raw.githubusercontent.com/flecoqui/CSAudioTool/master/Azure/101-vm-CSAudioTool-universal/CSAudioTool.linux.xml) for Linux and [CSAudioTool.windows.xml](https://raw.githubusercontent.com/flecoqui/CSAudioTool/master/Azure/101-vm-CSAudioTool-universal/CSAudioTool.windows.xml) for Windows) will be stored under: /CSAudioTool/config
-
-This service will run simulatenously 2 captures, storing the audio and video chunks under /CSAudioTool/dvr/test1 and /CSAudioTool/dvr/test2.
-The logs files will be available under /CSAudioTool/log.
-
-## Deploying CSAudioTool in  Virtual Machine Scale Set
-
-This [Azure Resource Manager template](https://github.com/flecoqui/CSAudioTool/tree/master/Azure/101-vm-CSAudioTool-release-vmss-universal) allow you to deploy by default 2 virtual machines in the same scale set in Azure. You can select the operating system running on this virtual machine, it can be Windows Server 2016, Ubuntu, Debian, Centos or Redhat.
-During the installation of the virtual machine, CSAudioTool will be installed as a service, if the virtual machine reboots it will start  the CSAudioTool feature define in the configuration associated with the deployment.
-By default on each virtual machine, this service will launch the 2 Pull features to capture the audio and video chunks of this sample Live asset: http://b028.wpc.azureedge.net/80B028/Samples/a38e6323-95e9-4f1f-9b38-75eba91704e4/5f2ce531-d508-49fb-8152-647eba422aec.ism/manifest during 3600 seconds.
-
-
-![](https://raw.githubusercontent.com/flecoqui/CSAudioTool/master/Docs/vmscaleset.png)
-
-
-
-The configuration files ([CSAudioTool.linux.xml](https://raw.githubusercontent.com/flecoqui/CSAudioTool/master/Azure/101-vm-CSAudioTool-universal/CSAudioTool.linux.xml) for Linux and [CSAudioTool.windows.xml](https://raw.githubusercontent.com/flecoqui/CSAudioTool/master/Azure/101-vm-CSAudioTool-universal/CSAudioTool.windows.xml) for Windows) will be stored under: /CSAudioTool/config
-
-This service will run simulatenously 2 captures, storing the audio and video chunks under /CSAudioTool/dvr/test1 and /CSAudioTool/dvr/test2.
-The logs files will be available under /CSAudioTool/log.
-
-## Deploying CSAudioTool in Azure Containers
-
-### Pre-requisites
-First you need an Azure subscription.
-You can subscribe here:  https://azure.microsoft.com/en-us/free/ . </p>
-Moreover, we will use Azure CLI v2.0 to deploy the resources in Azure.
-You can install Azure CLI on your machine running Linux, MacOS or Windows from here: https://docs.microsoft.com/en-us/cli/azure/install-azure-cli?view=azure-cli-latest 
-
-You could install Docker on your machine, but this installation is not mandatory, if you only deploy containers in Azure:
-You can download Docker for Windows from there https://docs.docker.com/docker-for-windows/install/
-You can also download Docker from there: https://hub.docker.com/editions/community/docker-ce-desktop-windows?tab=description  
-Once Docker is installed you can deploy your application in a local container.
-
-If you want to use Azure Kubernetes Service (AKS), you need to install kubectl.
-
-From a Powershell window, launch the following command to install kubectl on your Windows 10 machine:
-
-
-            Install-Script -Name install-kubectl -Scope CurrentUser -Force 
-
-
-Launch the following command to check if kubectl is correctly installed:
-
-
-            kubectl version
-
-
-### BUILDING A CONTAINER IMAGE IN AZURE
-Before deploying your application in a container running in Azure, you need to create a container image and deploy it in the cloud with Azure Container Registry:
-https://docs.microsoft.com/en-us/azure/container-registry/container-registry-tutorial-quick-task
-
-
-1. Open a command shell window in the project folder  
-
-
-        C:\git\me\CSAudioTool> 
-
-2. Create a resource group with Azure CLI using the following command:</p>
-**Azure CLI 2.0:** az group create --resource-group "ResourceGroupName" --location "RegionName"</p>
-For instance:
-
-
-        C:\git\me\CSAudioTool> az group create --resource-group testacrrg --location eastus2
-
-3. Create an Azure Container Registry with Azure CLI using the following command:</p>
-**Azure CLI 2.0:** az acr create --resource-group "ResourceGroupName" --name "ACRName" --sku "ACRSku" --location "RegionName"</p>
-For instance:
-
-        C:\git\me\CSAudioTool> az acr create --resource-group testacrrg --name testacreu2  --sku Standard --location eastus2  
-
-
-4. Build the container image and register it in the new Azure Container Registry with Azure CLI using the following command:</p>
-**Azure CLI 2.0:** az acr build --registry "ACRName" --image "ImageName:ImageTag" "localFolder" -f "DockerFilePath"</p>
-For instance below the creation of an image for Linux:
-
-        C:\git\me\CSAudioTool> az acr build --registry testacreu2   --image CSAudioTool.linux:v1 . -f Docker\Dockerfile.linux
-
-
-     After few minutes, the image should be available in the new registry:
-
-     For instance:
-        
-        2019/02/05 20:03:41
-        - image:
-            registry: testacreu2.azurecr.io
-            repository: CSAudioTool
-            tag: v1
-            digest: sha256:dc06bb0e107f52bd2b43abbf8c16ae816e667061acaece36c96074160fd99581
-          runtime-dependency:
-            registry: registry.hub.docker.com
-            repository: microsoft/dotnet
-            tag: 2.2-runtime
-            digest: sha256:cca439245c5d46d8549e83630c34f04dfbf3d6b70874e9a27faa971819df57a3
-          buildtime-dependency:
-          - registry: registry.hub.docker.com
-            repository: microsoft/dotnet
-            tag: 2.2-sdk
-            digest: sha256:06c53fd178222eb693f78546303c850cc75174f8548c87210e7b83e3433603f5
-          git: {}        
-        
-        Run ID: ch1 was successful after 3m0s
-
-     The image is built using the DockerFile below:
-
-
-            FROM microsoft/dotnet:2.2.103-sdk AS build-env
-            WORKDIR /app
-            
-            # copy csproj and restore as distinct layers
-            COPY  cs/CSAudioTool/CSAudioTool/*.csproj ./CSAudioTool/
-            WORKDIR /app/CSAudioTool
-            RUN dotnet restore
-
-            # copy everything else and build app
-            WORKDIR /app
-            #COPY Tests/SmoothAsset/. ./outputvideo/
-
-            COPY cs/CSAudioTool/CSAudioTool/. ./CSAudioTool/
-            WORKDIR /app/CSAudioTool
-            RUN dotnet publish --self-contained -r linux-x64 -c Release -o out
-            #RUN dotnet publish  -c Release -o out
-
-            FROM microsoft/dotnet:2.2-runtime-deps AS runtime
-            WORKDIR /app
-            COPY --from=build-env /app/CSAudioTool/out ./
-            #COPY --from=build-env /app/outputvideo ./outputvideo/
-
-            ENTRYPOINT ["./CSAudioTool", "--version"]
-
-
-This DockerFile is available [here](https://raw.githubusercontent.com/flecoqui/CSAudioTool/master/Docker/Dockerfile.linux) on line. The image built from this DockerFile contains only the CSAudioTool binary. 
-It's possible to create an image with an embedded Smooth Streaming Asset for a Push scenario, in that case, you need to copy the Smooth Streaming asset in the folder Tests\SmoothAsset.
-
-You can use for instance the following command  line:
-
-
-            C:\git\me\CSAudioTool> az acr build --registry testacreu2   --image CSAudioToolpush.linux:v1 . -f Docker\Dockerfile.push.linux
-
-Dockerfile below for the push scenario where the smooth streaming asset is embedded in the image:
-
-
-            FROM microsoft/dotnet:2.2.103-sdk AS build-env
-            WORKDIR /app
-            
-            # copy csproj and restore as distinct layers
-            COPY  cs/CSAudioTool/CSAudioTool/*.csproj ./CSAudioTool/
-            WORKDIR /app/CSAudioTool
-            RUN dotnet restore
-
-            # copy everything else and build app
-            WORKDIR /app
-            COPY Tests/SmoothAsset/. ./outputvideo/
-
-            COPY cs/CSAudioTool/CSAudioTool/. ./CSAudioTool/
-            WORKDIR /app/CSAudioTool
-            RUN dotnet publish --self-contained -r linux-x64 -c Release -o out
-            #RUN dotnet publish  -c Release -o out
-
-            FROM microsoft/dotnet:2.2-runtime-deps AS runtime
-            WORKDIR /app
-            COPY --from=build-env /app/CSAudioTool/out ./
-            COPY --from=build-env /app/outputvideo ./outputvideo/
-
-            ENTRYPOINT ["./CSAudioTool", "--version"]
-
-
-
-For instance below the creation of an image for Linux Alpine which will consume less resource than the default Linux image:
-
-        C:\git\me\CSAudioTool> az acr build --registry testacreu2   --image CSAudioTool.linux-musl:v1 . -f Docker\Dockerfile.linux-musl
-
-
-     After few minutes, the image should be available in the new registry:
-
-     The image is built using the DockerFile below:
-
-
-            FROM microsoft/dotnet:2.2.103-sdk-alpine AS build-env
-            WORKDIR /app
-            
-            # copy csproj and restore as distinct layers
-            COPY  cs/CSAudioTool/CSAudioTool/*.csproj ./CSAudioTool/
-            WORKDIR /app/CSAudioTool
-            RUN dotnet restore
-
-            # copy everything else and build app
-            WORKDIR /app
-            #COPY Tests/SmoothAsset/. ./outputvideo/
-
-            COPY cs/CSAudioTool/CSAudioTool/. ./CSAudioTool/
-            WORKDIR /app/CSAudioTool
-            RUN dotnet publish --self-contained -r linux-musl-x64 -c Release -o out
-            #RUN dotnet publish  -c Release -o out
-
-            FROM microsoft/dotnet:2.2-runtime-deps-alpine AS runtime
-            WORKDIR /app
-            COPY --from=build-env /app/CSAudioTool/out ./
-            #COPY --from=build-env /app/outputvideo ./outputvideo/
-
-            ENTRYPOINT ["./CSAudioTool", "--version"]
-
-
-
-This DockerFile is available [here](https://raw.githubusercontent.com/flecoqui/CSAudioTool/master/Docker/Dockerfile.linux-musl) on line. The image built from this DockerFile contains only the CSAudioTool binary. 
-It's possible to create an image with an embedded Smooth Streaming Asset for a Push scenario, in that case, you need to copy the Smooth Streaming asset in the folder Tests\SmoothAsset.
-You can use for instance the following command  line:
-
-
-            C:\git\me\CSAudioTool> az acr build --registry testacreu2   --image CSAudioToolpush.linux-musl:v1 . -f Docker\Dockerfile.push.linux-musl
-
-
-Dockerfile below for the push scenario where the smooth streaming asset is embedded in the image:
-
-
-            FROM microsoft/dotnet:2.2.103-sdk-alpine AS build-env
-            WORKDIR /app
-            
-            # copy csproj and restore as distinct layers
-            COPY  cs/CSAudioTool/CSAudioTool/*.csproj ./CSAudioTool/
-            WORKDIR /app/CSAudioTool
-            RUN dotnet restore
-
-            # copy everything else and build app
-            WORKDIR /app
-            COPY Tests/SmoothAsset/. ./outputvideo/
-
-            COPY cs/CSAudioTool/CSAudioTool/. ./CSAudioTool/
-            WORKDIR /app/CSAudioTool
-            RUN dotnet publish --self-contained -r linux-musl-x64 -c Release -o out
-            #RUN dotnet publish  -c Release -o out
-
-            FROM microsoft/dotnet:2.2-runtime-deps-alpine AS runtime
-            WORKDIR /app
-            COPY --from=build-env /app/CSAudioTool/out ./
-            COPY --from=build-env /app/outputvideo ./outputvideo/
-
-            ENTRYPOINT ["./CSAudioTool", "--version"]
-
-
-
-Moreover, as the entrypoint is :
-
-          ENTRYPOINT ["./CSAudioTool", "--version"]
-
-when the container will start, the CSAudioTool application will only display the version message and stop.
-
-If you want a image which runs always the same service, you can complete the entrypoint wth the CSAudioTool arguments, for instance:
-
-
-          ENTRYPOINT ["./CSAudioTool",  "--pullpush", "--input", "http://b028.wpc.azureedge.net/80B028/Samples/a38e6323-95e9-4f1f-9b38-75eba91704e4/5f2ce531-d508-49fb-8152-647eba422aec.ism/manifest", "--minbitrate", "300000"   ,"--maxbitrate" ,"1000000","--liveoffset","10" ,"--output", "http://channel2-testlivevi-use2.channel.media.azure.net/ingest.isml"]
-
-
-### CONFIGURING REGISTRY AUTHENTICATION
-In this sections, you create an Azure Key Vault and Service Principal, then deploy the container to Azure Container Instances (ACI) using Service Principal's credentials.
-
-1. Create a key vault with Azure CLI using the following command:</p>
-**Azure CLI 2.0:** az keyvault create --resource-group "ResourceGroupName" --name "AzureKeyVaultName"</p>
-For instance:
-
-
-        C:\git\me\CSAudioTool> az keyvault create --resource-group testacrrg --name acrkv
- 
-2. Display the ID associated with the new Azure Container Registry using the following command:</p>
-In order to create the Service Principal you need to know the ID associated with the new Azure Container Registry, you can display this information with the following command:</p>
-**Azure CLI 2.0:** az acr show --name "ACRName" --query id --output tsv</p>
-For instance:
-
-
-        C:\git\me\CSAudioTool> az acr show --name testacreu2 --query id --output tsv
-
-3. Create a Service Principal and display the password with Azure CLI using the following command:</p>
-**Azure CLI 2.0:** az ad sp create-for-rbac --name "ACRSPName" --scopes "ACRID" --role acrpull --query password --output tsv</p>
-For instance:
-
-
-        C:\git\me\CSAudioTool> az ad sp create-for-rbac --name acrspeu2 --scopes /subscriptions/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx/resourceGroups/acrrg/providers/Microsoft.ContainerRegistry/registries/acreu2 --role acrpull --query password --output tsv
-
-     After few seconds the result (ACR Password) is displayed:
-
-        Changing "spacreu2" to a valid URI of "http://acrspeu2", which is the required format used for service principal names
-        Retrying role assignment creation: 1/36
-        Retrying role assignment creation: 2/36
-        yyyyyyyy-yyyy-yyyy-yyyy-yyyyyyyyyyyy
-
-
-4. Store credentials (ACR password) with Azure CLI using the following command:</p>
-**Azure CLI 2.0:** az keyvault secret set  --vault-name "AzureKeyVaultName" --name "PasswordSecretName" --value "ServicePrincipalPassword" </p>
-For instance:
-
-
-        C:\git\me\CSAudioTool> az keyvault secret set  --vault-name acrkv --name acrspeu2-pull-pwd --value yyyyyyyy-yyyy-yyyy-yyyy-yyyyyyyyyyyy
- 
-5. Display the Application ID associated with the new Service Principal with Azure CLI using the following command:</p>
-**Azure CLI 2.0:** az ad sp show --id http://"ACRSPName" --query appId --output tsv</p>
-For instance:
-
-
-        C:\git\me\CSAudioTool> az ad sp show --id http://acrspeu2 --query appId --output tsv
-
-     After few seconds the result (ACR AppId) is displayed:
-
-        wwwwwwww-wwww-wwww-wwww-wwwwwwwwwwww
-
-
-
-6. Store credentials (ACR AppID) with Azure CLI using the following command:</p>
-**Azure CLI 2.0:** az keyvault secret set  --vault-name "AzureKeyVaultName" --name "AppIDSecretName" --value "ServicePrincipalAppID" </p>
-For instance:
-
-
-        C:\git\me\CSAudioTool> az keyvault secret set  --vault-name acrkv --name acrspeu2-pull-usr --value wwwwwwww-wwww-wwww-wwww-wwwwwwwwwwww
- 
-
-     The Azure Key Vault contains now the Azure Container Registry AppID and Password. 
-
-
-### Deploying CSAudioTool in ACI (Azure Container Instance)
-Your container image CSAudioTool:v1 is now available from your container registry in Azure.
-You can now deploy the image using the credentials stored in Azure Key Vault.
-
-
-**Warning:** There is currently an issue for the pullpush feature running in container. After several hours, the application CSAudioTool lose the connection with the ingestion point (TCP conneciton lost). As a temporary turnaround the container is deployed with the restart policy set to OnFailure to force the container to restart the pullpush feature.</p>
-
-<img src="https://raw.githubusercontent.com/flecoqui/CSAudioTool/master/Docs/aci.png"/>
-
-
-
-1. You need first to retrieve the AppID from the Azure Key Vault with Azure CLI using the following command:</p>
-**Azure CLI 2.0:** az keyvault secret show --vault-name "AzureKeyVaultName" --name "AppIDSecretName" --query value -o tsv  </p>
-For instance:
-
-
-        C:\git\me\CSAudioTool> az keyvault secret show --vault-name acrkv --name acrspeu2-pull-usr --query value -o tsv
- 
-     After few seconds the result (ACR AppId) is displayed:
-
-        wwwwwwww-wwww-wwww-wwww-wwwwwwwwwwww
-
-2. You need also to retrieve the Password from the Azure Key Vault with Azure CLI using the following command:</p>
-**Azure CLI 2.0:** az keyvault secret show --vault-name "AzureKeyVaultName" --name "PasswordSecretName" --query value -o tsv  </p>
-For instance:
-
-
-        C:\git\me\CSAudioTool> az keyvault secret show --vault-name acrkv --name acrspeu2-pull-pwd --query value -o tsv
- 
-     After few seconds the result (Password) is displayed:
-
-        yyyyyyyy-yyyy-yyyy-yyyy-yyyyyyyyyyyy
-
-
-3. With the AppID and the Password you can now deploy the image in a container with Azure CLI using the following command:</p>
-**Azure CLI 2.0:** az container create --resource-group "ResourceGroupName"  --name "ContainerGroupName" -f "file.yaml" -o json --debug --restart-policy OnFailure</p>
-
-
-Below the content of the file "file.yaml" :
-
-          apiVersion: 2018-06-01
-          location: <Region>
-          name: <ContainerGroupName>
-          properties:
-            containers:
-            - name: CSAudioTool
-              properties:
-                image: <ACRName>.azurecr.io/CSAudioTool.linux:v1
-                command: ["./CSAudioTool","--pullpush", "--input", "<inputSmoothStreamingUrl>", "--minbitrate", "<minBitrate>", "--maxbitrate", "<maxBitrate>", "--liveoffset", "<LiveOffset>", "--output", "<outputSmoothStreamingUrl>"]
-                resources:
-                  requests:
-                    cpu: .4
-                    memoryInGb: .3
-            osType: Linux
-            imageRegistryCredentials:
-            - server: <ACRName>.azurecr.io
-              username: <AppUserName>
-              password: <AppPassword>
-          tags: null
-          type: Microsoft.ContainerInstance/containerGroups
-
-
-For instance below the creation of a Linux container:
-
-        C:\git\me\CSAudioTool> az container create --resource-group testacrrg --name CSAudioToolpullpush.linux -f Docker\CSAudioToolpullpush.linux.aci.yaml  -o json --debug --restart-policy OnFailure
-
-
- 
-The content of the yaml file below:
-
-
-            apiVersion: 2018-06-01
-            location: eastus2
-            name: CSAudioToolpullpush.linux
-            properties:
-            containers:
-            - name: CSAudioTool
-                properties:
-                image: testacreu2.azurecr.io/CSAudioTool.linux:v1
-                command: ["./CSAudioTool","--pullpush", "--input", "https://streaming.media.azure.net/63f80159-6418-4202-b6f1-6e5c2032ac22/hd2az.ism/manifest", "--minbitrate", "200000", "--maxbitrate", "1810000", "--liveoffset", "10", "--output", "http://channel2.channel.media.azure.net/ingest.isml","--counterperiod","300","--tracefile", "/app/CSAudioTool.service.log" ,"--tracesize" ,"200000" ,"--tracelevel", "warning"]
-                resources:
-                    requests:
-                    cpu: .4
-                    memoryInGb: .3          
-            osType: Linux
-            imageRegistryCredentials:
-            - server: testacreu2.azurecr.io
-                username: 40e21cbe-9b70-469f-80da-4369e02ebc58
-                password: 783c8982-1c2b-4048-a70f-c9a21f5eba8f
-            tags: null
-            type: Microsoft.ContainerInstance/containerGroups
-
-
-
-For instance below the creation of an Alpine container:
-
-        C:\git\me\CSAudioTool> az container create --resource-group testacrrg --name CSAudioToolpullpush.linux-musl -f Docker\CSAudioToolpullpush.linux-musl.aci.yaml  -o json --debug --restart-policy OnFailure
-
-
- 
-The content of the yaml file below:
-
-
-
-            apiVersion: 2018-06-01
-            location: eastus2
-            name: CSAudioToolpullpush.linux-musl
-            properties:
-            containers:
-            - name: CSAudioTool
-                properties:
-                image: testacreu2.azurecr.io/CSAudioTool.linux-musl:v1
-                command: ["./CSAudioTool","--pullpush", "--input", "https://streaming.media.azure.net/63f80159-6418-4202-b6f1-6e5c2032ac22/hd2az.ism/manifest", "--minbitrate", "200000", "--maxbitrate", "1810000", "--liveoffset", "10", "--output", "http://channel2.channel.media.azure.net/ingest.isml","--counterperiod","300","--tracefile", "/app/CSAudioTool.service.log" ,"--tracesize" ,"200000" ,"--tracelevel", "warning"]
-                resources:
-                    requests:
-                    cpu: .4
-                    memoryInGb: .3          
-            osType: Linux
-            imageRegistryCredentials:
-            - server: testacreu2.azurecr.io
-                username: 40e21cbe-9b70-469f-80da-4369e02ebc58
-                password: 783c8982-1c2b-4048-a70f-c9a21f5eba8f
-            tags: null
-            type: Microsoft.ContainerInstance/containerGroups
-
-
-
-
-
-4. With your favorite Browser open the Azure portal https://portal.azure.com/ 
-Navigate to the resource group where you deployed your container instance.
-Check that the Container Instance has been created.
-
-
-     <img src="https://raw.githubusercontent.com/flecoqui/CSAudioTool/master/Docs/acicreate.png"/>
-   
-
-
-     Click on the new Container Instance, and check that the new instance is consuming CPU, Memory, ingress and egress:
-
-     
-     <img src="https://raw.githubusercontent.com/flecoqui/CSAudioTool/master/Docs/acimonitor.png"/>
-   
-
-
-#### VERIFYING THE CONTAINER RUNNING IN AZURE
-You can receive on your local machine the logs from the Container running in Azure with Azure CLI with the following command: </p>
-**Azure CLI 2.0:** az container attach --resource-group "ResourceGroupName" --name "ContainerGroupName"  </p>
-For instance:
-
-
-        C:\git\me\CSAudioTool> az container attach --resource-group testacrrg --name CSAudioToolpullpush.linux
-
-
-If you want to browse the files and the folders in the container while the container instance is running, you can use the following command:</p>
-**Azure CLI 2.0:** az container exec --resource-group "ResourceGroupName" --name "ContainerGroupName"  --exec-command "/bin/bash"</p>
-
-
-        C:\git\me\CSAudioTool> az container exec --resource-group testacrrg --name CSAudioToolpullpush.linux --exec-command "/bin/bash"
-
-
-#### TROUBLESHOOTING YOUR IMAGE
-If your image keep on rebooting, you can troubleshoot the issue creating the following instance from the image:
-**Azure CLI 2.0:** az container create -g "ResourceGroupName" --name "ContainerGroupName" --image "ACRName".azurecr.io/"ImageName:ImageTag" --command-line "tail -f /dev/null" --registry-username "UserName" --registry-password "Password" </p>
-For instance:
-
-        C:\git\me\CSAudioTool> az container create -g testacrrg --name CSAudioToolpullpush.linux --image testacreu2.azurecr.io/CSAudioTool.linux:v1 --command-line "tail -f /dev/null" --registry-username 40e21cbe-9b70-469f-80da-4369e02ebc58 --registry-password 783c8982-1c2b-4048-a70f-c9a21f5eba8f
-
-After this command, your image should not keep on rebooting, and you could browse the files and the folders in the container while the container instance is running, with the following command:</p>
-**Azure CLI 2.0:** az container exec --resource-group "ResourceGroupName" --name "ContainerGroupName"  --exec-command "/bin/bash"</p>
-
-
-        C:\git\me\CSAudioTool> az container exec --resource-group testacrrg --name CSAudioToolpullpush.linux --exec-command "/bin/bash"
-
-
-
-### Deploying CSAudioTool in AKS (Azure Kubernetes Service)
-Using the same container image in the Azure Container Registry you can deploy the same container image in Azure Kubernetes Service (AKS).</p>
-You'll find further information here:</p>
-https://docs.microsoft.com/fr-fr/azure/aks/tutorial-kubernetes-deploy-cluster 
-
-
-<img src="https://raw.githubusercontent.com/flecoqui/CSAudioTool/master/Docs/aks.png"/>
-
-
-#### CREATING SERVICE PRINCIPAL FOR AKS DEPLOYMENT
-
-1. With Azure CLI create an Service Principal:
-**Azure CLI 2.0:** az ad sp create-for-rbac --skip-assignment </p>
-For instance:
-
-
-          C:\git\me\CSAudioTool> az ad sp create-for-rbac --skip-assignment
- 
-      The command returns the following information associated with the new Service Principal:
-      - appID
-      - displayName
-      - name
-      - password
-      - tenant
-
-     For instance:
-
-
-          AppId                                 Password                            
-          ------------------------------------  ------------------------------------
-          d604dc61-d8c0-41e2-803e-443415a62825  097df367-7472-4c23-96e1-9722e1d8270a
-
-
-
-2. Display the ID associated with the new Azure Container Registry using the following command:</p>
-In order to allow the Service Principal to have access to the Azure Container Registry you need to display the ACR resource ID with the following command:</p>
-**Azure CLI 2.0:** az acr show --name "ACRName" --query id --output tsv</p>
-For instance:
-
-
-        C:\git\me\CSAudioTool> az acr show --name testacreu2 --query id --output tsv
-
-     The command returns ACR resource ID.
-
-     For instance:
-
-        /subscriptions/e5c9fc83-fbd0-4368-9cb6-1b5823479b6d/resourceGroups/acrrg/providers/Microsoft.ContainerRegistry/registries/testacreu2
-
-
-3. Allow the Service Principal to have access to the Azure Container Registry with the following command:</p>
-**Azure CLI 2.0:** az role assignment create --assignee "AppID" --scope "ACRReourceID" --role Reader
- For instance:
-
-        C:\git\me\CSAudioTool> az role assignment create --assignee d604dc61-d8c0-41e2-803e-443415a62825 --scope /subscriptions/e5c9fc83-fbd0-4368-9cb6-1b5823479b6d/resourceGroups/acrrg/providers/Microsoft.ContainerRegistry/registries/testacreu2 --role Reader
-
-
-#### CREATING A KUBERNETES CLUSTER
-Now you can create the Kubernetes Cluster in Azure. </p>
-
-
-1. With the following Azure CLI command create the Azure Kubernetes Cluster:</p>
-**Azure CLI 2.0:** az aks create --resource-group "ResourceGroupName" --name "AKSClusterName" --node-count 1 --service-principal "SPAppID" --client-secret "SPPassword" --generate-ssh-keys </p>
-
-     For instance:
-
-
-        az aks create --resource-group testacrrg --name testnetcoreakscluster --node-count 1 --service-principal d604dc61-d8c0-41e2-803e-443415a62825   --client-secret 097df367-7472-4c23-96e1-9722e1d8270a --generate-ssh-keys
-
- 
-2. After few minutes, the Cluster is deployed. To connect to the cluster from your local computer, you use the Kubernetes Command Line Client. Use the following Azure CLI command to install the Kubernetes Command Line Client:
-**Azure CLI 2.0:** az aks install-cli </p>
-
-
-3. Connect the Kubernetes Command Line Client to your Cluster in Azure using the following Azure CLI command:
-**Azure CLI 2.0:** az aks get-credentials --resource-group "ResourceGroupName" --name "AKSClusterName" </p>
-
-     For instance:
-
-        az aks get-credentials --resource-group testacrrg --name testnetcoreakscluster
-
-
-4. Check the connection from the Kubernetes Command Line Client with the following command:
-**kubectl:** kubectl get nodes
-
-     The commmand will return information about the Kuberentes nodes.
-     For instance:
-
-        NAME                       STATUS    ROLES     AGE       VERSION
-        aks-nodepool1-38201324-0   Ready     agent     16m       v1.9.11
-
-     You are now connected to your cluster from your local machine.
-
-#### DEPLOYING THE IMAGE TO A KUBERNETES CLUSTER IN AZURE
-
-**Warning:** There is currently an issue for the pullpush feature running in container. After several hours, the application CSAudioTool lose the connection with the ingestion point (TCP conneciton lost). As a temporary turnaround the container is deployed with the restart policy set to Always to force the container to restart the pullpush feature.</p>
-
-1. You can list the Azure Container Registry per Resource Group using the following Azure CLI command: </p>
-**Azure CLI 2.0:** az acr list --resource-group  "ResourceGroupName" </p>
-For instance: 
- 
-
-        az acr list --resource-group  testacrrg
-
-     it returns the list of ACR associated with this resource group.
-     For instance:</p>
-
-
-          NAME        RESOURCE GROUP    LOCATION    SKU       LOGIN SERVER           CREATION DATE         ADMIN ENABLED
-          ----------  ----------------  ----------  --------  ---------------------  --------------------  ---------------
-          testacreu2  testacrrg         eastus2     Standard  testacreu2.azurecr.io  2018-12-14T17:19:30Z
-
-
-
-2. You can list the repository in each Azure Container Registry  using the following Azure CLI command: </p>
-**Azure CLI 2.0:** az acr repository list --name "ACRName" --output table </p>
-
-     For instance: 
- 
-
-        az acr repository list --name testacreu2 --output table
-
-
-     It returns the list of images.
-
-     For instance:
-
-        Result
-        --------------------
-        CSAudioTool
-
-
-
-3. You can deploy the same image in Azure Kubernetes Cluster using the YAML file CSAudioToolpullpush.linux.aks.yaml with Kubernetes Command Line Client: </p>
-**kubectl:** kubectl apply -f "yamlfile" </p>
-
-     For instance: 
-
-          C:\git\me\CSAudioTool> kubectl apply -f Docker\CSAudioToolpullpush.linux.aks.yaml
- 
-     Before launching this command you need to edit the file CSAudioTool.pullpush.aks.yaml and update the line 28, and replace the field <AzureContainerRegistryName> with the Azure Container Registry Name. 
-
-      - image: <AzureContainerRegistryName>.azurecr.io/CSAudioTool:v1
-        name: CSAudioTool
-
-     For instance:
-
-      - image: testacreu2.azurecr.io/CSAudioTool:v1
-        name: CSAudioTool
-    
-     You also need to update the line 30 and add the arguments used to call CSAudioTool</p>
-     For instance replace:
-
-        command: ["./CSAudioTool","--version"]
-
-
-    with:
-
-
-        command: ["./CSAudioTool","--pullpush", "--input", "http://channel1-testlivevi-use2.channel.media.azure.net/preview.isml/manifest", "--minbitrate", "300000", "--maxbitrate", "2000000", "--liveoffset", "10", "--output", "http://channel2-testlivevi-use2.channel.media.azure.net/ingest.isml"]
-
-For instance below the content of a yaml file:
-
-
-            apiVersion: apps/v1
-            kind: Deployment
-            metadata:
-            name: CSAudioToolpullpushlinux
-            spec:
-            selector:
-                matchLabels:
-                run: CSAudioToolpullpushlinux
-            replicas: 1
-            template:
-                metadata:
-                labels:
-                    run: CSAudioToolpullpushlinux
-                spec:
-                containers:
-                - name: CSAudioToolpullpushlinux
-                    image: testacreu2.azurecr.io/CSAudioTool.linux:v1
-                    command: ["./CSAudioTool","--pullpush", "--input", "https://streaming.media.azure.net/63f80159-6418-4202-b6f1-6e5c2032ac22/hd2az.ism/manifest", "--minbitrate", "200000", "--maxbitrate", "1810000", "--liveoffset", "10", "--output", "http://channel2-testlivevi-use2.channel.media.azure.net/ingest.isml","--counterperiod","300","--tracefile", "/app/CSAudioTool.service.log" ,"--tracesize" ,"200000" ,"--tracelevel", "warning"]
-                    imagePullPolicy: IfNotPresent
-                    resources: 
-                    requests:
-                        cpu: .4
-                        memory: 300Mi
-
-
-
-4. You can check the new deployment with Kubernetes Command Line Client: </p>
-**kubectl:** kubectl get deployments </p>
-
-     For instance: 
- 
-
-        kubectl get deployments
-
-     This command returns a result like this one below:
-
-
-            NAME                       DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
-            CSAudioToolpullpushlinux        0         0         0            0           23h
-
-
-#### VERIFYING THE IMAGE DEPLOYMENT IN A KUBERNETES CLUSTER IN AZURE
-
-
-1. You can list the pods associated with your AKS Deployment with Kubernetes Command Line Client: </p>
-**kubectl:** kubectl get pods </p>
-
-     It returns the list of pods associated with your deployment for instance:
-
-            NAME                                        READY     STATUS    RESTARTS   AGE
-            CSAudioToolpullpushlinux-64556b657f-khct7   1/1       Running   2          22h
-
-
-2. You can stop the pod using the following command with Kubernetes Command Line Client: </p>
-**kubectl:** kubectl scale --replicas=0 deployment/CSAudioToolpullpushlinux-musl </p>
-
-     If you run the command "kubectl get pods" again, you'll see the pod is not running anymore.
-
-
-3. You can restart the pod using the following command with Kubernetes Command Line Client: </p>
-**kubectl:** kubectl scale --replicas=1 deployment/CSAudioToolpullpushlinux-musl </p>
-
-     If you run the command "kubectl get pods" again, you'll see the pod is running again.
-
-     For instance:
-
-            NAME                                        READY     STATUS    RESTARTS   AGE
-            CSAudioToolpullpushlinux-84556b657f-khct7   1/1       Running   2          43s
-
-
-4. With your favorite Browser open the Azure portal https://portal.azure.com/ 
-Navigate to the resource group where you deployed your Kubernetes service.
-Check that the Kubernetes service has been created.
-
-
-     <img src="https://raw.githubusercontent.com/flecoqui/CSAudioTool/master/Docs/akscreate.png"/>
-   
-
-
-     Click on the new AKS cluster, select the Insights in the monitoring section and check that your container is still running:
-
-     
-     <img src="https://raw.githubusercontent.com/flecoqui/CSAudioTool/master/Docs/aksmonitor.png"/>
-   
 
 # Next Steps
 
