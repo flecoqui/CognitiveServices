@@ -87,8 +87,8 @@ Command to launch the transcript from a microphone or a loopback input:
 
 
 
-| option | value type | default value | Description | 
-| :--- | :--- | :--- |  :--- | 
+| option<img width=230/>| value type | default value | Description | 
+| :--- | :--- | :--- | :--- | 
 |--input| string | null | Path to the local WAV file (This file must support 16000KHZ sample rate, 16 bits, and 1 channel)|
 |--input| string | null | for a transcript from a microphone the value is 'microphone', from a loopback input 'loopback'|
 |--region| string | null | Azure region where the Speech Service is deployed for instance: northeurope, eastus2, |
@@ -124,7 +124,7 @@ Command to launch the transcript from a WAV file:
                  [--device <CaptureDeviceID>]  
 
 
-| option | value type | default value | Description | 
+| option<img width=200/> | value type | default value | Description | 
 | :--- | :--- | :--- |  :--- | 
 |--input| string | null | for a transcript from a microphone the value is 'microphone', from a loopback input 'loopback'|
 |--output| string | null | Path to the local WAV file where the stream will be stored|
@@ -151,7 +151,7 @@ Command to convert a WAV file:
     csaudiotool --convert --input <Source WAV File> --output <New WAV File> --format <new format> 
 
 
-| option | value type | default value | Description | 
+| option<img width=100/>| value type | default value | Description | 
 | :--- | :--- | :--- |  :--- | 
 |--input| string | null | Path to the source local WAV file to convert |
 |--output| string | null | Path of the new local WAV file converted in the expected format|
