@@ -35,7 +35,7 @@ namespace CSAudioTool
             "csaudiotool --convert    --input <WAV Audio File path> --output <WAV Audio File path> --format <WAVFormat>\r\n" + 
             "                         --start <timeMs> --duration <DurationMs>\r\n" +
             "csaudiotool --transcript --input <WAV Audio File path> --region <AzureRegion> --key <AccountKey> \r\n" +
-            "                         --language <Language> --device <CaptureDeviceID>\r\n" +               
+            "                         --language <Language> \r\n" +               
             "csaudiotool --transcript --input <AudioSource> --region <AzureRegion> --key <AccountKey>\r\n" +
             "                         --language <Language> --device <CaptureDeviceID>\r\n" +
             "csaudiotool --listdevices \r\n" +

@@ -113,6 +113,7 @@ namespace CSAudioTool
                     }
 
                     stopRecognition.TrySetResult(0);
+                    
                 };
 
                 recognizer.SessionStarted += (s, e) =>
@@ -124,6 +125,7 @@ namespace CSAudioTool
                 {
                     Console.WriteLine("\nTranscript from file Stopped");
                     stopRecognition.TrySetResult(0);
+                    
                 };
 
                 // Starts continuous recognition. Uses StopContinuousRecognitionAsync() to stop recognition.
@@ -209,8 +211,9 @@ namespace CSAudioTool
                     Thread.Sleep(50);
                 } while (bTerminate == false);
                 Console.WriteLine("Aborting Transcript ...");
-                await recognizer.StopContinuousRecognitionAsync().ConfigureAwait(false);
                 capture.StopRecording();
+                if(recognizer!=null)                
+                    await recognizer.StopContinuousRecognitionAsync().ConfigureAwait(false);
             }
             );
 
@@ -257,8 +260,9 @@ namespace CSAudioTool
                             Console.WriteLine($"CANCELED: ErrorDetails={e.ErrorDetails}");
                             Console.WriteLine($"CANCELED: Did you update the subscription info?");
                         }
-
+                        
                         stopRecognition.TrySetResult(0);
+                        bTerminate = true;
                     };
 
                     recognizer.SessionStarted += (s, e) =>

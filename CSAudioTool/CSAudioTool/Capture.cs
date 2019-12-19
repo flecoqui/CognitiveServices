@@ -122,9 +122,10 @@ namespace CSAudioTool
             {
                 var outputFilePath = GetNewFilePath(Output);
 
-                int sampleRate = 0;
-                int channels = 0;
-                GetFormat(Format, out sampleRate, out channels);
+                int sampleRate = 16000;
+                int channels = 1;
+                if(!string.IsNullOrEmpty(Format))
+                    GetFormat(Format, out sampleRate, out channels);
                 WAVStream writer = null;
                 WaveFileWriter filewriter = null;
                 WaveFormat format = new WaveFormat(sampleRate, channels);
