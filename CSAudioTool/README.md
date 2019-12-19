@@ -70,46 +70,46 @@ The script to build the different release for each operating system is avaiable 
 The Cognitive Service Audio Tool (CSAudioTool) is an Open Source command line tool supporting several features. This chapter describes how to launch a feature from a command line.
 
 ##  Transcript feature: 
-This feature pushes a Smooth Streaming VOD asset towards Live ingestion point to emulate a Live Channel based on VOD Asset. The Live ingestion point can be either an IIS Media Services or an Azure Media Services ingestion point.
+This feature allow the user to get the transcript in different language (en-US, fr-FR, en-GB, de-DE, ...) for the source audio stream (microphone, loopback WASAPI, WAV file).
+To test this feature you need a Speech Service Account, the Key associated with this account and the region where the speech service is deployed will be required.
 
 ### Syntax
 
-    CSAudioTool --parse     --input <inputLocalISMFile> --output <outputLiveUri>
-            [--minbitrate <bitrate b/s>  --maxbitrate <bitrate b/s> --loop <loopCounter>]
-            [--name <service name> --counterperiod <periodinseconds>]
-            [--tracefile <path> --tracesize <size in bytes> ]
-            [--tracelevel <none|information|error|warning|verbose>]
-            [--consolelevel <none|information|error|warning|verbose>]
+Command to launch the transcript from a WAV file:
+
+    csaudiotool --transcript --input <WAV Audio File path> --region <AzureRegion> --key <AccountKey>
+                             --language <Language> 
+
+Command to launch the transcript from a microphone or a loopback input:
+
+    csaudiotool --transcript --input <AudioSource> --region <AzureRegion> --key <AccountKey>
+                             --language <Language> [--device <CaptureDeviceID>]            
+
+
 
 | option | value type | default value | Description | 
 | :--- | :--- | :--- |  :--- | 
-|--input| string | null | Path to the local ISM file on the disk (mandatory option)|
-|--ouput| string | null | Uri of the ingestion point (mandatory option)|
-|--loop| int |0  | number of live loop when the value is 0, infinite loop|
-|--minbitrate| int |0  | minimum bitrate of the video tracks to select|
-|--maxbitrate| int |0  | maximum bitrate of the video tracks to select. When the value is 0, all the video tracks with a bitrate over minbitrate value are selected |
-|--name| string | null  | name of the service, only used for the logs |
-|--counterperiod &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp;| int |0  | period in seconds used to display the counters|
-|--tracefile| string | null  | path of the file where the trace will be stored |
-|--tracesize| int |0  | maximum size of the trace file|
-|--tracelevel| string | information  | trace level: none (no log in the trace file), information, error, warning, verbose |
-|--consolelevel| string | information  | console level: none (no log in the console), information, error, warning, verbose |
+|--input| string | null | Path to the local WAV file (This file must support 16000KHZ sample rate, 16 bits, and 1 channel)|
+|--input| string | null | for a transcript from a microphone the value is 'microphone', from a loopback input 'loopback'|
+|--region| string | null | Azure region where the Speech Service is deployed for instance: northeurope, eastus2, |
+|--key| string | null | The key associated with the Speech Service |
+|--language| string | null  | The language associated with the audio source, for instance: 'fr-FR', 'en-US', 'de-DE', 'it-IT'|
+|--device| string | string | This option is only use when capturing the audio stream from microphone or loopback input. The parameter is the DeviceId associated with this audio source you can get the device ID using the Device feature described below in this document|
 
 
 ### Examples
 
-Push a smooth streaming asset (C:\projects\VideoApp\metisser\metisser.ism) towards a local IIS Media Services ingestion point (http://localhost/VideoApp/Live/_live1.isml):
+Transcript with loopback input to capture the speaker output:
 
-    CSAudioTool.exe --push --input C:\projects\VideoApp\metisser\metisser.ism --output http://localhost/VideoApp/Live/_live1.isml --loop 0
+    csaudiotool.exe --transcript --input loopback --region northeurope --key  14f47d6474644eacabf62e73e604fa17 --language fr-FR
 
-The live stream can be played opening the url: http://localhost/VideoApp/Live/_live1.isml/manifest
+Transcript with microphone input to capture the microphone output:
 
+    csaudiotool.exe --transcript --input microphone --region northeurope --key  14f47d6474644eacabf62e73e604fa17 --language fr-FR
 
-Same exemple with Azure Media Services:
+Transcript with stereo mix input using device ID to capture the speaker output:
 
-    CSAudioTool.exe --push --input C:\projects\VideoApp\metisser\metisser.ism --output http://testsmoothlive-testamsmedia.channel.mediaservices.windows.net/ingest.isml --loop 0
-
-The live stream can be played opening the url: http://testsmoothlive-testamsmedia.channel.mediaservices.windows.net/preview.isml/manifest
+    csaudiotool.exe --transcript --input microphone --region northeurope --key  14f47d6474644eacabf62e73e604fa17 --language fr-FR --device {0.0.1.00000000}.{e31952f5-2c78-4696-bc13-fe9c3573b512}
 
 
 
