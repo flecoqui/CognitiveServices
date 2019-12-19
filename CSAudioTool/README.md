@@ -21,21 +21,21 @@ The script to build the different release for each operating system is avaiable 
 - [Windows latest release](https://github.com/flecoqui/CognitiveServices/raw/master/CSAudioTool/Releases/LatestRelease.win.zip) </p>
 
     [win-download]:                 https://github.com/flecoqui/CognitiveServices/raw/master/CSAudioTool/Releases/LatestRelease.win.zip
-    [CSAudioTool-version-badge]:            https://cdn.rawgit.com/flecoqui/CognitiveServices/master/CSAudioTool/Docs/csaudiotoolbuild.svg
+    [CSAudioTool-version-badge]:            https://github.com/flecoqui/flecoqui.github.io/blob/master/CognitiveServices/csaudiotoolbuild.svg
     [![Github Release][CSAudioTool-version-badge]][win-download]
 
 
 - [Linux (Ubuntu, Centos, Debian,...)  latest release](https://github.com/flecoqui/CognitiveServices/raw/master/CSAudioTool/Releases/LatestRelease.linux.tar.gz)</p>
 
     [linux-download]:                 https://github.com/flecoqui/CognitiveServices/raw/master/CSAudioTool/Releases/LatestRelease.linux.tar.gz
-    [CSAudioTool-version-badge]:            https://cdn.rawgit.com/flecoqui/CognitiveServices/master/CSAudioTool/Docs/csaudiotoolbuild.svg
+    [CSAudioTool-version-badge]:            https://github.com/flecoqui/flecoqui.github.io/blob/master/CognitiveServices/csaudiotoolbuild.svg
     [![Github Release][CSAudioTool-version-badge]][linux-download]
 
 
 - [Linux (Lightweight distributions using musl like Alpine Linux) latest release](https://github.com/flecoqui/CognitiveServices/raw/master/CSAudioTool/Releases/LatestRelease.linux-musl.tar.gz)</p>
 
     [linux-musl-download]:                 https://github.com/flecoqui/CognitiveServices/raw/master/CSAudioTool/Releases/LatestRelease.linux-musl.tar.gz
-    [CSAudioTool-version-badge]:            https://cdn.rawgit.com/flecoqui/CognitiveServices/master/CSAudioTool/Docs/csaudiotoolbuild.svg
+    [CSAudioTool-version-badge]:            https://github.com/flecoqui/flecoqui.github.io/blob/master/CognitiveServices/csaudiotoolbuild.svg
     [![Github Release][CSAudioTool-version-badge]][linux-musl-download]
 
 
@@ -43,7 +43,7 @@ The script to build the different release for each operating system is avaiable 
 
 
     [rhel-download]:                 https://github.com/flecoqui/CognitiveServices/raw/master/CSAudioTool/Releases/LatestRelease.rhel.tar.gz
-    [CSAudioTool-version-badge]:            https://cdn.rawgit.com/flecoqui/CognitiveServices/master/CSAudioTool/Docs/csaudiotoolbuild.svg
+    [CSAudioTool-version-badge]:            https://github.com/flecoqui/flecoqui.github.io/blob/master/CognitiveServices/csaudiotoolbuild.svg
     [![Github Release][CSAudioTool-version-badge]][rhel-download]
 
 
@@ -51,7 +51,7 @@ The script to build the different release for each operating system is avaiable 
 
 
     [osx-download]:                 https://github.com/flecoqui/CognitiveServices/raw/master/CSAudioTool/Releases/LatestRelease.osx.tar.gz
-    [CSAudioTool-version-badge]:            https://cdn.rawgit.com/flecoqui/CognitiveServices/master/CSAudioTool/Docs/csaudiotoolbuild.svg
+    [CSAudioTool-version-badge]:            https://github.com/flecoqui/flecoqui.github.io/blob/master/CognitiveServices/csaudiotoolbuild.svg
     [![Github Release][CSAudioTool-version-badge]][osx-download]
 
 
