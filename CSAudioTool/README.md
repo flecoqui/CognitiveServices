@@ -204,6 +204,36 @@ Playing a WAV file:
     csaudiotool.exe --play --input local.wav
 
 
+##  Device feature: 
+With this feature the user can list all the device available on the machine to capture audio. The command will display the Device ID of each available device. Using the option --device and the Device ID as a parameter and with feature capture or transcript the user can select the device which will used for the capture.
+
+### Syntax
+
+    CSAudioTool --listdevices     
+
+
+
+### Examples
+
+List devices :
+
+    csaudiotool.exe --listdevices
+
+##  Help feature: 
+This feature will display the syntax of the CSAudioTool and will display the version.
+
+### Syntax
+
+    CSAudioTool --help     
+
+
+
+### Examples
+
+List devices :
+
+    csaudiotool.exe --help
+
 
 # Building CSAudioTool
 If you want to build CSAudioTool on your machine, you need first to install all the pre-requisites to run .Net Core on your machine, check in the table below based on your current Operating System:
