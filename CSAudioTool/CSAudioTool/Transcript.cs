@@ -236,7 +236,12 @@ namespace CSAudioTool
                 if (recognizer != null)
                 {
                     // Starts recognizing.
-                    Console.WriteLine("Starting Transcript from Speaker...");
+                    if(Input == InputMicrophone)
+                        Console.WriteLine("Starting Transcript from Microphone...");
+                    else if (Input == InputLoopback)
+                        Console.WriteLine("Starting Transcript from Loopback...");
+                    else 
+                        Console.WriteLine("Starting Transcript from Speaker...");
                     // Subscribes to events.
                     recognizer.Recognizing += (s, e) =>
                     {
