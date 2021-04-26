@@ -9,7 +9,8 @@ For instance, with CSAudioTool version 1.0 you can
 - Convert a WAV file in a format compliant with Cognitive Services (16000 KHZ, 16 bits, 1 channel)
 - Get the transcript of a WAV stream coming either from a WAV file, the Microphone Input or the WASAPI loopback input
 
-The Get transcript feature requires the deployment of a Speech Service on your Azure Subscription. The Key of this Speech service and the Azure region where the Speech service is deployed will be required before launching CSAudioTool transcript. 
+The Get transcript feature requires the deployment of a Speech Service on your Azure Subscription. The Key of this Speech service and the Azure region where the Speech service is deployed will be required before launching CSAudioTool transcript.
+See further information to deploy Speech service on Azure [here](https://docs.microsoft.com/en-us/azure/cognitive-services/speech-service/overview#try-the-speech-service-for-free). 
 As CSAudioTool is based on .Net Core, the application can be installed on any operating system supporting .Net Core (Windows, Mac OS, Ubuntu, Debian, Centos, Red Hat).
 The current version is limited to Windows operating system.
 
