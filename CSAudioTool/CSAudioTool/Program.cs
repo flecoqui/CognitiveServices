@@ -101,7 +101,6 @@ namespace CSAudioTool
                 int i = 0;
                 while ((i < args.Length) && (string.IsNullOrEmpty(ErrorMessage)))
                 {
-
                     switch (args[i++])
                     {
 
@@ -183,9 +182,11 @@ namespace CSAudioTool
                                 ErrorMessage = "Language not set";
                             break;
                         default:
-
-                            if ((args[i - 1].ToLower() == "dotnet") ||
-                                (args[i - 1].ToLower() == "csaudiotool.dll") ||
+                            if (args[i - 1].ToLower() == "dotnet"){
+                                i++;
+                                break;
+                            }
+                            if ((args[i - 1].ToLower() == "csaudiotool.dll") ||
                                 (args[i - 1].ToLower() == "csaudiotool.exe"))
                                 break;
 

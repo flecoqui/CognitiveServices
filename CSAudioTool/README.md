@@ -9,6 +9,7 @@ For instance, with CSAudioTool version 1.0 you can
 - Convert a WAV file in a format compliant with Cognitive Services (16000 KHZ, 16 bits, 1 channel)
 - Get the transcript of a WAV stream coming either from a WAV file, the Microphone Input or the WASAPI loopback input
 
+The Get transcript feature requires the deployment of a Speech Service on your Azure Subscription. The Key of this Speech service and the Azure region where the Speech service is deployed will be required before launching CSAudioTool transcript. 
 As CSAudioTool is based on .Net Core, the application can be installed on any operating system supporting .Net Core (Windows, Mac OS, Ubuntu, Debian, Centos, Red Hat).
 The current version is limited to Windows operating system.
 
@@ -18,39 +19,39 @@ The current version is limited to Windows operating system.
 The script to build the different release for each operating system is avaiable [here](https://github.com/flecoqui/CognitiveServices/tree/master/CSAudioTool/Scripts)
 
 
-- [Windows latest release](https://github.com/flecoqui/CognitiveServices/raw/master/CSAudioTool/Releases/LatestRelease.win.zip) </p>
+- [Windows latest release](https://github.com/flecoqui/CognitiveServices/raw/master/CSAudioTool/Releases/LatestRelease.win.txt) </p>
 
-    [win-download]:                 https://github.com/flecoqui/CognitiveServices/raw/master/CSAudioTool/Releases/LatestRelease.win.zip
+    [win-download]:                 https://github.com/flecoqui/CognitiveServices/raw/master/CSAudioTool/Releases/LatestRelease.win.txt
     [CSAudioTool-version-badge]:            https://github.com/flecoqui/flecoqui.github.io/blob/master/CognitiveServices/csaudiotoolbuild.svg
     [![Github Release][CSAudioTool-version-badge]][win-download]
 
 
-- [Linux (Ubuntu, Centos, Debian,...)  latest release](https://github.com/flecoqui/CognitiveServices/raw/master/CSAudioTool/Releases/LatestRelease.linux.tar.gz)</p>
+- [Linux (Ubuntu, Centos, Debian,...)  latest release](https://github.com/flecoqui/CognitiveServices/raw/master/CSAudioTool/Releases/LatestRelease.linux.tar.txt)</p>
 
-    [linux-download]:                 https://github.com/flecoqui/CognitiveServices/raw/master/CSAudioTool/Releases/LatestRelease.linux.tar.gz
+    [linux-download]:                 https://github.com/flecoqui/CognitiveServices/raw/master/CSAudioTool/Releases/LatestRelease.linux.tar.txt
     [CSAudioTool-version-badge]:            https://github.com/flecoqui/flecoqui.github.io/blob/master/CognitiveServices/csaudiotoolbuild.svg
     [![Github Release][CSAudioTool-version-badge]][linux-download]
 
 
-- [Linux (Lightweight distributions using musl like Alpine Linux) latest release](https://github.com/flecoqui/CognitiveServices/raw/master/CSAudioTool/Releases/LatestRelease.linux-musl.tar.gz)</p>
+- [Linux (Lightweight distributions using musl like Alpine Linux) latest release](https://github.com/flecoqui/CognitiveServices/raw/master/CSAudioTool/Releases/LatestRelease.linux-musl.tar.txt)</p>
 
-    [linux-musl-download]:                 https://github.com/flecoqui/CognitiveServices/raw/master/CSAudioTool/Releases/LatestRelease.linux-musl.tar.gz
+    [linux-musl-download]:                 https://github.com/flecoqui/CognitiveServices/raw/master/CSAudioTool/Releases/LatestRelease.linux-musl.tar.txt
     [CSAudioTool-version-badge]:            https://github.com/flecoqui/flecoqui.github.io/blob/master/CognitiveServices/csaudiotoolbuild.svg
     [![Github Release][CSAudioTool-version-badge]][linux-musl-download]
 
 
-- [Red Hat latest release](https://github.com/flecoqui/CognitiveServices/raw/master/CSAudioTool/Releases/LatestRelease.rhel.tar.gz)</p>
+- [Red Hat latest release](https://github.com/flecoqui/CognitiveServices/raw/master/CSAudioTool/Releases/LatestRelease.rhel.tar.txt)</p>
 
 
-    [rhel-download]:                 https://github.com/flecoqui/CognitiveServices/raw/master/CSAudioTool/Releases/LatestRelease.rhel.tar.gz
+    [rhel-download]:                 https://github.com/flecoqui/CognitiveServices/raw/master/CSAudioTool/Releases/LatestRelease.rhel.tar.txt
     [CSAudioTool-version-badge]:            https://github.com/flecoqui/flecoqui.github.io/blob/master/CognitiveServices/csaudiotoolbuild.svg
     [![Github Release][CSAudioTool-version-badge]][rhel-download]
 
 
-- [Mac OS latest release](https://github.com/flecoqui/CognitiveServices/raw/master/CSAudioTool/Releases/LatestRelease.osx.tar.gz)</p>
+- [Mac OS latest release](https://github.com/flecoqui/CognitiveServices/raw/master/CSAudioTool/Releases/LatestRelease.osx.tar.txt)</p>
 
 
-    [osx-download]:                 https://github.com/flecoqui/CognitiveServices/raw/master/CSAudioTool/Releases/LatestRelease.osx.tar.gz
+    [osx-download]:                 https://github.com/flecoqui/CognitiveServices/raw/master/CSAudioTool/Releases/LatestRelease.osx.tar.txt
     [CSAudioTool-version-badge]:            https://github.com/flecoqui/flecoqui.github.io/blob/master/CognitiveServices/csaudiotoolbuild.svg
     [![Github Release][CSAudioTool-version-badge]][osx-download]
 
@@ -61,7 +62,7 @@ The script to build the different release for each operating system is avaiable 
 # Required Software
 |[![Windows](Docs/windows_logo.png)](https://docs.microsoft.com/en-us/dotnet/core/windows-prerequisites?tabs=netcore2x)[Windows pre-requisites](https://docs.microsoft.com/en-us/dotnet/core/windows-prerequisites?tabs=netcore2x)|[![Linux](Docs/linux_logo.png)](https://docs.microsoft.com/en-us/dotnet/core/linux-prerequisites?tabs=netcore2x) [Linux pre-requisites](https://docs.microsoft.com/en-us/dotnet/core/linux-prerequisites?tabs=netcore2x)|[![MacOS](Docs/macos_logo.png)](https://docs.microsoft.com/en-us/dotnet/core/macos-prerequisites?tabs=netcore2x)  [Mac OS pre-requisites](https://docs.microsoft.com/en-us/dotnet/core/macos-prerequisites?tabs=netcore2x)|
 | :--- | :--- | :--- |
-| .NET Core is supported on the following versions of Windows 7 SP1, Windows 8.1, Windows 10 (version 1607) or later versions, Windows Server 2008 R2 SP1, Windows Server 2012 SP1, Windows Server 2012 R2, Windows Server 2016 or later versions | The Linux pre-requisites depends on the Linux distribution. Click on the link above to get further information &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;| .NET Core 2.x is supported on the following versions of macOS macOS 10.12 "Sierra" and later versions &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;|
+| .NET 5.0 is supported on the following versions of Windows 7 SP1, Windows 8.1, Windows 10 (version 1607) or later versions, Windows Server 2008 R2 SP1, Windows Server 2012 SP1, Windows Server 2012 R2, Windows Server 2016 or later versions | The Linux pre-requisites depends on the Linux distribution. Click on the link above to get further information &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;| .NET 5.x is supported on the following versions of macOS macOS 10.13 "High Sierra" and later versions &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;|
 
 
 
@@ -242,14 +243,14 @@ If you want to build CSAudioTool on your machine, you need first to install all 
 
 |[![Windows](Docs/windows_logo.png)](https://docs.microsoft.com/en-us/dotnet/core/windows-prerequisites?tabs=netcore2x)[Windows pre-requisites](https://docs.microsoft.com/en-us/dotnet/core/windows-prerequisites?tabs=netcore2x)|[![Linux](Docs/linux_logo.png)](https://docs.microsoft.com/en-us/dotnet/core/linux-prerequisites?tabs=netcore2x) [Linux pre-requisites](https://docs.microsoft.com/en-us/dotnet/core/linux-prerequisites?tabs=netcore2x)|[![MacOS](Docs/macos_logo.png)](https://docs.microsoft.com/en-us/dotnet/core/macos-prerequisites?tabs=netcore2x)  [Mac OS pre-requisites](https://docs.microsoft.com/en-us/dotnet/core/macos-prerequisites?tabs=netcore2x)|
 | :--- | :--- | :--- |
-| .NET Core is supported on the following versions of Windows 7 SP1, Windows 8.1, Windows 10 (version 1607) or later versions, Windows Server 2008 R2 SP1, Windows Server 2012 SP1, Windows Server 2012 R2, Windows Server 2016 or later versions | The Linux pre-requisites depends on the Linux distribution. Click on the link above to get further information &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;| .NET Core 2.x is supported on the following versions of macOS macOS 10.12 "Sierra" and later versions &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;|
+| .NET Core is supported on the following versions of Windows 7 SP1, Windows 8.1, Windows 10 (version 1607) or later versions, Windows Server 2008 R2 SP1, Windows Server 2012 SP1, Windows Server 2012 R2, Windows Server 2016 or later versions | The Linux pre-requisites depends on the Linux distribution. Click on the link above to get further information &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;| .NET 5.0 is supported on the following versions of macOS macOS 10.13 "High Sierra" and later versions &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;|
 
-## Installing git and .Net Core SDK version 2.1
+## Installing git and .Net SDK version 5.0
 
 Once the pre-requisites are installed, you need to install:
 
 - Git from https://github.com/
-- .Net Core SDK version 2.1 or later from https://dot.net/
+- .Net SDK version 5.0 or later from https://dotnet.microsoft.com/download 
 - Clone CSAudioTool github repository on your machine
   For instance on a machine running linux:
 
@@ -281,7 +282,7 @@ When you run the following command:
 
 the binaries will be available under:
 
-    /git/CSAudioTool/cs/CSAudioTool/CSAudioTool/bin/Release/netcoreapp2.0/[RuntimeFlavor]/publish
+    /git/CognitiveServices/CSAudioTool/CSAudioTool/bin/Release/net5.0/[RuntimeFlavor]/publish
 
 
 # Next Steps

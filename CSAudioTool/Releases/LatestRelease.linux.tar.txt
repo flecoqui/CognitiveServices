@@ -1,0 +1,10 @@
+Run the following commands in the CSAudioTool folder:
+
+dotnet publish ..\csaudiotool  --self-contained -c Release -r linux-x64
+"C:\Program Files\7-Zip\7z.exe" a c:\temp\LatestRelease.linux.tar ..\csaudiotool\bin\Release\net5.0\linux-x64\publish\
+"C:\Program Files\7-Zip\7z.exe" a c:\temp\LatestRelease.linux.tar.gz c:\temp\LatestRelease.linux.tar 
+copy /Y c:\temp\LatestRelease.linux.tar.gz ..\Releases\LatestRelease.linux.tar.gz
+
+
+
+

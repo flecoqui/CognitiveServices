@@ -1,0 +1,9 @@
+Run the following commands in the CSAudioTool folder:
+
+dotnet publish ..\csaudiotool --self-contained -c Release -r win-x64
+"C:\Program Files\7-Zip\7z.exe" a c:\temp\LatestRelease.win.zip ..\csaudiotool\bin\Release\net5.0\win-x64\publish\
+copy /Y c:\temp\LatestRelease.win.zip ..\Releases\LatestRelease.win.zip
+
+
+
+

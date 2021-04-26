@@ -1,0 +1,10 @@
+Run the following commands in the CSAudioTool folder:
+
+dotnet publish ..\csaudiotool  --self-contained -c Release -r rhel-x64
+"C:\Program Files\7-Zip\7z.exe" a c:\temp\LatestRelease.rhel.tar ..\csaudiotool\bin\Release\net5.0\rhel-x64\publish\
+"C:\Program Files\7-Zip\7z.exe" a c:\temp\LatestRelease.rhel.tar.gz c:\temp\LatestRelease.rhel.tar 
+copy /Y c:\temp\LatestRelease.rhel.tar.gz ..\Releases\LatestRelease.rhel.tar.gz
+
+
+
+
