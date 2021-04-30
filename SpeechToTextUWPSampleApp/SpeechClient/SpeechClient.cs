@@ -17,6 +17,7 @@ using Windows.Foundation;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Xml.Linq;
 using System.IO;
+using Windows.Data.Json;
 
 namespace SpeechClient
 {
@@ -55,6 +56,7 @@ namespace SpeechClient
 
         private bool bWebSocketReady = false;
         private string WebSocketRequestID;
+        private JsonObject ReceivedMessages;
         private Windows.Networking.Sockets.MessageWebSocket webSocket;
         private System.Threading.AutoResetEvent WebSocketInitializedEvent;
 
@@ -375,24 +377,30 @@ namespace SpeechClient
                             WebSocketInitializedEvent.Reset();
                         System.Diagnostics.Debug.WriteLine("Sending Speech Config");
                         bWebSocketReady = true;
+                        // RequestID for the session
+                        WebSocketRequestID = Guid.NewGuid().ToString("N");
+
                         if (await SendSpeechConfig() == true)
                         {
-                            System.Diagnostics.Debug.WriteLine("Sending Speech Header");
-                            if (await SendSpeechFileHeader(wavFile) == true)
+                            if (await SendSpeechContext() == true)
                             {
-                                await System.Threading.Tasks.Task.Factory.StartNew(async () =>
+                                System.Diagnostics.Debug.WriteLine("Sending Speech Header");
+                                if (await SendSpeechFileHeader(wavFile) == true)
                                 {
-                               // wait for the reception of Start message before sending the Wav file
-                               if (WebSocketInitializedEvent.WaitOne(5000))
+                                    await System.Threading.Tasks.Task.Factory.StartNew(async () =>
                                     {
-                                        System.Diagnostics.Debug.WriteLine("Sending Speech Stream");
-                                        await SendSpeechFile(wavFile);
-                                    }
-                                    else
-                                    {
-                                        System.Diagnostics.Debug.WriteLine("Message Start not received after 5000 ms");
-                                    }
-                                });
+                                        // wait for the reception of Start message before sending the Wav file
+                                        if (WebSocketInitializedEvent.WaitOne(5000))
+                                        {
+                                            System.Diagnostics.Debug.WriteLine("Sending Speech Stream");
+                                            await SendSpeechFile(wavFile);
+                                        }
+                                        else
+                                        {
+                                            System.Diagnostics.Debug.WriteLine("Message Start not received after 5000 ms");
+                                        }
+                                    });
+                                }
                             }
                         }
                     }
@@ -495,21 +503,27 @@ namespace SpeechClient
                                     WebSocketInitializedEvent.Reset();
                                 System.Diagnostics.Debug.WriteLine("Sending Speech Config");
                                 bWebSocketReady = true;
+                                // RequestID for the session
+                                WebSocketRequestID = Guid.NewGuid().ToString("N");
                                 if (await SendSpeechConfig() == true)
                                 {
-                                    System.Diagnostics.Debug.WriteLine("Sending Speech Header");
-                                    if (await SendSpeechStreamHeader(randomAudioStream) == true)
+                                    if (await SendSpeechContext() == true)
                                     {
-                                        // wait for the reception of Start message before sending the Wav file
-                                        if (WebSocketInitializedEvent.WaitOne(5000))
+                                        System.Diagnostics.Debug.WriteLine("Sending Speech Header");
+                                        if (await SendSpeechStreamHeader(randomAudioStream) == true)
                                         {
-                                            System.Diagnostics.Debug.WriteLine("Sending Speech File");
-                                            await SendSpeechStream(randomAudioStream, RecordingToken);
-                                        }
-                                        else
-                                        {
-                                            System.Diagnostics.Debug.WriteLine("Message Start not received after 5000 ms");
-                                            return;
+                                            // wait for the reception of Start message before sending the Wav file
+                                            if (WebSocketInitializedEvent.WaitOne(5000))
+                                            {
+                                                System.Diagnostics.Debug.WriteLine("Sending Speech File");
+                                                await SendSpeechStream(randomAudioStream, RecordingToken);
+                                            }
+                                            
+                                            else
+                                            {
+                                                System.Diagnostics.Debug.WriteLine("Message Start not received after 5000 ms");
+                                                return;
+                                            }
                                         }
                                     }
                                 }
@@ -746,26 +760,32 @@ namespace SpeechClient
                             RecordingTokenSource.Cancel();
                         RecordingTokenSource = new System.Threading.CancellationTokenSource();
                         RecordingToken = RecordingTokenSource.Token;
+                        // RequestID for the session
+                        WebSocketRequestID = Guid.NewGuid().ToString("N");
 
                         if (await SendSpeechConfig() == true)
                         {
-                            System.Diagnostics.Debug.WriteLine("Sending Speech Header");
-                            if (await SendSpeechStreamHeader(randomAudioStream) == true)
+                            if (await SendSpeechContext() == true)
                             {
-                                await System.Threading.Tasks.Task.Factory.StartNew(async () =>
+                                System.Diagnostics.Debug.WriteLine("Sending Speech Header");
+                                if (await SendSpeechStreamHeader(randomAudioStream) == true)
                                 {
-                                    // wait for the reception of Start message before sending the Wav file
-                                    if (WebSocketInitializedEvent.WaitOne(5000))
+                                    await System.Threading.Tasks.Task.Factory.StartNew(async () =>
                                     {
-                                        System.Diagnostics.Debug.WriteLine("Sending Speech Stream");
-                                        await SendSpeechStream(randomAudioStream, RecordingToken);
-                                    }
-                                    else
-                                    {
-                                        System.Diagnostics.Debug.WriteLine("Message Start not received after 5000 ms");
-                                    }
-                                });
-                                return true;
+                                        // wait for the reception of Start message before sending the Wav file
+                                        if (WebSocketInitializedEvent.WaitOne(5000))
+                                        {
+                                            System.Diagnostics.Debug.WriteLine("Sending Speech Stream");
+                                            await SendSpeechStream(randomAudioStream, RecordingToken);
+                                        }
+                                        else
+                                        {
+                                            System.Diagnostics.Debug.WriteLine("Message Start not received after 5000 ms");
+                                        }
+                                      
+                                    });
+                                    return true;
+                                }
                             }
                         }
                     }
@@ -1266,35 +1286,43 @@ namespace SpeechClient
 
         #endregion
         #region WebSocket
-        async System.Threading.Tasks.Task<bool> SendSpeechConfig()
+        async System.Threading.Tasks.Task<bool> SendBytes(byte[] payload)
         {
             bool result = false;
 
             try
             {
-
-
-                //Create a request id that is unique for this 
-                webSocket.Control.MessageType = Windows.Networking.Sockets.SocketMessageType.Utf8;
-
-                // RequestID for the session
-                WebSocketRequestID = Guid.NewGuid().ToString("N");
-
-                //Send the first message after connecting to the websocket with required headers
-                string payload =
-                 "Path: speech.config" + Environment.NewLine +
-                 "x-timestamp: " + DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ss.fffK") + Environment.NewLine +
-                 "content-type: application/json; charset=utf-8" + Environment.NewLine + Environment.NewLine +
-                 "{ \"context\":{ \"system\":{ \"version\":\"2.0.12341\"},\"os\":{ \"platform\":\"Windows\",\"name\":\"Windows 10\",\"version\":\"10.0.17763.253\"},\"device\":{ \"manufacturer\":\"Contoso\",\"model\":\"Fabrikan\",\"version\":\"7.341\"} } }";
-
-                System.Diagnostics.Debug.Write(payload);
-                using (var dataWriter = new Windows.Storage.Streams.DataWriter(webSocket.OutputStream))
+                if ((webSocket != null) && (bWebSocketReady))
                 {
-                    dataWriter.WriteString(payload);
-                    await dataWriter.StoreAsync();
-                    dataWriter.DetachStream();
+                    //System.Diagnostics.Debug.WriteLine($"Send {payload.Length} bytes");
+                    //System.Diagnostics.Debug.WriteLine(DumpHex(payload));
+                    webSocket.Control.MessageType = Windows.Networking.Sockets.SocketMessageType.Binary;
+
+                    using (var dataWriter = new Windows.Storage.Streams.DataWriter(webSocket.OutputStream))
+                    {
+                        dataWriter.WriteBytes(payload);
+                        await dataWriter.StoreAsync();
+                        dataWriter.DetachStream();
+                    }
+                    result = true;
                 }
-                result = true;
+                else
+                    result = false;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine("Exception while sending bytes over Web Socket: " + ex.Message);
+            }
+            return result;
+        }
+        async System.Threading.Tasks.Task<bool> SendSpeechConfig()
+        {
+            bool result = false;
+            try
+            {
+                System.Diagnostics.Debug.WriteLine("SendSpeechConfig");
+                SpeechWebSocketMessage message = new SpeechWebSocketMessage("speech.config", WebSocketRequestID, "application/json", "\r\n{ \"context\":{ \"system\":{ \"name\":\"SpeechSDK\",\"version\":\"1.15.1\",\"build\":\"JavaScript\",\"lang\":\"JavaScript\"},\"os\":{ \"platform\":\"Browser/Win32\",\"name\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.85 Safari/537.36 Edg/90.0.818.49\",\"version\":\"5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.85 Safari/537.36 Edg/90.0.818.49\"},\"audio\":{ \"source\":{ \"bitspersample\":16,\"channelcount\":1,\"connectivity\":\"Unknown\",\"manufacturer\":\"Speech SDK\",\"model\":\"Default - Microphone Array (Realtek(R) Audio)\",\"samplerate\":16000,\"type\":\"Microphones\"} } },\"recognition\":\"conversation\"}\r\n",null);
+                result = await this.SendBytes(message.ToBytes());
             }
             catch (Exception ex)
             {
@@ -1302,23 +1330,44 @@ namespace SpeechClient
             }
             return result;
         }
-        byte[] CreateAudioWebSocketHeader()
+        async System.Threading.Tasks.Task<bool> SendSpeechContext()
         {
-            var outputBuilder = new System.Text.StringBuilder();
-            outputBuilder.Append("path:audio\r\n");
-            outputBuilder.Append("x-requestid:" + WebSocketRequestID + "\r\n");
-            outputBuilder.Append("x-timestamp:" + DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ss.fffK") + "\r\n");
-            outputBuilder.Append("content-type:audio/x-wav\r\n");
+            bool result = false;
+            try
+            {
+                System.Diagnostics.Debug.WriteLine("SendSpeechContext");
 
-            return System.Text.Encoding.ASCII.GetBytes(outputBuilder.ToString());
+                SpeechWebSocketMessage message = new SpeechWebSocketMessage("speech.context", WebSocketRequestID, "application/json", "\r\n{ }\r\n",null);
+                result = await this.SendBytes(message.ToBytes());
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine("Exception while sending Speech Context: " + ex.Message);
+            }
+            return result;
         }
-        byte[] CreateAudioWebSocketHeaderLength(byte[] header)
+        async System.Threading.Tasks.Task<bool> SendTelemetry()
         {
-            var str = "0x" + (header.Length).ToString("X");
-            var headerHeadBytes = BitConverter.GetBytes((UInt16)header.Length);
-            var isBigEndian = !BitConverter.IsLittleEndian;
-            return !isBigEndian ? new byte[] { headerHeadBytes[1], headerHeadBytes[0] } : new byte[] { headerHeadBytes[0], headerHeadBytes[1] };
+            bool result = false;
+
+            try
+            {
+
+                if ((webSocket == null) || (webSocket.Control == null))
+                    return false;
+                System.Diagnostics.Debug.WriteLine("SendTelemetry");
+
+                SpeechWebSocketMessage message = new SpeechWebSocketMessage("telemetry", WebSocketRequestID, "application/json", "{\"ReceivedMessages\": [" + ReceivedMessages.Stringify() + "]}",null);
+                result = await this.SendBytes(message.ToBytes());
+                ReceivedMessages = null;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine("Exception while sending Telemetry: " + ex.Message);
+            }
+            return result;
         }
+
         async System.Threading.Tasks.Task<bool> SendSpeechFile(Windows.Storage.StorageFile wavFile)
         {
             bool result = false;
@@ -1339,57 +1388,23 @@ namespace SpeechClient
                             int index = 0;
                             while (index < (int)(fileStream.Size - (ulong)Len))
                             {
-                                var headerBytes = CreateAudioWebSocketHeader();
-                                var headerHead = CreateAudioWebSocketHeaderLength(headerBytes);
-
-                                var length = Math.Min(4096 * 2 - headerBytes.Length - 8, byteArray.Length - index); //8bytes for the chunk header
-
-                                var chunkHeader = System.Text.Encoding.ASCII.GetBytes("data").Concat(BitConverter.GetBytes((UInt32)length)).ToArray();
-
+                                var length = Math.Min(3200, byteArray.Length - index); //8bytes for the chunk header
                                 byte[] dataArray = new byte[length];
                                 Array.Copy(byteArray, index, dataArray, 0, length);
 
+                                //System.Diagnostics.Debug.WriteLine("Send 3200 audio bytes");
+                                SpeechWebSocketMessage message = new SpeechWebSocketMessage("audio", WebSocketRequestID, null, null, dataArray);
+                                result = await this.SendBytes(message.ToBytes());
+
                                 index += length;
-
-                                var arr = headerHead.Concat(headerBytes).Concat(chunkHeader).Concat(dataArray).ToArray();
-
-
-                                if ((webSocket != null) && (bWebSocketReady))
-                                {
-                                    //Create a request id that is unique for this 
-                                    webSocket.Control.MessageType = Windows.Networking.Sockets.SocketMessageType.Binary;
-                                    using (var dataWriter = new Windows.Storage.Streams.DataWriter(webSocket.OutputStream))
-                                    {
-                                        //  System.Diagnostics.Debug.Write(DumpHex(arr));
-                                        dataWriter.WriteBytes(arr);
-                                        await dataWriter.StoreAsync();
-                                        await dataWriter.FlushAsync();
-                                        dataWriter.DetachStream();
-                                    }
-                                }
-                                else
-                                    break;
                             }
                         }
                     }
                 }
                 {
-                    var headerBytes = CreateAudioWebSocketHeader();
-                    var headerHead = CreateAudioWebSocketHeaderLength(headerBytes);
-                    var arr = headerHead.Concat(headerBytes).ToArray();
-
-                    if ((webSocket != null) && (bWebSocketReady))
-                    {
-                        //Create a request id that is unique for this 
-                        webSocket.Control.MessageType = Windows.Networking.Sockets.SocketMessageType.Binary;
-                        using (var dataWriter = new Windows.Storage.Streams.DataWriter(webSocket.OutputStream))
-                        {
-                            dataWriter.WriteBytes(arr);
-                            await dataWriter.StoreAsync();
-                            await dataWriter.FlushAsync();
-                            dataWriter.DetachStream();
-                        }
-                    }
+                    System.Diagnostics.Debug.WriteLine("Send audio header");
+                    SpeechWebSocketMessage message = new SpeechWebSocketMessage("audio", WebSocketRequestID, null, null, null);
+                    result = await this.SendBytes(message.ToBytes());
                 }
                 result = true;
             }
@@ -1423,35 +1438,19 @@ namespace SpeechClient
                             Windows.Storage.Streams.IInputStream iStream = wavStream.GetInputStreamAt(index);
                             if (iStream != null)
                             {
-                                var headerBytes = CreateAudioWebSocketHeader();
-                                var headerHead = CreateAudioWebSocketHeaderLength(headerBytes);
-                                uint length = (uint)(4096 * 2 - headerBytes.Length - 8);
+                                uint length = 3200;
                                 byte[] dataArray = new byte[length];
                                 if (wavStream.Size > index + length)
                                 {
                                     iStream.ReadAsync(dataArray.AsBuffer(), length, Windows.Storage.Streams.InputStreamOptions.Partial).AsTask().Wait();
-                                    var chunkHeader = System.Text.Encoding.ASCII.GetBytes("data").Concat(BitConverter.GetBytes((UInt32)length)).ToArray();
+
+                                    //System.Diagnostics.Debug.WriteLine("Send 3200 audio bytes");
+                                    SpeechWebSocketMessage message = new SpeechWebSocketMessage("audio", WebSocketRequestID, null, null, dataArray);
+                                    result = await this.SendBytes(message.ToBytes());
+
                                     index += length;
                                     System.Diagnostics.Debug.WriteLine("AudioStream read Index: " + index.ToString());
 
-                                    var arr = headerHead.Concat(headerBytes).Concat(chunkHeader).Concat(dataArray).ToArray();
-
-
-                                    if ((webSocket != null) && (bWebSocketReady))
-                                    {
-                                        //Create a request id that is unique for this 
-                                        webSocket.Control.MessageType = Windows.Networking.Sockets.SocketMessageType.Binary;
-                                        using (var dataWriter = new Windows.Storage.Streams.DataWriter(webSocket.OutputStream))
-                                        {
-                                            //  System.Diagnostics.Debug.Write(DumpHex(arr));
-                                            dataWriter.WriteBytes(arr);
-                                            await dataWriter.StoreAsync();
-                                            await dataWriter.FlushAsync();
-                                            dataWriter.DetachStream();
-                                        }
-                                    }
-                                    else
-                                        break;
                                     var amplitude = Decode(dataArray).Select(Math.Abs).Average(x => x);
                                     if (AudioLevel != null)
                                         this.AudioLevel(this, amplitude);
@@ -1459,24 +1458,6 @@ namespace SpeechClient
                                 else
                                     await System.Threading.Tasks.Task.Delay(10);
                             }
-                        }
-                    }
-                }
-                {
-                    var headerBytes = CreateAudioWebSocketHeader();
-                    var headerHead = CreateAudioWebSocketHeaderLength(headerBytes);
-                    var arr = headerHead.Concat(headerBytes).ToArray();
-
-                    if ((webSocket != null) && (bWebSocketReady))
-                    {
-                        //Create a request id that is unique for this 
-                        webSocket.Control.MessageType = Windows.Networking.Sockets.SocketMessageType.Binary;
-                        using (var dataWriter = new Windows.Storage.Streams.DataWriter(webSocket.OutputStream))
-                        {
-                            dataWriter.WriteBytes(arr);
-                            await dataWriter.StoreAsync();
-                            await dataWriter.FlushAsync();
-                            dataWriter.DetachStream();
                         }
                     }
                 }
@@ -1533,6 +1514,40 @@ namespace SpeechClient
             }
             return result;
         }
+        static public char GetChar(byte b)
+        {
+            if ((b >= 32) && (b < 127))
+                return (char)b;
+            return '.';
+        }
+        static public string DumpHex([ReadOnlyArray()]  byte[] data)
+        {
+            string result = string.Empty;
+            string resultHex = " ";
+            string resultASCII = " ";
+            int Len = ((data.Length % 16 == 0) ? (data.Length / 16) : (data.Length / 16) + 1) * 16;
+            for (int i = 0; i < Len; i++)
+            {
+                if (i < data.Length)
+                {
+                    resultASCII += string.Format("{0}", GetChar(data[i]));
+                    resultHex += string.Format("{0:X2} ", data[i]);
+                }
+                else
+                {
+                    resultASCII += " ";
+                    resultHex += "   ";
+                }
+                if (i % 16 == 15)
+                {
+                    result += string.Format("{0:X8} ", i - 15) + resultHex + resultASCII + "\r\n";
+                    resultHex = " ";
+                    resultASCII = " ";
+                }
+            }
+            return result;
+        }
+
         int GetWAVHeaderLength(Windows.Storage.Streams.IRandomAccessStream fileStream)
         {
             int Len = 0;
@@ -1596,36 +1611,16 @@ namespace SpeechClient
                             fileStream.Seek(0);
                             fileStream.ReadAsync(header.AsBuffer(), (uint)Len, Windows.Storage.Streams.InputStreamOptions.Partial).AsTask().Wait();
 
-                            var headerBytes = CreateAudioWebSocketHeader();
-                            var headerHead = CreateAudioWebSocketHeaderLength(headerBytes);
-
-                            var arr = headerHead.Concat(headerBytes).Concat(header).ToArray();
-
-
-                            if ((webSocket != null) && (bWebSocketReady))
-                            {
-                                //Create a request id that is unique for this 
-                                webSocket.Control.MessageType = Windows.Networking.Sockets.SocketMessageType.Binary;
-                                //    System.Diagnostics.Debug.Write(DumpHex(arr));
-
-                                using (var dataWriter = new Windows.Storage.Streams.DataWriter(webSocket.OutputStream))
-                                {
-                                    dataWriter.WriteBytes(arr);
-                                    await dataWriter.StoreAsync();
-                                    await dataWriter.FlushAsync();
-                                    dataWriter.DetachStream();
-                                }
-                            }
-
+                            System.Diagnostics.Debug.WriteLine("Send audio header");
+                            SpeechWebSocketMessage message = new SpeechWebSocketMessage("audio", WebSocketRequestID, "audio/x-wav", null, header);
+                            result = await this.SendBytes(message.ToBytes());
                         }
-
                     }
                 }
-                result = true;
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine("Exception while sending Speech Config: " + ex.Message);
+                System.Diagnostics.Debug.WriteLine("Exception while sending Speech Audio Header: " + ex.Message);
             }
             return result;
         }
@@ -1646,36 +1641,16 @@ namespace SpeechClient
                             wavStream.Seek(0);
                             wavStream.ReadAsync(header.AsBuffer(), (uint)Len, Windows.Storage.Streams.InputStreamOptions.Partial).AsTask().Wait();
 
-                            var headerBytes = CreateAudioWebSocketHeader();
-                            var headerHead = CreateAudioWebSocketHeaderLength(headerBytes);
-
-                            var arr = headerHead.Concat(headerBytes).Concat(header).ToArray();
-
-
-                            if ((webSocket != null) && (bWebSocketReady))
-                            {
-                                //Create a request id that is unique for this 
-                                webSocket.Control.MessageType = Windows.Networking.Sockets.SocketMessageType.Binary;
-                                //    System.Diagnostics.Debug.Write(DumpHex(arr));
-
-                                using (var dataWriter = new Windows.Storage.Streams.DataWriter(webSocket.OutputStream))
-                                {
-                                    dataWriter.WriteBytes(arr);
-                                    await dataWriter.StoreAsync();
-                                    await dataWriter.FlushAsync();
-                                    dataWriter.DetachStream();
-                                }
-                            }
-
+                            System.Diagnostics.Debug.WriteLine("Send audio header");
+                            SpeechWebSocketMessage message = new SpeechWebSocketMessage("audio", WebSocketRequestID, "audio/x-wav", null, header);
+                            result = await this.SendBytes(message.ToBytes());
                         }
-
                     }
                 }
-                result = true;
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine("Exception while sending Speech Config: " + ex.Message);
+                System.Diagnostics.Debug.WriteLine("Exception while sending Speech Audio Header: " + ex.Message);
             }
             return result;
         }
@@ -1791,6 +1766,25 @@ namespace SpeechClient
                         WebSocketMessage wsm = WebSocketMessage.CreateSocketMessage(message);
                         if (wsm != null)
                         {
+                            string receivedTime = DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ss.ffffff");
+                            if (ReceivedMessages == null)
+                                ReceivedMessages = new JsonObject();
+                            if (!ReceivedMessages.Keys.Contains(wsm.Path.ToLower()))
+                            {
+                                JsonArray list = new JsonArray();
+                                if (list != null)
+                                {
+                                    list.Add(JsonValue.CreateStringValue(receivedTime));
+                                    ReceivedMessages.Add(wsm.Path.ToLower(), list);
+                                }
+                            }
+                            else
+                            {
+                                ReceivedMessages[wsm.Path.ToLower()].GetArray().Add(JsonValue.CreateStringValue(receivedTime));
+                            }
+                            if (wsm.RequestId != this.WebSocketRequestID)
+                                System.Diagnostics.Debug.WriteLine("Error not the same RequestId - received: " + wsm.RequestId + " expected: " + this.WebSocketRequestID);
+
                             SpeechToTextResponse sr = new SpeechToTextResponse(wsm.Body);
                             switch (wsm.Path.ToLower())
                             {
@@ -1800,6 +1794,11 @@ namespace SpeechClient
                                     break;
                                 case "turn.end":
                                     bWebSocketReady = false;
+                                    this.SendTelemetry().GetAwaiter().GetResult();
+                                    //this.SendSpeechConfig().GetAwaiter().GetResult();
+                                    //this.SendSpeechContext().GetAwaiter().GetResult();
+
+                                    //this.SendSpeechStreamHeader(randomAudioStream).GetAwaiter().GetResult();                                    
                                     AudioCaptureError?.Invoke(this, "Received end of conversation from the service");
                                     WebSocketEvent?.Invoke(this, wsm.Path.ToLower(), sr);
                                     break;
