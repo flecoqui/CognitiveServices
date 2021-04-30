@@ -111,7 +111,7 @@
                     </StackPanel>
                     <StackPanel Orientation="Horizontal"  VerticalAlignment="Center">
                         <StackPanel Orientation="Vertical"  VerticalAlignment="Center">
-                            <ComboBox x:Name="ComboDevice1" ToolTipService.ToolTip="Select the recording device" Width="308" IsTabStop="True"   HorizontalAlignment="Left" SelectionChanged="ComboHostname_SelectionChanged"/>
+                            <ComboBox x:Name="ComboDevice1" ToolTipService.ToolTip="Select the recording device" Width="308" IsTabStop="True"   HorizontalAlignment="Left" />
                         </StackPanel>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal"  VerticalAlignment="Center">
@@ -122,7 +122,7 @@
                     </StackPanel>
                     <StackPanel Orientation="Horizontal"  VerticalAlignment="Center">
                         <StackPanel Orientation="Vertical"  VerticalAlignment="Center">
-                            <ComboBox x:Name="ComboDevice2" ToolTipService.ToolTip="Select the recording device" Width="308" IsTabStop="True"   HorizontalAlignment="Left" SelectionChanged="ComboHostname_SelectionChanged"/>
+                            <ComboBox x:Name="ComboDevice2" ToolTipService.ToolTip="Select the recording device" Width="308" IsTabStop="True"   HorizontalAlignment="Left" />
                         </StackPanel>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal"  VerticalAlignment="Center">
