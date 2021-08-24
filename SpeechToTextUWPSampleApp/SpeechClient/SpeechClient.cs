@@ -1009,9 +1009,8 @@ namespace SpeechClient
 
 
 
-                    // string TextToSpeechContent = "<speak version=\"1.0\" xml:lang=\"{0}\"><voice xml:lang=\"{1}\" xml:gender=\"{2}\" name=\"Microsoft Server Speech Text to Speech Voice (en-US, ZiraRUS)\">{3}</voice></speak>";
-                    //  string contentString = String.Format(TextToSpeechContent, lang, lang, gender, text);
-                    string contentString = GenerateSsml(lang, gender, GetVoiceName(lang, gender), text);
+
+                    string contentString = GenerateSsml(lang, gender, GetVoiceName(lang,gender), text);
                     Windows.Web.Http.HttpStringContent content = new Windows.Web.Http.HttpStringContent(contentString);
                     content.Headers.Clear();
                     content.Headers.Remove("Content-Type");
@@ -1049,16 +1048,29 @@ namespace SpeechClient
         /// <param name="text">The text input.</param>
         private string GenerateSsml(string locale, string gender, string name, string text)
         {
+            // Previous XML format:
+            //var ssmlDoc = new XDocument(
+            //                  new XElement("speak",
+            //                      new XAttribute("version", "1.0"),
+            //                      new XAttribute(XNamespace.Xml + "lang", "en-US"),
+            //                      new XElement("voice",
+            //                          new XAttribute(XNamespace.Xml + "lang", locale),
+            //                          new XAttribute(XNamespace.Xml + "gender", gender),
+            //                          new XAttribute("name", name),
+            //                          text)));
+
+
             var ssmlDoc = new XDocument(
                               new XElement("speak",
                                   new XAttribute("version", "1.0"),
                                   new XAttribute(XNamespace.Xml + "lang", "en-US"),
                                   new XElement("voice",
-                                      new XAttribute(XNamespace.Xml + "lang", locale),
-                                      new XAttribute(XNamespace.Xml + "gender", gender),
                                       new XAttribute("name", name),
-                                      text)));
-            return ssmlDoc.ToString();
+                                      new XElement("prosody",
+                                          new XAttribute("rate", "0%"),
+                                          new XAttribute("pitch", "0%"),
+                                          text))));
+          return ssmlDoc.ToString();
         }
 
         string GetVoiceName(string lang, string gender)
@@ -1277,6 +1289,10 @@ namespace SpeechClient
 
                 case "zh-cn-xiaoxiaoneural":
                     voiceName = "Microsoft Server Speech Text to Speech Voice (zh-CN, XiaoxiaoNeural)";
+                    break;
+
+                default:
+                    voiceName = lang;
                     break;
 
             }
